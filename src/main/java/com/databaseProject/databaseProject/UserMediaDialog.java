@@ -124,28 +124,35 @@ public class UserMediaDialog extends JDialog
 	JLabel	awardsLabel;
 	JLabel	directorLabel;
 	JLabel	castLabel;
+	JLabel	sequelsLabel;
 	JScrollPane	awardsPane;
 	JScrollPane	castPane;
 	JScrollPane	directorPane;
+	JScrollPane	sequelsPane;
 	List<String>	cast;
 	List<String>	awards;
 	List<String>	directors;
+	List<String>	sequels;
 	DefaultListModel	castListModel;
 	DefaultListModel	awardsListModel;
 	DefaultListModel	directorListModel;
+	DefaultListModel	sequelListModel;
 	JList	awardsList;
 	JList	castList;
 	JList	directorList;
+	JList	sequelsList;
 	JPanel	tempMoviePanel;
 	
 	awardsLabel = new JLabel("Awards:");
 	directorLabel = new JLabel("Director:");
 	castLabel = new JLabel("Cast:");
+	sequelsLabel = new JLabel("Sequels:");
 	
 	// need to be returned from a database call
 	cast = new ArrayList<String>();
 	awards = new ArrayList<String>();
 	directors = new ArrayList<String>();
+	sequels = new ArrayList<String>();
 	
 	castListModel = new DefaultListModel();
 	for (String actor : cast)
@@ -165,13 +172,21 @@ public class UserMediaDialog extends JDialog
 		directorListModel.addElement(director);
 		}
 	
+	sequelListModel = new DefaultListModel();
+	for (String sequel : sequels)
+		{
+		directorListModel.addElement(sequel);
+		}
+	
 	castList = new JList(castListModel);
 	awardsList = new JList(awardsListModel);
 	directorList = new JList(directorListModel);
+	sequelsList = new JList(sequelListModel);
 	
 	castPane = new JScrollPane(castList);
 	awardsPane = new JScrollPane(awardsList);
 	directorPane = new JScrollPane(directorList);
+	sequelsPane = new JScrollPane(sequelsList);
 	
 	tempMoviePanel = new JPanel();
 	GroupLayout layout = new GroupLayout(tempMoviePanel);
@@ -189,14 +204,16 @@ public class UserMediaDialog extends JDialog
 			addComponent(castLabel).addComponent(castPane));
 	hGroup.addGroup(layout.createParallelGroup().
             addComponent(awardsLabel).addComponent(awardsPane));
+	hGroup.addGroup(layout.createParallelGroup().
+            addComponent(sequelsLabel).addComponent(sequelsPane));
 	layout.setHorizontalGroup(hGroup);
 
 	GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
 
 	vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-			addComponent(directorLabel).addComponent(castLabel).addComponent(awardsLabel));
+			addComponent(directorLabel).addComponent(castLabel).addComponent(awardsLabel).addComponent(sequelsLabel));
 	vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-			addComponent(directorPane).addComponent(castPane).addComponent(awardsPane));
+			addComponent(directorPane).addComponent(castPane).addComponent(awardsPane).addComponent(sequelsPane));
 	layout.setVerticalGroup(vGroup);
 	
 	return tempMoviePanel;

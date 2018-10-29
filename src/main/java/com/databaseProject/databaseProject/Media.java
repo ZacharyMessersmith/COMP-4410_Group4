@@ -15,7 +15,30 @@ public class Media
 	private float	version;
 	private String	platform;
 	private	List<String>	castList;
-	private List<String>	awardsList;
+	private List<String>	awardsList; 
+	private List<String>	sequelsList;
+	
+	public List<String> getSequelsList()
+	{
+	return sequelsList;
+	}
+
+	public void setSequelsList(List<String> sequelsList)
+	{
+	this.sequelsList = sequelsList;
+	}
+
+	public List<String> getDirectorList()
+	{
+	return directorList;
+	}
+
+	public void setDirectorList(List<String> directorList)
+	{
+	this.directorList = directorList;
+	}
+
+	private	List<String>	directorList;
 	
 	public List<String> getCastList()
 	{
