@@ -1,4 +1,4 @@
-package com.databaseProject.databaseProject;
+package com.databaseProject.Pojos;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,13 @@ public class User
 	private	boolean	isAdmin;
 	private	boolean	isUser;
 	private String	plan;
+	
+	@Override
+	public String toString()
+	{
+	return "User [email=" + email + ", name=" + name + ", phoneNumber=" + phoneNumber + ", password=" + password
+			+ ", streetAddress=" + streetAddress + ", city=" + city + ", state=" + state + ", zipCode=" + zipCode + "]";
+	}
 	
 	public String getPlan()
 	{

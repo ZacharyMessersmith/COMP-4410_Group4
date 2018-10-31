@@ -62,7 +62,7 @@ public class MainJFrame extends JFrame
 	tk = Toolkit.getDefaultToolkit();
 	d = tk.getScreenSize();
 
-	setSize(701, 550);
+	setSize(900, 700);
 	setLocation(d.width/3, d.height/4);
 
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

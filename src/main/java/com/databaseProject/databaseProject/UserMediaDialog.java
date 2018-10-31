@@ -13,6 +13,8 @@ import java.awt.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.databaseProject.Pojos.Media;
+
 
 public class UserMediaDialog extends JDialog
 							 implements ActionListener

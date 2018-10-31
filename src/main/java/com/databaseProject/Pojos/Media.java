@@ -1,4 +1,4 @@
-package com.databaseProject.databaseProject;
+package com.databaseProject.Pojos;
 
 import java.sql.Date;
 import java.util.List;
@@ -15,6 +15,17 @@ public class Media
 	private float	version;
 	private String	platform;
 	private	List<String>	castList;
+	
+	public Media(int mediaID, Date releaseDate, String genre, String title, int numCopiesAvailable, char mediaType)
+	{
+	this.mediaID = mediaID;
+	this.releaseDate = releaseDate;
+	this.genre = genre;
+	this.title = title;
+	this.numCopiesAvailable = numCopiesAvailable;
+	this.mediaType = mediaType;
+	}
+
 	private List<String>	awardsList; 
 	private List<String>	sequelsList;
 	

@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
+import com.databaseProject.Pojos.User;
+
 import java.awt.*;
 import javax.swing.JDialog;
 

@@ -13,6 +13,8 @@ import java.awt.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.databaseProject.Pojos.Media;
+
 //Since this will be used by the admin, we should give them a default password that they can change later.
 
 public class AdminMediaDialog extends JDialog
@@ -305,7 +307,7 @@ public class AdminMediaDialog extends JDialog
 		// make sure to update the Works_In table too
 		
 		// Fill in using info from boxes
-		media = new Media();
+		//media = new Media();
 		
 		dispose();
 		}
