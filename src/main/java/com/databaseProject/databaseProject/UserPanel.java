@@ -75,7 +75,7 @@ public class UserPanel extends JRootPane
 	
 	cp = getContentPane();
 	cp.setLayout(cardLayout);
-	searchPanel.setBackground(Color.BLUE);
+//	searchPanel.setBackground(Color.BLUE);
 	cp.add(searchPanel, "SearchPanel");
 	cp.add(rentalInfoPanel, "RentalInfoPanel");
 	}
@@ -91,6 +91,7 @@ public class UserPanel extends JRootPane
 	DefaultListModel<Media>	mediaListModel;		
 	MediaInfoTableModel	tableModel;
 	JMenuItem	item;
+	GridBagConstraints constraints;
 	
 	mediaList = new ArrayList<Media>();
 	
@@ -151,7 +152,7 @@ public class UserPanel extends JRootPane
 	hGroup.addGroup(layout.createParallelGroup().
             addComponent(searchByBox));
 	hGroup.addGroup(layout.createParallelGroup().
-            addComponent(searchButton));
+            addComponent(searchButton).addComponent(numRentalsAvailableLabel));
 	layout.setHorizontalGroup(hGroup);
 
 	GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
@@ -162,11 +163,25 @@ public class UserPanel extends JRootPane
             addComponent(gamesCheck).addComponent(moviesCheck));
 	vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
             addComponent(notPrevRentedCheck).addComponent(awardsCheck));
+	vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
+            addComponent(numRentalsAvailableLabel));
 	layout.setVerticalGroup(vGroup);
 	
 	panel = new JPanel();
-	panel.add(buttonPanel, BorderLayout.NORTH);
-	panel.add(scrollPane, BorderLayout.CENTER);
+	panel = new JPanel(new GridBagLayout());
+	constraints = new GridBagConstraints();
+	constraints.fill = GridBagConstraints.HORIZONTAL;
+	constraints.weightx = 0.5;
+	constraints.gridx = 0;
+	constraints.gridy = 0;
+	panel.add(buttonPanel, constraints);
+
+	constraints = new GridBagConstraints();
+	constraints.fill = GridBagConstraints.BOTH;
+	constraints.weighty = 0.7;
+	constraints.gridx = 0;
+	constraints.gridy = 1;
+	panel.add(scrollPane, constraints);
 	
 	return panel;
 	}
@@ -219,7 +234,7 @@ public class UserPanel extends JRootPane
 	DefaultTableColumnModel  colModel;
 
 	colModel = new DefaultTableColumnModel();
-
+	
 	col = new TableColumn(0);    // 0 is the column index
 	col.setPreferredWidth(10);
 	col.setMinWidth(10);
@@ -250,7 +265,7 @@ public class UserPanel extends JRootPane
 	col.setHeaderValue("Genre");
 	colModel.addColumn(col);
 
-	col = new TableColumn(5);    // 4 is the column index
+	col = new TableColumn(5);    // 5 is the column index
 	col.setPreferredWidth(10);
 	col.setMinWidth(10);
 	col.setHeaderValue("Release Date");
@@ -349,8 +364,6 @@ public class UserPanel extends JRootPane
 		rentalInfoTable.setModel(tableModel);
 		
 		cardLayout.show(getContentPane(), "RentalInfoPanel");
-		
-		//new UserMediaDialog(new Media());
 		}
 	else if (e.getSource() == menuEditProfile)
 		{

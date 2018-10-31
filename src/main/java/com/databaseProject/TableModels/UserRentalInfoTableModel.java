@@ -17,12 +17,12 @@ public class UserRentalInfoTableModel extends AbstractTableModel
 	
 	public int getColumnCount()
 	{
-	return 6;
+	return 7;
 	}
 	
 	public Rental getRentalAt(int rowIndex)
 	{
-	return (Rental)getValueAt(rowIndex, 5);
+	return (Rental)getValueAt(rowIndex, 6);
 	}
 	
 	public int getRowCount()
@@ -55,9 +55,9 @@ public class UserRentalInfoTableModel extends AbstractTableModel
 		}
 	else if (col == 4)
 		return rental.getMedia().getGenre();
-	else if (col == 4)
-		return rental.getMedia().getReleaseDate();
 	else if (col == 5)
+		return rental.getMedia().getReleaseDate();
+	else if (col == 6)
 		return rental;
 	else
 	    return null;
