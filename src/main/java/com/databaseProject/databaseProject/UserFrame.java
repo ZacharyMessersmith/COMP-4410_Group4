@@ -6,6 +6,8 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+
+// THIS CLASS IS NOT ACTUALLY USED FOR ANYTHING
 public class UserFrame extends JFrame
 					   implements ActionListener
 {

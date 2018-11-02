@@ -3,6 +3,7 @@ package com.databaseProject.databaseProject;
 import javax.swing.JFrame;
 import javax.swing.*;
 
+//THIS CLASS IS NOT ACTUALLY USED FOR ANYTHING
 public class AdminFrame extends JFrame
 {
 	JTable	resultsTable;

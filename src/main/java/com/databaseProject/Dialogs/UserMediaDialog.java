@@ -1,4 +1,4 @@
-package com.databaseProject.databaseProject;
+package com.databaseProject.Dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,75 +15,27 @@ import javax.swing.event.ChangeListener;
 
 import com.databaseProject.Pojos.Media;
 
-//Since this will be used by the admin, we should give them a default password that they can change later.
 
-public class AdminMediaDialog extends JDialog
-						 implements ActionListener, ChangeListener
+public class UserMediaDialog extends JDialog
+							 implements ActionListener
 {
-	JTextField	titleBox;
 	JTextField	numCopiesBox;
 	JTextField	releaseDateBox;
 	JTextField	genreBox;
+	JTextField	typeBox;
 	
-	ButtonGroup		mediaTypeGroup;
-	JRadioButton	gameOption;
-	JRadioButton	movieOption;
-	
-	JButton		saveButton;
-	JButton		cancelButton;
-	
-	JTextField	versionBox;
-	JTextField	platformBox;
-	
-	JList	awardsList;
-	JList	castList;
-	JList	directorList;
-	JList	sequelsList;
+	JButton		closeButton;
 	
 	JPanel	gamePanel;
 	JPanel	moviePanel;
 	
 	Media	media;
 	
-	AdminMediaDialog()
+	public UserMediaDialog(Media media)
 	{
-	setupBaseMediaDialog();
-	saveButton.setActionCommand("CREATE_MEDIA");
-	setTitle("Create Media");
-	}
-	
-	
-	AdminMediaDialog(Media media)
-	{
-	setupBaseMediaDialog();
 	this.media = media;
-	saveButton.setActionCommand("EDIT_MEDIA");
-	setTitle("Edit Media");
 	
-	titleBox.setText(media.getTitle());
-	numCopiesBox.setText(Integer.toString(media.getNumCopiesAvailable()));
-	//Need to figure out how to convert from a date to a string
-	//releaseDateBox.setText(media.getReleaseDate());
-	genreBox.setText(media.getGenre());
-	
-	// These might need changed based on what is stored in the database
-	if (media.getMediaType() == 'g') 
-		{
-		gameOption.setSelected(true);
-		versionBox.setText(Float.toString(media.getVersion()));
-		platformBox.setText(media.getPlatform());
-		}
-	else
-		{
-		movieOption.setSelected(true);
-		
-		}
-	
-	}
-	
-	void	setupBaseMediaDialog()
-	{
-	JLabel	titleLabel;
+	JLabel	typeLabel;
 	JLabel	numCopiesLabel;
 	JLabel	releaseDateLabel;
 	JLabel	genreLabel;
@@ -91,37 +43,42 @@ public class AdminMediaDialog extends JDialog
 	JPanel	buttonPanel;
 	Container	cp;
 	
-	titleLabel = new JLabel("Title:");
+	typeLabel = new JLabel("Media Type:");
 	numCopiesLabel = new JLabel("Copies Available:");
 	releaseDateLabel = new JLabel("Release Date:");
 	genreLabel = new JLabel("Genre:");
 	
-	titleBox = new JTextField(10);
 	numCopiesBox = new JTextField(10);
+	numCopiesBox.setEditable(false);
+	numCopiesBox.setText(Integer.toString(media.getNumCopiesAvailable()));
+	
 	releaseDateBox = new JTextField(10);
+	releaseDateBox.setEditable(false);
+	// Need to convert this to something that can actually be displayed
+	//releaseDateBox.setText(media.getReleaseDate());
+	
 	genreBox = new JTextField(10);
+	genreBox.setEditable(false);
 	
-	gameOption = new JRadioButton("Game");
-	gameOption.addChangeListener(this);
-	movieOption = new JRadioButton("Movie");
-	movieOption.addChangeListener(this);
-			
-	gamePanel = createGamePanel();
-	gamePanel.setVisible(true);
-	moviePanel = createMoviePanel();
-	moviePanel.setVisible(false);
+	// Might need changed based on how it's stored in the database
+	typeBox = new JTextField(10);
+	typeBox.setEditable(false);
+	if (media.getMediaType() == 'm')
+		{
+		typeBox.setText("Movie");
+		moviePanel = createMoviePanel(media);
+		gamePanel = null;
+		}
+	else
+		{
+		typeBox.setText("Game");
+		gamePanel = createGamePanel(media);
+		moviePanel = null;
+		}
 	
-	mediaTypeGroup = new ButtonGroup();
-	mediaTypeGroup.add(gameOption);
-	mediaTypeGroup.add(movieOption);
-	gameOption.setSelected(true);
-	
-	saveButton = new JButton("Save");
-	saveButton.addActionListener(this);
-	
-	cancelButton = new JButton("Cancel");
-	cancelButton.addActionListener(this);
-	cancelButton.setActionCommand("CANCEL");
+	closeButton = new JButton("Close");
+	closeButton.addActionListener(this);
+	closeButton.setActionCommand("CLOSE");
 	
 	mainPanel = new JPanel();
 	GroupLayout layout = new GroupLayout(mainPanel);
@@ -133,9 +90,9 @@ public class AdminMediaDialog extends JDialog
 	GroupLayout.SequentialGroup hGroup = layout.createSequentialGroup();
 
 	hGroup.addGroup(layout.createParallelGroup().
-            addComponent(titleLabel).addComponent(releaseDateLabel).addComponent(gameOption));
+            addComponent(typeLabel).addComponent(releaseDateLabel));
 	hGroup.addGroup(layout.createParallelGroup().
-			addComponent(titleBox).addComponent(releaseDateBox).addComponent(movieOption));
+			addComponent(typeBox).addComponent(releaseDateBox));
 	hGroup.addGroup(layout.createParallelGroup().
             addComponent(numCopiesLabel).addComponent(genreLabel));
 	hGroup.addGroup(layout.createParallelGroup().
@@ -145,27 +102,26 @@ public class AdminMediaDialog extends JDialog
 	GroupLayout.SequentialGroup vGroup = layout.createSequentialGroup();
 
 	vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-            addComponent(titleLabel).addComponent(titleBox).addComponent(numCopiesLabel).addComponent(numCopiesBox));
+            addComponent(typeLabel).addComponent(typeBox).addComponent(numCopiesLabel).addComponent(numCopiesBox));
 	vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
             addComponent(releaseDateLabel).addComponent(releaseDateBox).addComponent(genreLabel).addComponent(genreBox));
-	vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-			addComponent(gameOption).addComponent(movieOption));
 	layout.setVerticalGroup(vGroup);
 	
 	buttonPanel = new JPanel();
-	buttonPanel.add(saveButton);
-	buttonPanel.add(cancelButton);
+	buttonPanel.add(closeButton);
 	
 	cp = getContentPane();
 	cp.add(mainPanel, BorderLayout.NORTH);
-	cp.add(gamePanel, BorderLayout.WEST);
-	cp.add(moviePanel, BorderLayout.CENTER);
 	cp.add(buttonPanel, BorderLayout.SOUTH);
+	if (gamePanel == null)
+		cp.add(moviePanel, BorderLayout.CENTER);
+	else
+		cp.add(gamePanel, BorderLayout.WEST);
 	
-	setupMediaDialog();
+	setupMediaDialog(media.getTitle());
 	}
 	
-	JPanel	createMoviePanel()
+	JPanel	createMoviePanel(Media media)
 	{
 	JLabel	awardsLabel;
 	JLabel	directorLabel;
@@ -182,7 +138,11 @@ public class AdminMediaDialog extends JDialog
 	DefaultListModel	castListModel;
 	DefaultListModel	awardsListModel;
 	DefaultListModel	directorListModel;
-	DefaultListModel	sequelsListModel;
+	DefaultListModel	sequelListModel;
+	JList	awardsList;
+	JList	castList;
+	JList	directorList;
+	JList	sequelsList;
 	JPanel	tempMoviePanel;
 	
 	awardsLabel = new JLabel("Awards:");
@@ -194,7 +154,7 @@ public class AdminMediaDialog extends JDialog
 	cast = new ArrayList<String>();
 	awards = new ArrayList<String>();
 	directors = new ArrayList<String>();
-	sequels = new ArrayList<String>(); 
+	sequels = new ArrayList<String>();
 	
 	castListModel = new DefaultListModel();
 	for (String actor : cast)
@@ -214,16 +174,16 @@ public class AdminMediaDialog extends JDialog
 		directorListModel.addElement(director);
 		}
 	
-	sequelsListModel = new DefaultListModel();
+	sequelListModel = new DefaultListModel();
 	for (String sequel : sequels)
 		{
-		castListModel.addElement(sequel);
+		directorListModel.addElement(sequel);
 		}
 	
 	castList = new JList(castListModel);
 	awardsList = new JList(awardsListModel);
 	directorList = new JList(directorListModel);
-	sequelsList = new JList(sequelsListModel);
+	sequelsList = new JList(sequelListModel);
 	
 	castPane = new JScrollPane(castList);
 	awardsPane = new JScrollPane(awardsList);
@@ -261,17 +221,24 @@ public class AdminMediaDialog extends JDialog
 	return tempMoviePanel;
 	}
 	
-	JPanel	createGamePanel()
+	JPanel	createGamePanel(Media media)
 	{
 	JLabel	versionLabel;
 	JLabel	platformLabel;
 	JPanel	tempGamePanel;
+	JTextField	versionBox;
+	JTextField	platformBox;
 	
 	versionLabel = new JLabel("Version:");
 	platformLabel = new JLabel("Platform");
 	
 	versionBox = new JTextField(10);
+	versionBox.setEnabled(false);
+	versionBox.setText(Float.toString(media.getVersion()));
 	platformBox = new JTextField(10);
+	platformBox.setEnabled(false);
+	platformBox.setText(media.getPlatform());
+	
 	
 	tempGamePanel = new JPanel();
 	GroupLayout layout = new GroupLayout(tempGamePanel);
@@ -298,55 +265,22 @@ public class AdminMediaDialog extends JDialog
 	
 	return tempGamePanel;
 	}
-
+	
 	public void actionPerformed(ActionEvent ae)
 	{
-	if (ae.getActionCommand().equals("CREATE_MEDIA"))
-		{
-		Media	media;
-		// make sure to update the Works_In table too
-		
-		// Fill in using info from boxes
-		//media = new Media();
-		
+	if (ae.getActionCommand().equals("CLOSE"))
 		dispose();
-		}
-	if (ae.getActionCommand().equals("EDIT_MEDIA")) 
-		{
-		// update database where mediaID = this.mediaID
-		// make sure to update the Works_In table too
-		
-		dispose();
-		}
-	else if (ae.getActionCommand().equals("CANCEL"))
-		{
-		dispose();
-		}
-	
 	}
 	
-	public void stateChanged(ChangeEvent e)
-	{
-	if (gameOption.isSelected())
-		{
-		gamePanel.setVisible(true);
-		moviePanel.setVisible(false);
-		}
-	if (movieOption.isSelected())
-		{
-		gamePanel.setVisible(false);
-		moviePanel.setVisible(true);
-		}
-	}
-	
-	void	setupMediaDialog()
+	void	setupMediaDialog(String title)
 	{
 	Toolkit		tk;
 	Dimension	d;
 
 	tk = Toolkit.getDefaultToolkit();
 	d = tk.getScreenSize();
-
+	
+	setTitle(title);
 	setSize(700, 500);
 	setLocation(d.width/3, d.height/4);
 
@@ -356,4 +290,5 @@ public class AdminMediaDialog extends JDialog
 
 	setVisible(true);
 	}
+	
 }

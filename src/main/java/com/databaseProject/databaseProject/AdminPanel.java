@@ -17,6 +17,9 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import com.databaseProject.Dialogs.AdminMediaDialog;
+import com.databaseProject.Dialogs.UserDialog;
+import com.databaseProject.Dialogs.UserMediaDialog;
 import com.databaseProject.Pojos.Media;
 import com.databaseProject.Pojos.Rental;
 import com.databaseProject.Pojos.User;
@@ -27,7 +30,6 @@ import com.databaseProject.TableModels.MemberInfoTableModel;
 public class AdminPanel extends JRootPane
 						implements ActionListener, MouseListener
 {	
-
 	JMenuItem	menuCreateUser;
 	JMenuItem	menuCreateMedia;
 	JMenuItem	menuViewMembers;

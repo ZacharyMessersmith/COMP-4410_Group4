@@ -15,6 +15,8 @@ public class Media
 	private float	version;
 	private String	platform;
 	private	List<String>	castList;
+	private List<String>	awardsList; 
+	private List<String>	sequelsList;
 	
 	public Media(int mediaID, Date releaseDate, String genre, String title, int numCopiesAvailable, char mediaType)
 	{
@@ -26,8 +28,6 @@ public class Media
 	this.mediaType = mediaType;
 	}
 
-	private List<String>	awardsList; 
-	private List<String>	sequelsList;
 	
 	public List<String> getSequelsList()
 	{

@@ -1,4 +1,4 @@
-package com.databaseProject.databaseProject;
+package com.databaseProject.Dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -40,7 +40,7 @@ public class UserDialog extends JDialog
 	
 	User	user;
 	
-	UserDialog()
+	public UserDialog()
 	{
 	initializeBaseUserDialog();
 	setTitle("Create User");
@@ -52,7 +52,7 @@ public class UserDialog extends JDialog
 	userPlanLabel.setVisible(false);
 	}
 	
-	UserDialog(User user, boolean isAdmin)
+	public UserDialog(User user, boolean isAdmin)
 	{
 	initializeBaseUserDialog();
 	this.user = user;

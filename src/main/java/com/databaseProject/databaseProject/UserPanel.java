@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.databaseProject.Dialogs.UserDialog;
+import com.databaseProject.Dialogs.UserMediaDialog;
 import com.databaseProject.Pojos.Media;
 import com.databaseProject.Pojos.Rental;
 import com.databaseProject.Pojos.User;
@@ -45,11 +47,10 @@ public class UserPanel extends JRootPane
 	JLabel		numRentalsAvailableLabel;
 	
 	JPanel		searchPanel;
+	JTable		searchResultsTable;
 	
 	JPanel		rentalInfoPanel;
 	JTable		rentalInfoTable;
-	
-	JTable		searchResultsTable;
 	
 	CardLayout	cardLayout;
 	
@@ -339,6 +340,7 @@ public class UserPanel extends JRootPane
 
 		tableModel = new MediaInfoTableModel(mediaListModel);
 		searchResultsTable.setModel(tableModel);
+		searchResultsTable.setColumnModel(getMediaColumnModel());
 		}
 	}
 	
@@ -362,6 +364,7 @@ public class UserPanel extends JRootPane
 
 		tableModel = new UserRentalInfoTableModel(rentalListModel);
 		rentalInfoTable.setModel(tableModel);
+		rentalInfoTable.setColumnModel(getRentalColumnModel());
 		
 		cardLayout.show(getContentPane(), "RentalInfoPanel");
 		}

@@ -1,4 +1,4 @@
-package com.databaseProject.databaseProject;
+package com.databaseProject.Dialogs;
 
 import java.awt.Container;
 import java.awt.event.ActionEvent;
