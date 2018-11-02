@@ -26,7 +26,7 @@ INSERT INTO addresses (street,zip,city,state) VALUES ("Maryfield Park","24732","
 INSERT INTO addresses (street,zip,city,state) VALUES ("Upper Piccadilly","24712","Athens","AZ");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Stoneycrof Crescent","24733","Lashmeet","MD");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Knowle Top Road","24729","Hiawatha","WI");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Merleswen","24716",Bud","IA");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Merleswen","24716","Bud","IA");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Dolphin Gardens East","24719","Covel","FL");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Benmore View","24724","Freeman","CT");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Kelton Grove","24714","Beeson","AL");
