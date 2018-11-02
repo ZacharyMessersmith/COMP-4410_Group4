@@ -81,6 +81,13 @@ INSERT INTO `games` (`gameID`, `version`, `platform`) VALUES ('13', '1.01', 'Pla
 INSERT INTO `games` (`gameID`, `version`, `platform`) VALUES ('14', '1.00', 'Wee');
 INSERT INTO `games` (`gameID`, `version`, `platform`) VALUES ('15', '0.12', 'Woo');
 
+#fill plans
+INSERT INTO `plans` (`planID`, `cost`, `numMediaAllowed`) VALUES ('1', '5', '1');
+INSERT INTO `plans` (`planID`, `cost`, `numMediaAllowed`) VALUES ('2', '10', '3');
+INSERT INTO `plans` (`planID`, `cost`, `numMediaAllowed`) VALUES ('3', '15', '8');
+INSERT INTO `plans` (`planID`, `cost`, `numMediaAllowed`) VALUES ('4', '20', '20');
+
+
 #fill has_plan
 INSERT INTO `has_plan` (`email`, `planID`) VALUES ('Bala.Stella@hotmail.com', '3');
 INSERT INTO `has_plan` (`email`, `planID`) VALUES ('Cecilie.Humaira@gmail.com', '2');
