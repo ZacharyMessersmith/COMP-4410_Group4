@@ -19,7 +19,7 @@ CREATE TABLE Media(
     releaseDate	DATE,
     genre		VARCHAR(30),
     title		VARCHAR(40),
-    numCopiesAvaliable	INTEGER,
+    numCopiesAvailable	INTEGER,
     PRIMARY KEY(mediaID));
 
 CREATE TABLE Awards(
