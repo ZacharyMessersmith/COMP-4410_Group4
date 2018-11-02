@@ -16,24 +16,32 @@ INSERT INTO users (email,name,phoneNum,password,isMember,isAdmin) VALUES("Elli.N
 INSERT INTO users (email,name,phoneNum,password,isMember,isAdmin) VALUES("Ian.Lainey@yahoo.com","Ian Lainey","6191239302","BobRoss",0,1);
 
 #fill address
-INSERT INTO addresses (street,zip,city,state) VALUES ("New Close Farm Road","24715",Bramwell",IN");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Canon Place","24737",Montcalm",AK");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Fish Rake Lane","24726",Herndon",MN");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Berryhill Avenue","24738",Nemours",WV");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Venette Close","24731",Kegley",MI");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Vandries Street","24701",Bluefield",DE");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Maryfield Park","24732",Kellysville",MO");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Upper Piccadilly","24712",Athens",AZ");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Stoneycrof Crescent","24733",Lashmeet",MD");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Knowle Top Road","24729",Hiawatha",WI");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Merleswen","24716",Bud",IA");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Dolphin Gardens East","24719",Covel",FL");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Benmore View","24724",Freeman",CT");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Kelton Grove","24714",Beeson",AL");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Beechcroft Court","24736",Matoaka",NC");
+INSERT INTO addresses (street,zip,city,state) VALUES ("New Close Farm Road","24715","Bramwell","IN");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Canon Place","24737","Montcalm","AK");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Fish Rake Lane","24726","Herndon","MN");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Berryhill Avenue","24738","Nemours","WV");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Venette Close","24731","Kegley","MI");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Vandries Street","24701","Bluefield","DE");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Maryfield Park","24732","Kellysville","MO");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Upper Piccadilly","24712","Athens","AZ");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Stoneycrof Crescent","24733","Lashmeet","MD");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Knowle Top Road","24729","Hiawatha","WI");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Merleswen","24716",Bud","IA");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Dolphin Gardens East","24719","Covel","FL");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Benmore View","24724","Freeman","CT");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Kelton Grove","24714","Beeson","AL");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Beechcroft Court","24736","Matoaka","NC");
 
-#fill livesAt1
-
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('280th Ave', '32819', 'WaKeeney', 'KN');
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('Delaware St', '32852', 'Fanning', 'MI');
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('Pennsylvania St', '29183', 'Bendena', 'KN');
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('Burroughs Creek Road', '40212', 'Denton', 'KN');
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('Lakeside Dr', '23492', 'Highland', 'IN');
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('Hills Dr', '92092', 'Highland', 'MI');
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('Meadowoak Ln', '48213', 'Troy', 'NC');
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('Mansfield Rd', '12523', 'Doniphan', 'NY');
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('Commonwealth Dr', '24632', 'Small', 'DC');
+INSERT INTO `addresses` (`street`, `zip`, `city`, `state`) VALUES ('Vera Ln', '92301', 'Big', 'TX');
 
 
 
@@ -128,4 +136,48 @@ INSERT INTO `won` (`awardID`, `movieID`) VALUES ('5', '4');
 INSERT INTO `won` (`awardID`, `movieID`) VALUES ('6', '5');
 INSERT INTO `won` (`awardID`, `movieID`) VALUES ('4', '6');
 
-#need to do workers, and livesAt2 then livesAt1 convert into script
+
+#Fill lives_at1`
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Bala.Stella@hotmail.com`,	    	`Beechcroft Court`,		`24736`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Cecilie.Humaira@gmail.com`,		`Benmore Views`	,		`24724`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Cecilie.Lainey@hotmail.com`,		`Berryhill Avenue`,		`24738`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Clio.Seraphine@hotmail.com`,		`Canon Place`,			`24737`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Desmond.Stella@hotmail.com`,		`Dolphin Gardens East`,	`24719`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Elli.Nerthus@hotmail.com`,		`Fish Rake Lane`,		`24726`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Emmett.Humaira@hotmail.com`,		`Kelton Grove`,			`24714`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Geoff.Humaira@gmail.com`,			`Knowle Top Road`,		`24729`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Ian.Lainey@yahoo.com`,			`Maryfield Park`,		`24732`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Juan.Eseoghene@hotmail.com`,		`Merleswen`,			`24716`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Juan.Lainey@yahoo.com`	,		`New Close Farm Road`,	`24715`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Kekepania.Seraphine@yahoo.com`,	`Stoneycrof Crescent`,	`24733`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Pavel.America@yahoo.com`,			`Upper Piccadilly`,		`24712`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Sudarshan.Lainey@gmail.com`,		`Vandries Street`,		`24701`);
+INSERT INTO `lives_at1` (`email`,`street`,`zip`) VALUES (`Zarko.Ghislaine@yahoo.com`,		`Venette Close`,		`24731`);
+
+#Fill workers
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14445', 'Joshua', '1', '0');
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14446', 'Daniel', '0', '1');
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14447', 'Sarah', '0', '1');
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14448', 'Claire', '1', '0');
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14449', 'Sanders', '1', '0');
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14550', 'Calli', '1', '0');
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14551', 'Robert', '0', '1');
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14552', 'Ronald', '1', '0');
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14553', 'David', '1', '0');
+INSERT INTO `workers` (`workerID`, `wname`, `isActor`, `isDirector`) VALUES ('14554', 'Madonna', '0', '1');
+
+#Fill lives_at2
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES (`14445`,'280th Ave', '32819');
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14446','Delaware St', '32852');
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14447','Pennsylvania St', '29183');
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14448','Burroughs Creek Road', '40212');
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14449','Lakeside Dr', '23492');
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14550','Hills Dr', '92092');
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14551','Meadowoak Ln', '48213');
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14552','Mansfield Rd', '12523');
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14553','Commonwealth Dr', '24632');
+INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14554','Vera Ln', '92301');
+
+
+
+
