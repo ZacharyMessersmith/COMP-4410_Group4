@@ -42,6 +42,7 @@ class Project1TestMediaLauncher
 		List<Media> 		mediaListInsert;
 		List<Media>			mediaListRetrieve;
 		List<Integer>		mediaIDList;
+		List<String> 		titleList;
 		MediaDAO 			mediaDAO;
 		
 		releaseDate = new Date(System.currentTimeMillis());
@@ -49,6 +50,7 @@ class Project1TestMediaLauncher
 		mediaListInsert = new ArrayList<Media>();
 		mediaListRetrieve = new ArrayList<Media>();
 		mediaIDList = new ArrayList<Integer>();
+		titleList = null;
 		
 		int i;
 		for(i = 0; i < 10; i++)
@@ -84,7 +86,7 @@ class Project1TestMediaLauncher
 		mediaDAO = new MediaDAO();
 		System.out.println("Created MediaDAO");
 		
-		System.out.println("Manually adding single media");
+		/*System.out.println("Manually adding single media");
 		mediaDAO.insertMedia(mediaInsert);
 		System.out.println("Successfully added single media");
 		
@@ -94,7 +96,7 @@ class Project1TestMediaLauncher
 		
 		System.out.println("Getting single media");
 		mediaRetrieve = mediaDAO.getMedia(i);
-		System.out.println("Got media. Compare to input.");
+		System.out.println("Got media. Compare to input.");*/
 		
 		System.out.println("Inserted: " + mediaInsert.getTitle());
 		System.out.println("Retrieved: " + mediaRetrieve.getTitle());
@@ -143,7 +145,7 @@ class Project1TestMediaLauncher
 		mediaListRetrieve = mediaDAO.getAllMedia();
 		System.out.println("Size = " + mediaListRetrieve.size());
 		
-		List<String> titleList = mediaDAO.getAllMediaTitles();
+		titleList = mediaDAO.getAllMediaTitles();
 		
 		for(i = 0; i < titleList.size(); i++)
 		{
@@ -153,6 +155,20 @@ class Project1TestMediaLauncher
 		}
 		
 		System.out.println("Done getting all media.");
+		
+		System.out.println("Testing getting movie titles");
+		
+		titleList = mediaDAO.getAllMovieTitles();
+		
+		for(i = 0; i < titleList.size(); i++)
+		{
+			
+			System.out.println(titleList.get(i));
+			
+		}
+		
+		System.out.println("Done Testing getting movie titles");
+		
 		/*
 		System.out.println("Testing updating media information");
 		

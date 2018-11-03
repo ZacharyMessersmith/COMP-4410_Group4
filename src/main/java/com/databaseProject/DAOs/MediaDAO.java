@@ -436,5 +436,57 @@ public class MediaDAO
 
 //============================================================================
 	
+	public List<String> getAllMovieTitles()
+	{
+		
+		List<String>			movieNameList;
+		PreparedStatement 	pstatement;
+		ResultSet 			resultSet;
+		
+		movieNameList = new ArrayList<String>();
+		pstatement = null;
+		resultSet = null;
+		
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("SELECT M.title FROM Media M, Movies M2 WHERE M.mediaID = M2.movieID");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			
+			resultSet = pstatement.executeQuery();
+
+			while ( resultSet.next() ) 
+			{
+					
+				movieNameList.add(resultSet.getString("title"));
+				
+			} // end while
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		
+		
+		return movieNameList;
+		
+	}
+	
+//=============================================================================
+	
 }
 
