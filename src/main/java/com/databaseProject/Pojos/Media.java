@@ -27,6 +27,23 @@ public class Media
 	this.numCopiesAvailable = numCopiesAvailable;
 	this.mediaType = mediaType;
 	}
+	
+	public Media()
+	{
+		
+		mediaID = -1;
+		releaseDate = null;
+		genre = null;
+		title = null;
+		numCopiesAvailable = -1;
+		mediaType = 'n';
+		version = -1;
+		platform = null;
+		castList = null;
+		awardsList = null;
+		sequelsList = null;
+		
+	}
 
 	
 	public List<String> getSequelsList()

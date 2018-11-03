@@ -36,11 +36,6 @@ public class User
 	{
 	this.plan = plan;
 	}
-
-	User()
-	{
-	this.currentRentals = new ArrayList<Media>();
-	}
 	
 	public User(String email, String name, String phoneNumber, String password, String streetAddress, String city,
 			String state, int zipCode, boolean isAdmin, boolean isUser)
@@ -56,6 +51,29 @@ public class User
 	this.isAdmin = isAdmin;
 	this.isUser = isUser;
 	}
+	
+	
+	public User()
+	{
+		
+		email = null;
+		name = null;
+		phoneNumber = null;
+		password = null;
+		streetAddress = null;
+		city = null;
+		state = null;
+		zipCode = 0;
+		isAdmin = false;
+		isUser = false;
+		maxNumRentals = 0;
+		currentNumRentals = 0;
+		currentRentals = new ArrayList<Media>();
+		plan = null;
+		
+		
+	}
+	
 
 
 

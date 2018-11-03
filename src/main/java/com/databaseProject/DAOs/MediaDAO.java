@@ -3,18 +3,15 @@
 //Description: An object that accesses a database to retrieve
 //				the information about a Media.
 
+package com.databaseProject.DAOs;
 
-//import com.databaseProject.databaseProject.*;
+import com.databaseProject.Pojos.Media;
+import com.databaseProject.databaseProject.*;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
-
-import com.databaseProject.Pojos.Media;
-import com.databaseProject.databaseProject.ConnectionManager;
-
 import java.util.ArrayList;
 
 
@@ -38,7 +35,6 @@ public class MediaDAO
 		
 		PreparedStatement 	pstatement;
 		int		 			result;
-		//int					numOfColumns;
 		
 		pstatement = null;
 		//resultSet = null;
@@ -56,7 +52,7 @@ public class MediaDAO
 			pstatement.setDate(2, media.getReleaseDate());
 			pstatement.setString(3, media.getGenre());
 			pstatement.setString(4, media.getTitle());
-			pstatement.setInt(5, media.getNumOfCopiesAvailable());
+			pstatement.setInt(5, media.getNumCopiesAvailable());
 			
 			result = pstatement.executeUpdate();
 			
@@ -84,7 +80,6 @@ public class MediaDAO
 		Media media;
 		PreparedStatement 	pstatement;
 		int		 			result;
-		//int					numOfColumns;
 		
 		media = null;
 		pstatement = null;
@@ -107,7 +102,7 @@ public class MediaDAO
 				pstatement.setDate(2, media.getReleaseDate());
 				pstatement.setString(3, media.getGenre());
 				pstatement.setString(4, media.getTitle());
-				pstatement.setInt(5, media.getNumOfCopiesAvailable());
+				pstatement.setInt(5, media.getNumCopiesAvailable());
 			
 				result = pstatement.executeUpdate();
 			
@@ -138,7 +133,6 @@ public class MediaDAO
 		Media 				media;
 		PreparedStatement 	pstatement;
 		ResultSet 			resultSet;
-		int					numOfColumns;
 		
 		media = new Media();
 		pstatement = null;
@@ -156,25 +150,16 @@ public class MediaDAO
 			pstatement.setInt(1, mediaID);
 			
 			resultSet = pstatement.executeQuery();
-			
-			
-			// process query results
-			ResultSetMetaData metaData = resultSet.getMetaData();
-			int numberOfColumns = metaData.getColumnCount();
 
 			while ( resultSet.next() ) 
 			{
-				
-				for ( int i = 1; i <= numberOfColumns; i++ )
-				{
-					
+
 					media.setMediaID(resultSet.getInt("mediaID"));
 					media.setReleaseDate(resultSet.getDate("releaseDate"));
 					media.setGenre(resultSet.getString("genre"));
 					media.setTitle(resultSet.getString("title"));
-					media.setNumOfCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
-					
-				}
+					media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+
 				
 			} // end while
 			
@@ -206,7 +191,6 @@ public class MediaDAO
 		Media 				media;
 		PreparedStatement 	pstatement;
 		ResultSet 			resultSet;
-		int					numOfColumns;
 		
 		mediaList = new ArrayList<Media>();
 		media = new Media();
@@ -227,27 +211,17 @@ public class MediaDAO
 				pstatement.setInt(1, mediaIDList.get(i));
 			
 				resultSet = pstatement.executeQuery();
-			
-			
-				// process query results
-				ResultSetMetaData metaData = resultSet.getMetaData();
-				int numberOfColumns = metaData.getColumnCount();
 
 				while ( resultSet.next() ) 
 				{
-				
-					for ( int j = 1; j <= numberOfColumns; j++ )
-					{
-					
+						media = new Media();
 						media.setMediaID(resultSet.getInt("mediaID"));
 						media.setReleaseDate(resultSet.getDate("releaseDate"));
 						media.setGenre(resultSet.getString("genre"));
 						media.setTitle(resultSet.getString("title"));
-						media.setNumOfCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+						media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
 						mediaList.add(media);
 					
-					}
-				
 				} //end while
 			
 			}
@@ -280,7 +254,6 @@ public class MediaDAO
 		Media 				media;
 		PreparedStatement 	pstatement;
 		ResultSet 			resultSet;
-		int					numOfColumns;
 		
 		mediaList = new ArrayList<Media>();
 		media = new Media();
@@ -298,27 +271,17 @@ public class MediaDAO
 			pstatement.clearParameters();
 			
 			resultSet = pstatement.executeQuery();
-			
-			// process query results
-			ResultSetMetaData metaData = resultSet.getMetaData();
-			int numberOfColumns = metaData.getColumnCount();
 
 			while ( resultSet.next() ) 
 			{
-			
-				//for ( int i = 1; i <= numberOfColumns; i++ )
-				//{
 					
 					media = new Media();
 					media.setMediaID(resultSet.getInt("mediaID"));
 					media.setReleaseDate(resultSet.getDate("releaseDate"));
 					media.setGenre(resultSet.getString("genre"));
 					media.setTitle(resultSet.getString("title"));
-					media.setNumOfCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
-					
+					media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
 					mediaList.add(media);
-					
-				//}
 				
 			} // end while
 			
