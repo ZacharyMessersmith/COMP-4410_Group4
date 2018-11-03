@@ -326,13 +326,14 @@ public class MediaDAO
 		{
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("SELECT * FROM Media M");
+			pstatement = connection.prepareStatement("SELECT * FROM Media M, Movies M2 WHERE M.mediaID = M2.movieID");
 			
 			// instantiate parameters
 			pstatement.clearParameters();
 			
 			resultSet = pstatement.executeQuery();
 
+			//get movies
 			while ( resultSet.next() ) 
 			{
 					
@@ -342,6 +343,30 @@ public class MediaDAO
 					media.setGenre(resultSet.getString("genre"));
 					media.setTitle(resultSet.getString("title"));
 					media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+					media.setMediaType('m');
+					mediaList.add(media);
+				
+			} // end while
+			
+			pstatement = connection.prepareStatement("SELECT * FROM Media M, Games G WHERE M.mediaID = G.gameID");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			
+			resultSet = pstatement.executeQuery();
+			
+			while ( resultSet.next() ) 
+			{
+					
+					media = new Media();
+					media.setMediaID(resultSet.getInt("mediaID"));
+					media.setReleaseDate(resultSet.getDate("releaseDate"));
+					media.setGenre(resultSet.getString("genre"));
+					media.setTitle(resultSet.getString("title"));
+					media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+					media.setVersion(resultSet.getFloat("version"));
+					media.setPlatform(resultSet.getString("platform"));
+					media.setMediaType('g');
 					mediaList.add(media);
 				
 			} // end while
@@ -440,8 +465,8 @@ public class MediaDAO
 	{
 		
 		List<String>			movieNameList;
-		PreparedStatement 	pstatement;
-		ResultSet 			resultSet;
+		PreparedStatement 		pstatement;
+		ResultSet 				resultSet;
 		
 		movieNameList = new ArrayList<String>();
 		pstatement = null;
@@ -487,6 +512,7 @@ public class MediaDAO
 	}
 	
 //=============================================================================
+	
 	
 }
 

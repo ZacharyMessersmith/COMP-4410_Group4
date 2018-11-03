@@ -145,6 +145,35 @@ class Project1TestMediaLauncher
 		mediaListRetrieve = mediaDAO.getAllMedia();
 		System.out.println("Size = " + mediaListRetrieve.size());
 		
+		for(i = 0; i < mediaListRetrieve.size(); i++)
+		{
+			
+			if(mediaListRetrieve.get(i).getMediaType() == 'g')
+			{
+				System.out.println("Game: " + mediaListRetrieve.get(i).getTitle());
+				System.out.println("--" + mediaListRetrieve.get(i).getPlatform());
+				System.out.println("--" + new Float( mediaListRetrieve.get(i).getVersion()).toString());
+			
+			}
+			
+			else if(mediaListRetrieve.get(i).getMediaType() == 'm')
+			{
+				
+				System.out.println("Movie: " + mediaListRetrieve.get(i).getTitle());
+				
+				
+			}
+			
+			else
+			{
+				
+				System.out.println("Undefined Media Type: " + mediaListRetrieve.get(i).getTitle() );	
+			
+			}
+			
+		}
+		
+		/*
 		titleList = mediaDAO.getAllMediaTitles();
 		
 		for(i = 0; i < titleList.size(); i++)
@@ -167,7 +196,7 @@ class Project1TestMediaLauncher
 			
 		}
 		
-		System.out.println("Done Testing getting movie titles");
+		System.out.println("Done Testing getting movie titles");*/
 		
 		/*
 		System.out.println("Testing updating media information");
