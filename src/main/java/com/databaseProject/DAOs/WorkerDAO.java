@@ -441,7 +441,7 @@ public class WorkerDAO
 		wnameList = new ArrayList<String>();
 		pstatement = null;
 		resultSet = null;
-		getActorByte = 1;
+		getActorByte = 0;
 		
 		
 		try
