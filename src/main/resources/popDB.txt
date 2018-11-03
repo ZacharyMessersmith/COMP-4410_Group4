@@ -26,7 +26,7 @@ INSERT INTO addresses (street,zip,city,state) VALUES ("Maryfield Park","24732","
 INSERT INTO addresses (street,zip,city,state) VALUES ("Upper Piccadilly","24712","Athens","AZ");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Stoneycrof Crescent","24733","Lashmeet","MD");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Knowle Top Road","24729","Hiawatha","WI");
-INSERT INTO addresses (street,zip,city,state) VALUES ("Merleswen","24716","Bud","IA");
+INSERT INTO addresses (street,zip,city,state) VALUES ("Merleswen","24716",Bud","IA");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Dolphin Gardens East","24719","Covel","FL");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Benmore View","24724","Freeman","CT");
 INSERT INTO addresses (street,zip,city,state) VALUES ("Kelton Grove","24714","Beeson","AL");
@@ -80,13 +80,6 @@ INSERT INTO `games` (`gameID`, `version`, `platform`) VALUES ('12', '12.1', 'Woo
 INSERT INTO `games` (`gameID`, `version`, `platform`) VALUES ('13', '1.01', 'PlayTro');
 INSERT INTO `games` (`gameID`, `version`, `platform`) VALUES ('14', '1.00', 'Wee');
 INSERT INTO `games` (`gameID`, `version`, `platform`) VALUES ('15', '0.12', 'Woo');
-
-#fill plans
-INSERT INTO `plans` (`planID`, `cost`, `numMediaAllowed`) VALUES ('1', '5', '1');
-INSERT INTO `plans` (`planID`, `cost`, `numMediaAllowed`) VALUES ('2', '10', '3');
-INSERT INTO `plans` (`planID`, `cost`, `numMediaAllowed`) VALUES ('3', '15', '8');
-INSERT INTO `plans` (`planID`, `cost`, `numMediaAllowed`) VALUES ('4', '20', '20');
-
 
 #fill has_plan
 INSERT INTO `has_plan` (`email`, `planID`) VALUES ('Bala.Stella@hotmail.com', '3');
