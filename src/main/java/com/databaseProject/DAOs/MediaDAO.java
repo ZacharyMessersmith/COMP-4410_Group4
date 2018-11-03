@@ -6,6 +6,7 @@
 package com.databaseProject.DAOs;
 
 import com.databaseProject.Pojos.Media;
+import com.databaseProject.Pojos.Worker;
 import com.databaseProject.databaseProject.*;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -204,23 +205,48 @@ public class MediaDAO
 		{
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("SELECT * FROM Media M WHERE M.mediaID = ?");
+			pstatement = connection.prepareStatement("SELECT * FROM Media M, Movies M2, Games G WHERE M.mediaID = ? AND (M2.movieID = ? OR G.gameID = ?) Group by M.mediaID");
 			
 			// instantiate parameters
 			pstatement.clearParameters();
 			pstatement.setInt(1, mediaID);
+			pstatement.setInt(2, mediaID);
+			pstatement.setInt(3, mediaID);
 			
 			resultSet = pstatement.executeQuery();
 
 			while ( resultSet.next() ) 
 			{
 
-					media.setMediaID(resultSet.getInt("mediaID"));
-					media.setReleaseDate(resultSet.getDate("releaseDate"));
-					media.setGenre(resultSet.getString("genre"));
-					media.setTitle(resultSet.getString("title"));
-					media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
-
+				media.setMediaID(resultSet.getInt("mediaID"));
+				media.setReleaseDate(resultSet.getDate("releaseDate"));
+				media.setGenre(resultSet.getString("genre"));
+				media.setTitle(resultSet.getString("title"));
+				media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+				
+				if(media.getMediaID() == resultSet.getInt("gameID"))
+				{
+					
+					media.setPlatform(resultSet.getString("platform"));
+					media.setVersion(resultSet.getFloat("version"));
+					media.setMediaType('g');
+					
+				}
+				
+				else if(media.getMediaID() == resultSet.getInt("movieID"))
+				{
+						
+					media.setMediaType('m');
+					
+				}
+					
+				else
+				{
+					
+					media.setMediaType('n');
+					
+				}
+					
 				
 			} // end while
 			
@@ -508,6 +534,167 @@ public class MediaDAO
 		
 		
 		return movieNameList;
+		
+	}
+	
+//=============================================================================
+	
+	public Media getMediaInformation(int mediaID)
+	{
+		
+		List<String>			nameList;
+		//List<Worker>			castList;
+		Media					returnMedia;
+		//Worker					worker;
+		PreparedStatement 		pstatement;
+		ResultSet 				resultSet;
+		
+		//castList = new ArrayList<Worker>();
+		nameList = new ArrayList<String>();
+		//worker = new Worker();
+		pstatement = null;
+		resultSet = null;
+		returnMedia = null;
+		
+		
+		try
+		{
+			
+			//returnMedia = new Media();
+			returnMedia = getMedia(mediaID);
+			
+			Connection connection = ConnectionManager.getConnection();
+		
+			
+			//Get list of Actor Names
+			pstatement = connection.prepareStatement("SELECT W.wname FROM Workers W, Works_On WO WHERE WO.movieID = ? AND WO.workerID = W.workerID AND W.isActor = 1");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, mediaID);
+			
+			resultSet = pstatement.executeQuery();
+
+			while ( resultSet.next() ) 
+			{
+					
+				
+				nameList.add(resultSet.getString("wname"));
+				/*worker = new Worker();
+				worker.setWorkerID(resultSet.getInt("workerID"));
+				worker.setname(resultSet.getString("name"));
+				worker.setIsActor(resultSet.getByte("isActor"));
+				worker.setIsDirector(resultSet.getByte("isDirector"));
+				castList.add(worker);*/
+				
+			} // end while
+			
+			returnMedia.setCastList(nameList);
+			nameList = new ArrayList<String>();
+			
+			
+			//Get list of Director Names
+			pstatement = connection.prepareStatement("SELECT W.* FROM Workers W, Works_On WO WHERE WO.movieID = ? AND WO.workerID = W.workerID AND W.isDirector = 1");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, mediaID);
+			
+			resultSet = pstatement.executeQuery();
+
+			while ( resultSet.next() ) 
+			{
+					
+				
+				nameList.add(resultSet.getString("wname"));
+				/*worker = new Worker();
+				worker.setWorkerID(resultSet.getInt("workerID"));
+				worker.setname(resultSet.getString("name"));
+				worker.setIsActor(resultSet.getByte("isActor"));
+				worker.setIsDirector(resultSet.getByte("isDirector"));
+				castList.add(worker);*/
+				
+			} // end while
+			
+			returnMedia.setDirectorList(nameList);
+
+			
+			nameList = getSequels(mediaID);
+			returnMedia.setSequelsList(nameList); 
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		
+		
+		return returnMedia;
+		
+	}
+	
+//=============================================================================
+	
+	public List<String> getSequels(int mediaID)
+	{
+		
+		List<String>			sequelList;
+		PreparedStatement 		pstatement;
+		ResultSet 				resultSet;
+		
+		sequelList = new ArrayList<String>();
+		pstatement = null;
+		resultSet = null;
+		
+		
+		try
+		{
+			
+			
+			Connection connection = ConnectionManager.getConnection();
+		
+			
+			//Get list of sequels
+			pstatement = connection.prepareStatement("SELECT M.title FROM Media M, Sequel S WHERE S.prequelID = ? AND S.sequelID = M.mediaID GROUP BY M.title");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, mediaID);
+			
+			resultSet = pstatement.executeQuery();
+
+			while ( resultSet.next() ) 
+			{
+					
+				sequelList.add(resultSet.getString("title"));
+			
+			} // end while
+			
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		return sequelList;
 		
 	}
 	

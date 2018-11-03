@@ -171,7 +171,46 @@ class Project1TestMediaLauncher
 			
 			}
 			
+			
+			
 		}
+		
+		
+		System.out.println("Done Testing If Media Type is acquired.");
+		System.out.println("Testing getting Cast From Media");
+		
+		mediaRetrieve = mediaDAO.getMediaInformation(2);
+		
+		for( i = 0; i < mediaRetrieve.getCastList().size(); i ++)
+		{
+			
+			System.out.println("Cast Name: " + mediaRetrieve.getCastList().get(i));
+			
+		}
+		
+		System.out.println("Done Testing Cast List. Testing Director List");
+		
+		
+		
+		for( i = 0; i < mediaRetrieve.getDirectorList().size(); i ++)
+		{
+			
+			System.out.println("Director Name: " + mediaRetrieve.getDirectorList().get(i));
+			
+		}
+		
+		System.out.println("Done Testing Director List");
+		
+		System.out.println("Testing Sequels");
+		
+		for(i = 0; i < mediaRetrieve.getSequelsList().size(); i++)
+		{
+			
+			System.out.println("Sequel: " + mediaRetrieve.getSequelsList().get(i));
+			
+		}
+		
+		
 		
 		/*
 		titleList = mediaDAO.getAllMediaTitles();

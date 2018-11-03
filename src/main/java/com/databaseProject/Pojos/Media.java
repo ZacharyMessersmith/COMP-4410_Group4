@@ -15,6 +15,7 @@ public class Media
 	private float	version;
 	private String	platform;
 	private	List<String>	castList;
+	private	List<String>	directorList;
 	private List<String>	awardsList; 
 	private List<String>	sequelsList;
 	
@@ -65,8 +66,6 @@ public class Media
 	{
 	this.directorList = directorList;
 	}
-
-	private	List<String>	directorList;
 	
 	public List<String> getCastList()
 	{
