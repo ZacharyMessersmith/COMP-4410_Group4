@@ -56,6 +56,35 @@ public class MediaDAO
 			
 			result = pstatement.executeUpdate();
 			
+			if(media.getMediaType() == 'm')
+			{
+				
+				pstatement = connection.prepareStatement("INSERT INTO Movies (movieID) VALUES (?)");
+				
+				// instantiate parameters
+				pstatement.clearParameters();
+				pstatement.setInt(1, media.getMediaID());
+			
+				result = pstatement.executeUpdate(); 
+				
+			}
+			
+			else if(media.getMediaType() == 'g')
+			{
+				
+				pstatement = connection.prepareStatement("INSERT INTO Games (gameID, version, platform) VALUES (?, ?, ?)");
+				
+				// instantiate parameters
+				pstatement.clearParameters();
+				pstatement.setInt(1, media.getMediaID());
+				pstatement.setFloat(2, media.getVersion());
+				pstatement.setString(3, media.getPlatform());
+				
+			
+				result = pstatement.executeUpdate(); 
+				
+			}
+			
 			// ensure statement and connection are closed properly                                      
 			//resultSet.close();                                      
 			pstatement.close();                                      
@@ -85,16 +114,14 @@ public class MediaDAO
 		pstatement = null;
 		//resultSet = null;
 		
-		
 		try
 		{
 			Connection connection = ConnectionManager.getConnection();
-		
-			pstatement = connection.prepareStatement("INSERT INTO Media (mediaID, releaseDate, genre, title, numCopiesAvailable) VALUES (?, ?, ?, ?, ?)");
 			
 			for(int i = 0; i < mediaList.size(); i++)
 			{
 				
+				pstatement = connection.prepareStatement("INSERT INTO Media (mediaID, releaseDate, genre, title, numCopiesAvailable) VALUES (?, ?, ?, ?, ?)");
 				media = mediaList.get(i);
 				// instantiate parameters
 				pstatement.clearParameters();
@@ -105,13 +132,48 @@ public class MediaDAO
 				pstatement.setInt(5, media.getNumCopiesAvailable());
 			
 				result = pstatement.executeUpdate();
+				
+				System.out.println("3");
+				
+				if(media.getMediaType() == 'm')
+				{
+
+					pstatement = connection.prepareStatement("INSERT INTO Movies (movieID) VALUES (?)");
+					
+					// instantiate parameters
+					pstatement.clearParameters();
+					pstatement.setInt(1, media.getMediaID());
+				
+					result = pstatement.executeUpdate(); 
+					
+				}
+				
+				else if(media.getMediaType() == 'g')
+				{
+
+					pstatement = connection.prepareStatement("INSERT INTO Games (gameID, version, platform) VALUES (?, ?, ?)");
+					
+					// instantiate parameters
+					pstatement.clearParameters();
+					pstatement.setInt(1, media.getMediaID());
+					pstatement.setDouble(2, media.getVersion());
+					pstatement.setString(3, media.getPlatform());
+					
+				
+					result = pstatement.executeUpdate(); 
+					pstatement.close(); 
+					
+					
+				}
+				
+				pstatement.close(); 
 			
 			}
 			
 			// ensure statement and connection are closed properly                                      
 			//resultSet.close();                                      
-			pstatement.close();                                      
-			connection.close();                       
+			
+			connection.close();   
 		
 		}
 		
@@ -121,7 +183,6 @@ public class MediaDAO
 			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
 			
 		}
-		
 		
 	}
 	

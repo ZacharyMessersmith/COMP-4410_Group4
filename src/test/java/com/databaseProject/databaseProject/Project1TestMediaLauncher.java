@@ -62,6 +62,7 @@ class Project1TestMediaLauncher
 			mediaInsert.setGenre("genre" + i);
 			mediaInsert.setTitle("Media" + i);
 			mediaInsert.setNumCopiesAvailable(4);
+			mediaInsert.setMediaType('m');
 			
 			mediaListInsert.add(mediaInsert);
 			
@@ -75,6 +76,9 @@ class Project1TestMediaLauncher
 		mediaInsert.setGenre("genreCustom");
 		mediaInsert.setTitle("MediaCustom");
 		mediaInsert.setNumCopiesAvailable(3);
+		mediaInsert.setMediaType('g');
+		mediaInsert.setVersion((float) 1.0);
+		mediaInsert.setPlatform("X-bone");
 		
 		System.out.println("Creating MediaDAO");
 		mediaDAO = new MediaDAO();
