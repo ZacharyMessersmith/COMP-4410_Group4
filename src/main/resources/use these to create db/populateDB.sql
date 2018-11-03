@@ -184,3 +184,11 @@ INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14551','Meadowoak L
 INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14552','Mansfield Rd', '12523');
 INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14553','Commonwealth Dr', '24632');
 INSERT INTO `lives_at2` (`workerID`,`street`,`zip`) VALUES ('14554','Vera Ln', '92301');
+
+#Fill works_on
+INSERT INTO `works_on` (`movieID`, `workerID`) VALUES ('1', '14445');
+INSERT INTO `works_on` (`movieID`, `workerID`) VALUES ('2', '14446');
+INSERT INTO `works_on` (`movieID`, `workerID`) VALUES ('3', '14447');
+INSERT INTO `works_on` (`movieID`, `workerID`) VALUES ('4', '14448');
+INSERT INTO `works_on` (`movieID`, `workerID`) VALUES ('5', '14449');
+INSERT INTO `works_on` (`movieID`, `workerID`) VALUES ('6', '14550');
