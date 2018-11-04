@@ -179,7 +179,7 @@ class Project1TestMediaLauncher
 		System.out.println("Done Testing If Media Type is acquired.");
 		System.out.println("Testing getting Cast From Media");
 		
-		mediaRetrieve = mediaDAO.getMediaInformation(2);
+		mediaRetrieve = mediaDAO.getMediaInformation(1);
 		
 		for( i = 0; i < mediaRetrieve.getCastList().size(); i ++)
 		{

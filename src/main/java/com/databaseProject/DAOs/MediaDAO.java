@@ -650,10 +650,13 @@ public class MediaDAO
 		List<String>			sequelList;
 		PreparedStatement 		pstatement;
 		ResultSet 				resultSet;
+		int						sequelToMediaID;
+		boolean					notEndOfSequelsBoolean;
 		
 		sequelList = new ArrayList<String>();
 		pstatement = null;
 		resultSet = null;
+		notEndOfSequelsBoolean = false;
 		
 		
 		try
@@ -661,24 +664,43 @@ public class MediaDAO
 			
 			
 			Connection connection = ConnectionManager.getConnection();
-		
 			
-			//Get list of sequels
-			pstatement = connection.prepareStatement("SELECT M.title FROM Media M, Sequel S WHERE S.prequelID = ? AND S.sequelID = M.mediaID GROUP BY M.title");
+			//This will change inside to loop in order to repeatedly retrieve
+			//all media sequels. This needs to change because a media can 
+			//indirectly be a sequel e.g. m3 is sequel of m2 and m2 is 
+			//a sequel of m1. m3 is, therefore, a sequel of m1
+			sequelToMediaID = mediaID;
 			
-			// instantiate parameters
-			pstatement.clearParameters();
-			pstatement.setInt(1, mediaID);
-			
-			resultSet = pstatement.executeQuery();
-
-			while ( resultSet.next() ) 
+			//This is a do while because the initial MediaID can be 0
+			//and the result of a null value to mediaID is also 0.
+			//Therefore, if sequelToMediaID is initialized to 0
+			//The program will try to find the sequel to it.
+			//The only problem is if a media with ID 0
+			//is the sequel to another Media.
+			do
 			{
+				notEndOfSequelsBoolean = false;
+				//Get list of sequels
+				pstatement = connection.prepareStatement("SELECT M.title, M.mediaID FROM Media M, Sequel S WHERE S.prequelID = ? AND S.sequelID = M.mediaID GROUP BY M.title");
+			
+				// instantiate parameters
+				pstatement.clearParameters();
+				pstatement.setInt(1, sequelToMediaID);
+			
+				resultSet = pstatement.executeQuery();
+
+				while ( resultSet.next() ) 
+				{
 					
-				sequelList.add(resultSet.getString("title"));
+					sequelList.add(resultSet.getString("title"));
+					sequelToMediaID = resultSet.getInt("mediaID");
+					notEndOfSequelsBoolean = true;
+					
+				} // end while resultSet.next()
+				
+				
 			
-			} // end while
-			
+			}while( notEndOfSequelsBoolean );
 			
 			// ensure statement and connection are closed properly                                      
 			resultSet.close();                                      
