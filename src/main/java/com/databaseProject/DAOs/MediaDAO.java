@@ -991,7 +991,90 @@ public class MediaDAO
 	}
 	
 //=============================================================================
+	public List<Media> searchGenres(String genre)
+	{
+		List<Media> 		listOfGenresSearched;
+		PreparedStatement 	pState;
+		ResultSet			rSet;
+		
+		Media				media;
+		listOfGenresSearched = new ArrayList<Media>();
+		pState = null;
+		rSet   = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+			
+			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre = ?");
+			
+			pState.clearParameters();
+			pState.setString(1, genre);
+			
+			rSet = pState.executeQuery();
+			while(rSet.next())
+			{
+				
+				media= new Media();
+				media.setMediaID(rSet.getInt("mediaID"));
+				media.setGenre(rSet.getString("genre"));
+				media.setReleaseDate(rSet.getDate("releaseDate"));
+				media.setTitle(rSet.getString("title"));
+				media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
+				
+				listOfGenresSearched.add(media);
+			}
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		
+		}
+		
+		return listOfGenresSearched;
+	}
+//============================================================================================
+	public List<Media> keywordSearch(String keyword)
+	{
+		List<Media>			keywordSearched;
+		PreparedStatement 	pState;
+		ResultSet			rSet;
+		Media				media;
+		
+		keywordSearched = new ArrayList<Media>();
+		pState = null;
+		rSet = null;
+		
+		try
+		{
+			Connection connection= ConnectionManager.getConnection();
+			
+			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.title LIKE ?");
+			
+			pState.clearParameters();
+			pState.setString(1, "%"+keyword+"%");
+			
+			rSet = pState.executeQuery();
+			
+			while(rSet.next())
+			{
+				media= new Media();
+				media.setMediaID(rSet.getInt("mediaID"));
+				media.setGenre(rSet.getString("genre"));
+				media.setReleaseDate(rSet.getDate("releaseDate"));
+				media.setTitle(rSet.getString("title"));
+				media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
+				keywordSearched.add(media);
+			}
 	
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		}
+		
+		return keywordSearched;
+	}
 	
 }
 
