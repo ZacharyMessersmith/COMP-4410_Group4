@@ -990,8 +990,10 @@ public class MediaDAO
 		
 	}
 	
-//=============================================================================
-	public List<Media> searchGenres(String genre)
+//=========================================================================================================
+	//Search by keyword with 2 booleans to tell if you want to search if it was previously rented or has won awards. 
+	//Also needs the email of the user just to check if it was prevRented by that user.
+	public List<Media> searchGenres(String genre,boolean prevRented,boolean wonAward,String emailOfUser)
 	{
 		List<Media> 		listOfGenresSearched;
 		PreparedStatement 	pState;
@@ -1002,39 +1004,121 @@ public class MediaDAO
 		pState = null;
 		rSet   = null;
 		
-		try
+		//===========================================================
+		if(prevRented)
 		{
-			Connection connection = ConnectionManager.getConnection();
-			
-			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre = ?");
-			
-			pState.clearParameters();
-			pState.setString(1, genre);
-			
-			rSet = pState.executeQuery();
-			while(rSet.next())
+			try
 			{
+				Connection connection = ConnectionManager.getConnection();
 				
-				media= new Media();
-				media.setMediaID(rSet.getInt("mediaID"));
-				media.setGenre(rSet.getString("genre"));
-				media.setReleaseDate(rSet.getDate("releaseDate"));
-				media.setTitle(rSet.getString("title"));
-				media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
+				pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre = ? AND M.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
 				
-				listOfGenresSearched.add(media);
+				
+				pState.clearParameters();
+				pState.setString(1, genre);
+				pState.setString(2, emailOfUser);
+				
+				rSet = pState.executeQuery();
+				while(rSet.next())
+				{
+					
+					media = new Media();
+					media.setMediaID(rSet.getInt("mediaID"));
+					media.setGenre(rSet.getString("genre"));
+					media.setReleaseDate(rSet.getDate("releaseDate"));
+					media.setTitle(rSet.getString("title"));
+					media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
+					
+					listOfGenresSearched.add(media);
+				}
+				rSet.close();                                      
+				pState.close();                                      
+				connection.close();
+			}
+			catch(SQLException e)
+			{
+				System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+			
 			}
 		}
-		catch(SQLException e)
+		//===========================================================
+		else if(wonAward)
 		{
-			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
-		
+			try
+			{
+				Connection connection = ConnectionManager.getConnection();
+				
+				pState = connection.prepareStatement("SELECT * FROM Media M, Won W WHERE M.genre = ? AND W.movieID = M.mediaID");
+				
+				pState.clearParameters();
+				pState.setString(1, genre);
+				
+				rSet = pState.executeQuery();
+				while(rSet.next())
+				{
+					media= new Media();
+					
+					media.setMediaID(rSet.getInt("mediaID"));
+					media.setGenre(rSet.getString("genre"));
+					media.setReleaseDate(rSet.getDate("releaseDate"));
+					media.setTitle(rSet.getString("title"));
+					media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
+					
+					listOfGenresSearched.add(media);
+				}
+				rSet.close();                                      
+				pState.close();                                      
+				connection.close();
+			}
+			catch(SQLException e)
+			{
+				System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+			
+			}
 		}
-		
+		//===========================================================
+		else
+		{
+			try
+			{
+				Connection connection = ConnectionManager.getConnection();
+				
+				pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre = ?");
+				
+				pState.clearParameters();
+				pState.setString(1, genre);
+				
+				rSet = pState.executeQuery();
+				while(rSet.next())
+				{
+					
+					media= new Media();
+					media.setMediaID(rSet.getInt("mediaID"));
+					media.setGenre(rSet.getString("genre"));
+					media.setReleaseDate(rSet.getDate("releaseDate"));
+					media.setTitle(rSet.getString("title"));
+					media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
+					
+					listOfGenresSearched.add(media);
+				}
+				rSet.close();                                      
+				pState.close();                                      
+				connection.close();
+			}
+			catch(SQLException e)
+			{
+				System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+			
+			}
+		}
+		//===========================================================
 		return listOfGenresSearched;
 	}
-//============================================================================================
-	public List<Media> keywordSearch(String keyword)
+	//=========================================================================================================
+	
+	//Search by keyword with 2 booleans to tell if you want to search if it was previously rented or has won awards. 
+	//Also needs the email of the user just to check if it was prevRented by that user.
+	public List<Media> keywordSearch(String keyword, boolean prevRented,boolean wonAwards,String emailOfUser)
 	{
 		List<Media>			keywordSearched;
 		PreparedStatement 	pState;
@@ -1045,36 +1129,117 @@ public class MediaDAO
 		pState = null;
 		rSet = null;
 		
-		try
+		//===========================================================
+		if(prevRented)
 		{
-			Connection connection= ConnectionManager.getConnection();
-			
-			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.title LIKE ?");
-			
-			pState.clearParameters();
-			pState.setString(1, "%"+keyword+"%");
-			
-			rSet = pState.executeQuery();
-			
-			while(rSet.next())
+			try
 			{
-				media= new Media();
-				media.setMediaID(rSet.getInt("mediaID"));
-				media.setGenre(rSet.getString("genre"));
-				media.setReleaseDate(rSet.getDate("releaseDate"));
-				media.setTitle(rSet.getString("title"));
-				media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
-				keywordSearched.add(media);
+				Connection connection = ConnectionManager.getConnection();
+				pState = connection.prepareStatement("SELECT * FROM Media m WHERE m.title LIKE ? AND m.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+				
+				pState.clearParameters();
+				pState.setString(1,  "%"+keyword+"%");
+				pState.setString(2, emailOfUser);
+				
+				rSet = pState.executeQuery();
+				
+				while(rSet.next())
+				{
+					media= new Media();
+					media.setMediaID(rSet.getInt("mediaID"));
+					media.setGenre(rSet.getString("genre"));
+					media.setReleaseDate(rSet.getDate("releaseDate"));
+					media.setTitle(rSet.getString("title"));
+					media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
+					keywordSearched.add(media);
+				}
+				rSet.close();                                      
+				pState.close();                                      
+				connection.close();
 			}
-	
+			catch(SQLException e)
+			{
+				System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+			}
+			
+			
+			
 		}
-		catch(SQLException e)
+		//===========================================================
+		else if(wonAwards)
 		{
-			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
-		}
+			try
+			{
+				Connection connection= ConnectionManager.getConnection();
+				
+				pState = connection.prepareStatement("SELECT * FROM Media M, won W WHERE M.title LIKE ? AND W.movieID = M.mediaID");
+													
+				pState.clearParameters();
+				pState.setString(1, "%"+keyword+"%");
+				
+				rSet = pState.executeQuery();
+				
+				while(rSet.next())
+				{
+					media= new Media();
+					media.setMediaID(rSet.getInt("mediaID"));
+					media.setGenre(rSet.getString("genre"));
+					media.setReleaseDate(rSet.getDate("releaseDate"));
+					media.setTitle(rSet.getString("title"));
+					media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
+					keywordSearched.add(media);
+				}
+				rSet.close();                                      
+				pState.close();                                      
+				connection.close();
 		
+			}
+			catch(SQLException e)
+			{
+				System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+			}
+			
+		}
+		//===========================================================
+		else
+		{
+			try
+			{
+				Connection connection= ConnectionManager.getConnection();
+				
+				pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.title LIKE ?");
+				
+				pState.clearParameters();
+				pState.setString(1, "%"+keyword+"%");
+				
+				rSet = pState.executeQuery();
+				
+				while(rSet.next())
+				{
+					media= new Media();
+					media.setMediaID(rSet.getInt("mediaID"));
+					media.setGenre(rSet.getString("genre"));
+					media.setReleaseDate(rSet.getDate("releaseDate"));
+					media.setTitle(rSet.getString("title"));
+					media.setNumCopiesAvailable(rSet.getInt("numCopiesAvailable"));
+					keywordSearched.add(media);
+				}
+			rSet.close();                                      
+			pState.close();                                      
+			connection.close();
+			}
+			catch(SQLException e)
+			{
+				System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+			}
+			
+		}
+		//===========================================================
+		
+		 
 		return keywordSearched;
 	}
+
 	
 }
 
