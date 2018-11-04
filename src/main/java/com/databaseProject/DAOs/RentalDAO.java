@@ -115,7 +115,7 @@ public class RentalDAO
 	
 //=============================================================================
 	
-	public List<Rental> getUsersRentals(String email)
+	public List<Rental> getUserRentals(String email)
 	{
 		
 		List<Rental>		rentalList;
@@ -146,7 +146,9 @@ public class RentalDAO
 		{
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("SELECT U.email, M.mediaID, RI.checkoutDate, RI.returnedDate FROM Rental_Info RI, Users U, Media M WHERE U.email = ? AND U.email = RI.email AND M.mediaID = RI.mediaID");
+			pstatement = connection.prepareStatement("SELECT U.email, M.mediaID, RI.checkoutDate, RI.returnedDate "
+					+ "FROM Rental_Info RI, Users U, Media M "
+					+ "WHERE U.email = ? AND U.email = RI.email AND M.mediaID = RI.mediaID");
 			
 			// instantiate parameters
 			pstatement.clearParameters();
@@ -161,7 +163,7 @@ public class RentalDAO
 				rental.setDateRented(resultSet.getDate("checkoutDate"));
 				rental.setDateReturned(resultSet.getDate("returnedDate"));
 				rentalList.add(rental);
-				mediaIDList.add( resultSet.getInt("mediaID"));
+				mediaIDList.add(resultSet.getInt("mediaID"));
 				
 				
 			} // end while
@@ -181,19 +183,21 @@ public class RentalDAO
 			resultSet.close();                                      
 			pstatement.close();                                      
 			connection.close();                       
-		
+			
+			return rentalList;
 		}
 		
 		catch(SQLException sqle)
 		{
 			
 			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			return rentalList;
 			
 		}
 		
 		
 		
-		return rentalList;
+		
 		
 	}
 	
