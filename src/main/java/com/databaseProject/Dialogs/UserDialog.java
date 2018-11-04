@@ -2,10 +2,13 @@ package com.databaseProject.Dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+import java.util.List;
 
+import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Pojos.User;
 
 import java.awt.*;
@@ -40,8 +43,11 @@ public class UserDialog extends JDialog
 	
 	User	user;
 	
+	UserDAO	userDao;
+	
 	public UserDialog()
 	{
+	userDao = new UserDAO();
 	initializeBaseUserDialog();
 	setTitle("Create User");
 	
@@ -54,6 +60,7 @@ public class UserDialog extends JDialog
 	
 	public UserDialog(User user, boolean isAdmin)
 	{
+	userDao = new UserDAO();
 	initializeBaseUserDialog();
 	this.user = user;
 	
@@ -73,6 +80,16 @@ public class UserDialog extends JDialog
 		{
 		if (planDropdown.getItemAt(i).equals(user.getPlan()))
 			planDropdown.setSelectedIndex(i);
+		}
+	
+	if (user.isAdmin())
+		{
+		isAdminBox.setSelected(true);
+		}
+	
+	if (user.isUser())
+		{
+		isUserBox.setSelected(true);
 		}
 	
 	if (!isAdmin)
@@ -112,6 +129,7 @@ public class UserDialog extends JDialog
 	
 	JPanel		panel1;
 	JPanel		buttonPanel;
+	List<String>	planNames;
 	Container	cp;
 	
 	emailLabel = new JLabel("Email:");
@@ -150,11 +168,12 @@ public class UserDialog extends JDialog
 	planLabel.setMinimumSize(new Dimension(75, 0));
 	planDropdown = new JComboBox();
 	
-	//Should be populated from the database
-	planDropdown.addItem("Plan 1");
-	planDropdown.addItem("Plan 2");
-	planDropdown.addItem("Plan 3");
-	
+	planNames = userDao.getAllPlanNames();
+	for (String name : planNames)
+		{
+		planDropdown.addItem(name);
+		}
+
 	userPlanLabel = new JLabel("Plan:", SwingConstants.RIGHT);
 	userPlanLabel.setMinimumSize(new Dimension(75, 0));
 	userPlanBox = new JTextField(10);

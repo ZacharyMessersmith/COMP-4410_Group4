@@ -2,7 +2,10 @@
 //Date: 10/25/2018
 //Description: A POJO that hold information about media
 
+package com.databaseProject.databaseProject;
 
+import com.databaseProject.Pojos.*;
+import com.databaseProject.DAOs.*;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -39,15 +42,10 @@ class Project1TestUserLauncher
 		List<String>		emailList;
 		List<String>		passwordList;
 		UserDAO 			userDAO;
-		byte				falseByte;
-		byte				trueByte;
 		
-		
-		falseByte = 0;
-		trueByte = 1;
 		userRetrieve = new User();
 		userListInsert = new ArrayList<User>();
-		userListRetrieve = new ArrayList();
+		userListRetrieve = new ArrayList<User>();
 		emailList = new ArrayList<String>();
 		passwordList = new ArrayList<String>();
 		
@@ -63,9 +61,9 @@ class Project1TestUserLauncher
 			userInsert.setPassword("Password" + i);
 			
 			userInsert.setName("Name" + i);
-			userInsert.setPhoneNum("PhoNumber" + i);
-			userInsert.setIsMember(falseByte);
-			userInsert.setIsAdmin(falseByte);
+			userInsert.setPhoneNumber("PhoNumber" + i);
+			userInsert.setUser(false);
+			userInsert.setAdmin(false);
 			
 			userListInsert.add(userInsert);
 			
@@ -76,9 +74,9 @@ class Project1TestUserLauncher
 		userInsert.setEmail("ManualAdd@email.test");
 		userInsert.setPassword("ManualAddPassword");
 		userInsert.setName("ManualAddName");
-		userInsert.setPhoneNum("ManualAdd1");
-		userInsert.setIsMember(trueByte);
-		userInsert.setIsAdmin(trueByte);
+		userInsert.setPhoneNumber("ManualAdd1");
+		userInsert.setUser(true);
+		userInsert.setAdmin(true);
 		
 		System.out.println("Creating UserDAO");
 		userDAO = new UserDAO();
@@ -136,7 +134,7 @@ class Project1TestUserLauncher
 		System.out.println("Size = " + userListRetrieve.size());
 		
 		System.out.println("Done retrieving list of users. Testing retrieving all users. Returning count of users retrieved.");
-		
+
 		userListRetrieve.clear();
 		userListRetrieve = userDAO.getAllUsers();
 		System.out.println("Size = " + userListRetrieve.size());

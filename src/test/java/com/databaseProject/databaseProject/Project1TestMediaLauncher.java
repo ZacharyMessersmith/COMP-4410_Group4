@@ -2,7 +2,10 @@
 //Date: 10/25/2018
 //Description: A POJO that hold information about media
 
+package com.databaseProject.databaseProject;
 
+import com.databaseProject.DAOs.*;
+import com.databaseProject.Pojos.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.sql.Date;
@@ -39,18 +42,15 @@ class Project1TestMediaLauncher
 		List<Media> 		mediaListInsert;
 		List<Media>			mediaListRetrieve;
 		List<Integer>		mediaIDList;
+		List<String> 		titleList;
 		MediaDAO 			mediaDAO;
-		byte				falseByte;
-		byte				trueByte;
 		
-		
-		falseByte = 0;
-		trueByte = 1;
 		releaseDate = new Date(System.currentTimeMillis());
 		mediaRetrieve = new Media();
 		mediaListInsert = new ArrayList<Media>();
 		mediaListRetrieve = new ArrayList<Media>();
 		mediaIDList = new ArrayList<Integer>();
+		titleList = null;
 		
 		int i;
 		for(i = 0; i < 10; i++)
@@ -63,7 +63,8 @@ class Project1TestMediaLauncher
 			mediaInsert.setReleaseDate(releaseDate);
 			mediaInsert.setGenre("genre" + i);
 			mediaInsert.setTitle("Media" + i);
-			mediaInsert.setNumOfCopiesAvailable(4);
+			mediaInsert.setNumCopiesAvailable(4);
+			mediaInsert.setMediaType('m');
 			
 			mediaListInsert.add(mediaInsert);
 			
@@ -76,13 +77,16 @@ class Project1TestMediaLauncher
 		mediaInsert.setReleaseDate(releaseDate);
 		mediaInsert.setGenre("genreCustom");
 		mediaInsert.setTitle("MediaCustom");
-		mediaInsert.setNumOfCopiesAvailable(3);
+		mediaInsert.setNumCopiesAvailable(3);
+		mediaInsert.setMediaType('g');
+		mediaInsert.setVersion((float) 1.0);
+		mediaInsert.setPlatform("X-bone");
 		
 		System.out.println("Creating MediaDAO");
 		mediaDAO = new MediaDAO();
 		System.out.println("Created MediaDAO");
 		
-		System.out.println("Manually adding single media");
+		/*System.out.println("Manually adding single media");
 		mediaDAO.insertMedia(mediaInsert);
 		System.out.println("Successfully added single media");
 		
@@ -92,7 +96,7 @@ class Project1TestMediaLauncher
 		
 		System.out.println("Getting single media");
 		mediaRetrieve = mediaDAO.getMedia(i);
-		System.out.println("Got media. Compare to input.");
+		System.out.println("Got media. Compare to input.");*/
 		
 		System.out.println("Inserted: " + mediaInsert.getTitle());
 		System.out.println("Retrieved: " + mediaRetrieve.getTitle());
@@ -141,7 +145,36 @@ class Project1TestMediaLauncher
 		mediaListRetrieve = mediaDAO.getAllMedia();
 		System.out.println("Size = " + mediaListRetrieve.size());
 		
-		List<String> titleList = mediaDAO.getAllMediaTitles();
+		for(i = 0; i < mediaListRetrieve.size(); i++)
+		{
+			
+			if(mediaListRetrieve.get(i).getMediaType() == 'g')
+			{
+				System.out.println("Game: " + mediaListRetrieve.get(i).getTitle());
+				System.out.println("--" + mediaListRetrieve.get(i).getPlatform());
+				System.out.println("--" + new Float( mediaListRetrieve.get(i).getVersion()).toString());
+			
+			}
+			
+			else if(mediaListRetrieve.get(i).getMediaType() == 'm')
+			{
+				
+				System.out.println("Movie: " + mediaListRetrieve.get(i).getTitle());
+				
+				
+			}
+			
+			else
+			{
+				
+				System.out.println("Undefined Media Type: " + mediaListRetrieve.get(i).getTitle() );	
+			
+			}
+			
+		}
+		
+		/*
+		titleList = mediaDAO.getAllMediaTitles();
 		
 		for(i = 0; i < titleList.size(); i++)
 		{
@@ -151,6 +184,20 @@ class Project1TestMediaLauncher
 		}
 		
 		System.out.println("Done getting all media.");
+		
+		System.out.println("Testing getting movie titles");
+		
+		titleList = mediaDAO.getAllMovieTitles();
+		
+		for(i = 0; i < titleList.size(); i++)
+		{
+			
+			System.out.println(titleList.get(i));
+			
+		}
+		
+		System.out.println("Done Testing getting movie titles");*/
+		
 		/*
 		System.out.println("Testing updating media information");
 		
