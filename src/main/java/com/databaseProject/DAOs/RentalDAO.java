@@ -76,7 +76,7 @@ public class RentalDAO
 				rental.setDateReturned(resultSet.getDate("returnedDate"));
 				rentalList.add(rental);
 				emailList.add(resultSet.getString("email"));
-				mediaIDList.add( resultSet.getInt("mediaID"));
+				mediaIDList.add(resultSet.getInt("mediaID"));
 				
 				
 			} // end while
@@ -86,7 +86,7 @@ public class RentalDAO
 			
 			for(int i = 0; i < userList.size(); i++)
 			{
-				
+//				System.out.println(mediaList.get(i).getTitle());
 				rentalList.get(i).setUser(userList.get(i));
 				rentalList.get(i).setMedia(mediaList.get(i));
 				

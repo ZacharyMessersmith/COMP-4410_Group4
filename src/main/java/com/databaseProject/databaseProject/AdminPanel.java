@@ -18,6 +18,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import com.databaseProject.DAOs.MediaDAO;
+import com.databaseProject.DAOs.RentalDAO;
 import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Dialogs.AdminMediaDialog;
 import com.databaseProject.Dialogs.UserDialog;
@@ -55,6 +56,7 @@ public class AdminPanel extends JRootPane
 	
 	MediaDAO	mediaDao;
 	UserDAO		userDao;
+	RentalDAO	rentalDao;
 
 	AdminPanel()
 	{
@@ -62,6 +64,7 @@ public class AdminPanel extends JRootPane
 	
 	mediaDao = new MediaDAO();
 	userDao = new UserDAO();
+	rentalDao = new RentalDAO(); 
 	setJMenuBar(newMenuBar());
 	
 	memberInfoPanel = createMemberInfoPanel();
@@ -342,11 +345,7 @@ public class AdminPanel extends JRootPane
 	titleLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 45));
 	
 	// needs to be populated from the database
-	rentalList = new ArrayList<Rental>();
-	
-	//This is a test Rental
-	//Rental(String name, String email, String streetAddress, String city, String state, String zipCode,
-	//String title, char mediaType, Date dateRented)
+	rentalList = rentalDao.getRentalsWithinLast24Hours();
 	
 	rentalListModel = new DefaultListModel<Rental>();
 	for (Rental rental : rentalList)
