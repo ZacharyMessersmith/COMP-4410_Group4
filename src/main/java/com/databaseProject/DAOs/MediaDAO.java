@@ -283,8 +283,7 @@ public class MediaDAO
 		media = new Media();
 		pstatement = null;
 		resultSet = null;
-		
-		
+	
 		try
 		{
 			Connection connection = ConnectionManager.getConnection();

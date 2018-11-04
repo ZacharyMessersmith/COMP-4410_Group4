@@ -43,10 +43,26 @@ class Project1RentalTestLauncher
 		
 		rentalList = rentalDAO.getRentalsWithinLast24Hours();
 		
+		System.out.println("Testing Getting rentals withing 24 hours");
 		for(int i = 0; i < rentalList.size(); i++)
 		{
 			
 			System.out.println("User: " + rentalList.get(i).getUser().getEmail());
+			System.out.println("Media: " + rentalList.get(i).getMedia().getTitle());
+			System.out.println("Date Rented: " + rentalList.get(i).getDateRented().toString());
+			System.out.println("Date Returned: " + rentalList.get(i).getDateReturned().toString());
+			
+		}
+		
+		System.out.println("Testing getting all the rentals of a user given an email");
+		
+		rentalList.clear();
+		rentalList = new ArrayList<Rental>();
+		rentalList = rentalDAO.getUsersRentals("Bala.Stella@hotmail.com");
+		System.out.println("User: " + rentalList.get(0).getUser().getEmail());
+		for(int i = 0; i < rentalList.size(); i++)
+		{
+
 			System.out.println("Media: " + rentalList.get(i).getMedia().getTitle());
 			System.out.println("Date Rented: " + rentalList.get(i).getDateRented().toString());
 			System.out.println("Date Returned: " + rentalList.get(i).getDateReturned().toString());

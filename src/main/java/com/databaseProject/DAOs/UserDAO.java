@@ -177,7 +177,6 @@ public class UserDAO
 		User 				user;
 		PreparedStatement 	pstatement;
 		ResultSet 			resultSet;
-		byte				trueFalseByte;
 		
 		user = new User();
 		pstatement = null;
@@ -198,26 +197,21 @@ public class UserDAO
 
 			while ( resultSet.next() ) 
 			{
+					
+				user.setEmail(resultSet.getString("email"));
+				user.setName(resultSet.getString("name"));
+				user.setPhoneNumber(resultSet.getString("phoneNum"));
+				user.setPassword(resultSet.getString("password"));
 				
-					user.setEmail(resultSet.getString("email"));
-					user.setName(resultSet.getString("name"));
-					user.setPhoneNumber(resultSet.getString("phoneNum"));
-					user.setPassword(resultSet.getString("password"));
-					
-					if(true == user.isUser())
-						trueFalseByte = 1;
-					else
-						trueFalseByte = 0;
-					
-					pstatement.setByte(5,trueFalseByte);
-					
-					if(true == user.isUser())
-						trueFalseByte = 1;
-					else
-						trueFalseByte = 0;
-					
-					pstatement.setByte(6, trueFalseByte);
-					
+				if(1 == resultSet.getByte("isMember"))
+					user.setUser(true);
+				else
+					user.setUser(false);
+				
+				if(1 == resultSet.getByte("isAdmin"))
+					user.setAdmin(true);
+				else
+					user.setAdmin(false);
 				
 			} // end while
 			
@@ -238,6 +232,7 @@ public class UserDAO
 		
 		
 		return user;
+		
 		
 	}
 
