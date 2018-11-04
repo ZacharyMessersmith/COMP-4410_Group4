@@ -223,6 +223,16 @@ public class UserDAO
 					pstatement.setByte(6, trueFalseByte);
 					
 				
+				if(1 == resultSet.getByte("isMember"))
+					user.setUser(true);
+				else
+					user.setUser(false);
+				
+				if(1 == resultSet.getByte("isAdmin"))
+					user.setAdmin(true);
+				else
+					user.setAdmin(false);
+				
 			} // end while
 			
 			// ensure statement and connection are closed properly                                      
@@ -242,6 +252,7 @@ public class UserDAO
 		
 		
 		return user;
+		
 		
 	}
 
@@ -320,6 +331,83 @@ public class UserDAO
 
 //=============================================================================
 	
+	public List<User> getUsers(List<String> emailList)
+	{
+		
+			
+			List<User> 			userList;
+			User 				user;
+			PreparedStatement 	pstatement;
+			ResultSet 			resultSet;
+			
+			userList = new ArrayList<User>();
+			user = new User();
+			pstatement = null;
+			resultSet = null;
+			
+			
+//			try
+//			{
+//				Connection connection = ConnectionManager.getConnection();
+//			
+//				pstatement = connection.prepareStatement("SELECT * FROM Users U WHERE U.email = ?");
+				
+				for(int i = 0; i < emailList.size(); i++)
+				{
+				userList.add(getUser(emailList.get(i)));
+				}
+//					// instantiate parameters
+//					pstatement.clearParameters();
+//					pstatement.setString(1, emailList.get(i));
+//				
+//					resultSet = pstatement.executeQuery();
+//
+//					while ( resultSet.next() ) 
+//					{
+//							
+//							user= new User();
+//							user.setEmail(resultSet.getString("email"));
+//							user.setName(resultSet.getString("name"));
+//							user.setPhoneNumber(resultSet.getString("phoneNum"));
+//							user.setPassword(resultSet.getString("password"));
+//							
+//							if(0 == resultSet.getByte("isMember"))
+//								user.setUser(false);
+//							else
+//								user.setUser(false);
+//							
+//							if(1 == resultSet.getByte("isAdmin"))
+//								user.setAdmin(true);
+//							else
+//								user.setAdmin(false);
+//							
+//							userList.add(user);
+//					
+//					} // end while
+//				
+//				}
+//				
+//				// ensure statement and connection are closed properly                                      
+//				resultSet.close();                                      
+//				pstatement.close();                                      
+//				connection.close();                       
+//			
+//			}
+//			
+//			catch(SQLException sqle)
+//			{
+//				
+//				System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+//				
+//			}
+			
+			return userList;
+			
+	}
+		
+	
+//=============================================================================
+	
 	//emailList and passwordList should be the same size and assumes that the
 	//kth element in emailList corresponds to the kth element in passwordList
 	public List<User> getUsers(List<String> emailList, List<String> passwordList)
@@ -355,27 +443,27 @@ public class UserDAO
 				while ( resultSet.next() ) 
 				{
 						
-						user= new User();
-						user.setEmail(resultSet.getString("email"));
-						user.setName(resultSet.getString("name"));
-						user.setPhoneNumber(resultSet.getString("phoneNum"));
-						user.setPassword(resultSet.getString("password"));
-						user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
-						user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
-						
-						setUserAddress(user);
-						
-						if(0 == resultSet.getByte("isMember"))
-							user.setUser(false);
-						else
-							user.setUser(false);
-						
-						if(1 == resultSet.getByte("isAdmin"))
-							user.setAdmin(true);
-						else
-							user.setAdmin(false);
-						
-						userList.add(user);
+				user = new User();
+				user.setEmail(resultSet.getString("email"));
+				user.setName(resultSet.getString("name"));
+				user.setPhoneNumber(resultSet.getString("phoneNum"));
+				user.setPassword(resultSet.getString("password"));
+				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
+				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				
+				setUserAddress(user);
+				
+				if(0 == resultSet.getByte("isMember"))
+					user.setUser(false);
+				else
+					user.setUser(true);
+				
+				if(1 == resultSet.getByte("isAdmin"))
+					user.setAdmin(true);
+				else
+					user.setAdmin(false);
+				
+				userList.add(user);
 				
 				} // end while
 			

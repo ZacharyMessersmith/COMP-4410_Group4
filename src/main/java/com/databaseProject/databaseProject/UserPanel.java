@@ -8,6 +8,8 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.databaseProject.DAOs.RentalDAO;
+import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Dialogs.UserDialog;
 import com.databaseProject.Dialogs.UserMediaDialog;
 import com.databaseProject.Pojos.Media;
@@ -54,18 +56,21 @@ public class UserPanel extends JRootPane
 	
 	CardLayout	cardLayout;
 	
+	RentalDAO	rentalDao;
+	
 	//JTable for displaying media information
 	
 	//test comment 2
 	
 	User		user;
-	
+	UserDAO		userDao;
 	UserPanel()//User user)
 	{
 	Container	cp;
 	
-	
-//	this.user = user;
+	userDao = new UserDAO();
+	rentalDao = new RentalDAO();
+	this.user = userDao.getUser("Bala.Stella@hotmail.com");
 	
 	setJMenuBar(newMenuBar());
 	
@@ -134,7 +139,7 @@ public class UserPanel extends JRootPane
 	searchByLabel.setMinimumSize(new Dimension(100, 0));
 	
 	numRentalsAvailableLabel = new JLabel("Number of Rentals Available: 0", SwingConstants.RIGHT);
-	//updateNumRentalsAvailableLabel(user.getMaxNumRentals()-user.getCurrentNumRentals());
+	updateNumRentalsAvailableLabel(user.getMaxNumRentals()-user.getCurrentNumRentals());
 		
 	buttonPanel = new JPanel();
 	GroupLayout layout = new GroupLayout(buttonPanel);
@@ -199,13 +204,8 @@ public class UserPanel extends JRootPane
 	
 	titleLabel = new JLabel(" Rental History");
 	titleLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 45));
-	
-	// needs to be populated from the database
-	rentalList = new ArrayList<Rental>();
-	
-	//This is a test Rental
-	//Rental(String name, String email, String streetAddress, String city, String state, String zipCode,
-	//String title, char mediaType, Date dateRented)
+
+	rentalList = rentalDao.getUserRentals(user.getEmail());
 	
 	rentalListModel = new DefaultListModel<Rental>();
 	for (Rental rental : rentalList)
@@ -353,7 +353,7 @@ public class UserPanel extends JRootPane
 		DefaultListModel<Rental>	rentalListModel;		
 		UserRentalInfoTableModel	tableModel;
 		
-		rentalList = new ArrayList<Rental>();
+		rentalList = rentalDao.getUserRentals(user.getEmail());
 		
 		//Get rental list from the database (needed in case they rent something new)
 		rentalListModel = new DefaultListModel<Rental>();

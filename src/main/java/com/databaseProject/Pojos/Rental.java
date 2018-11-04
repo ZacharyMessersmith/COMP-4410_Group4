@@ -16,6 +16,16 @@ public class	Rental
 	this.dateRented = dateRented;
 	this.dateReturned = dateReturned;
 	}
+	
+	public Rental()
+	{
+		
+		user = null;
+		media = null;
+		dateRented = null;
+		dateReturned = null;
+		
+	}
 
 	public User getUser()
 	{

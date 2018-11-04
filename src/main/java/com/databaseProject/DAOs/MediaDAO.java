@@ -6,6 +6,7 @@
 package com.databaseProject.DAOs;
 
 import com.databaseProject.Pojos.Media;
+import com.databaseProject.Pojos.Worker;
 import com.databaseProject.databaseProject.*;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -190,58 +191,134 @@ public class MediaDAO
 	
 	public Media getMedia(Integer mediaID)
 	{
-		
-		Media 				media;
-		PreparedStatement 	pstatement;
-		ResultSet 			resultSet;
-		
-		media = new Media();
-		pstatement = null;
-		resultSet = null;
-		
-		
-		try
+	Media	media;
+	
+	media = getMovie(mediaID);
+	if (media.getTitle() == null)
+		media = getGame(mediaID);
+	
+	return media;	
+	}
+
+//=============================================================================	
+	
+	public Media getMovie(Integer movieID)
+	{
+	Media 				media;
+	PreparedStatement 	pstatement;
+	ResultSet 			resultSet;
+	WorkerDAO			workerDao;
+	
+	workerDao = new WorkerDAO();
+	media = new Media();
+	pstatement = null;
+	resultSet = null;
+	
+	try
 		{
-			Connection connection = ConnectionManager.getConnection();
+		Connection connection = ConnectionManager.getConnection();
+	
+		pstatement = connection.prepareStatement("SELECT * FROM Media M, Movies M2 WHERE M.mediaID = M2.movieID "
+				+ "AND M2.movieID = ?");
 		
-			pstatement = connection.prepareStatement("SELECT * FROM Media M WHERE M.mediaID = ?");
-			
-			// instantiate parameters
-			pstatement.clearParameters();
-			pstatement.setInt(1, mediaID);
-			
-			resultSet = pstatement.executeQuery();
-
-			while ( resultSet.next() ) 
-			{
-
-					media.setMediaID(resultSet.getInt("mediaID"));
-					media.setReleaseDate(resultSet.getDate("releaseDate"));
-					media.setGenre(resultSet.getString("genre"));
-					media.setTitle(resultSet.getString("title"));
-					media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
-
-				
-			} // end while
-			
-			// ensure statement and connection are closed properly                                      
-			resultSet.close();                                      
-			pstatement.close();                                      
-			connection.close();                       
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setInt(1, movieID);
 		
-		}
+		resultSet = pstatement.executeQuery();
+
+		//get movies
+		while ( resultSet.next() ) 
+			{	
+			media = new Media();
+			media.setMediaID(resultSet.getInt("mediaID"));
+			media.setReleaseDate(resultSet.getDate("releaseDate"));
+			media.setGenre(resultSet.getString("genre"));
+			media.setTitle(resultSet.getString("title"));
+			media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+			media.setMediaType('m');
+			media.setCastList(getActorsForMovie(media));
+			media.setDirectorList(getDirectorsForMovie(media));
+			media.setAwardsList(getAwardsForMovie(media));
+			media.setSequelsList(getSequelsForMovie(media));
+			} 
 		
-		catch(SQLException sqle)
-		{
-			
-			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
-		}
+		// ensure statement and connection are closed properly                                      
+		resultSet.close();                                      
+		pstatement.close();                                      
+		connection.close();  
 		
 		return media;
+		}
+	
+	catch(SQLException sqle)
+		{
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		return media;
+		}
+	
+	}	
+
+//=============================================================================
+	
+	public Media getGame(Integer gameID)
+	{
+		
+	Media 				media;
+	PreparedStatement 	pstatement;
+	ResultSet 			resultSet;
+	WorkerDAO			workerDao;
+	
+	workerDao = new WorkerDAO();
+	media = null;
+	pstatement = null;
+	resultSet = null;
+	
+	
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+	
+		pstatement = connection.prepareStatement("SELECT * FROM Media M, Games G WHERE M.mediaID = G.gameID "
+				+ "AND G.gameID = ?");
+		
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setInt(1, gameID);
+		
+		resultSet = pstatement.executeQuery();
+		
+		while ( resultSet.next() ) 
+			{
+			media = new Media();
+			media.setMediaID(resultSet.getInt("mediaID"));
+			media.setReleaseDate(resultSet.getDate("releaseDate"));
+			media.setGenre(resultSet.getString("genre"));
+			media.setTitle(resultSet.getString("title"));
+			media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+			media.setVersion(resultSet.getFloat("version"));
+			media.setPlatform(resultSet.getString("platform"));
+			media.setMediaType('g');
+			}	 
+		
+		// ensure statement and connection are closed properly                                      
+		resultSet.close();                                      
+		pstatement.close();                                      
+		connection.close();  
+		
+		return media;
+		}
+	
+	catch(SQLException sqle)
+		{
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		return media;
+		}
 		
 		
-	}
+		
+		
+	}	
 	
 //=============================================================================
 	
@@ -254,56 +331,13 @@ public class MediaDAO
 		ResultSet 			resultSet;
 		
 		mediaList = new ArrayList<Media>();
-		media = new Media();
-		pstatement = null;
-		resultSet = null;
-		
-		
-		try
-		{
-			Connection connection = ConnectionManager.getConnection();
-		
-			pstatement = connection.prepareStatement("SELECT * FROM Media M WHERE M.mediaID = ?");
-			
-			for(int i = 0; i < mediaIDList.size(); i++)
+		for (int i=0; i < mediaIDList.size(); i++)
 			{
-				
-				pstatement.clearParameters();
-				pstatement.setInt(1, mediaIDList.get(i));
-			
-				resultSet = pstatement.executeQuery();
-
-				while ( resultSet.next() ) 
-				{
-						media = new Media();
-						media.setMediaID(resultSet.getInt("mediaID"));
-						media.setReleaseDate(resultSet.getDate("releaseDate"));
-						media.setGenre(resultSet.getString("genre"));
-						media.setTitle(resultSet.getString("title"));
-						media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
-						mediaList.add(media);
-					
-				} //end while
-			
+			mediaList.add(getMedia(mediaIDList.get(i)));
+//			System.out.println(getMedia(mediaIDList.get(i)).getTitle());
 			}
-			
-			// ensure statement and connection are closed properly                                      
-			resultSet.close();                                      
-			pstatement.close();                                      
-			connection.close();                       
-		
-		}
-		
-		catch(SQLException sqle)
-		{
-			
-			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
-		}
 		
 		return mediaList;
-		
-		
 	}
 	
 //=============================================================================
@@ -770,6 +804,189 @@ public class MediaDAO
 		}
 		
 		return movieNameList;
+		
+	}
+	
+//=============================================================================
+	
+	public Media getMediaInformation(int mediaID)
+	{
+		
+		List<String>			nameList;
+		//List<Worker>			castList;
+		Media					returnMedia;
+		//Worker					worker;
+		PreparedStatement 		pstatement;
+		ResultSet 				resultSet;
+		
+		//castList = new ArrayList<Worker>();
+		nameList = new ArrayList<String>();
+		//worker = new Worker();
+		pstatement = null;
+		resultSet = null;
+		returnMedia = null;
+		
+		
+		try
+		{
+			
+			//returnMedia = new Media();
+			returnMedia = getMedia(mediaID);
+			
+			Connection connection = ConnectionManager.getConnection();
+		
+			
+			//Get list of Actor Names
+			pstatement = connection.prepareStatement("SELECT W.wname FROM Workers W, Works_On WO WHERE WO.movieID = ? AND WO.workerID = W.workerID AND W.isActor = 1");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, mediaID);
+			
+			resultSet = pstatement.executeQuery();
+
+			while ( resultSet.next() ) 
+			{
+					
+				
+				nameList.add(resultSet.getString("wname"));
+				/*worker = new Worker();
+				worker.setWorkerID(resultSet.getInt("workerID"));
+				worker.setname(resultSet.getString("name"));
+				worker.setIsActor(resultSet.getByte("isActor"));
+				worker.setIsDirector(resultSet.getByte("isDirector"));
+				castList.add(worker);*/
+				
+			} // end while
+			
+			returnMedia.setCastList(nameList);
+			nameList = new ArrayList<String>();
+			
+			
+			//Get list of Director Names
+			pstatement = connection.prepareStatement("SELECT W.* FROM Workers W, Works_On WO WHERE WO.movieID = ? AND WO.workerID = W.workerID AND W.isDirector = 1");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, mediaID);
+			
+			resultSet = pstatement.executeQuery();
+
+			while ( resultSet.next() ) 
+			{
+					
+				
+				nameList.add(resultSet.getString("wname"));
+				/*worker = new Worker();
+				worker.setWorkerID(resultSet.getInt("workerID"));
+				worker.setname(resultSet.getString("name"));
+				worker.setIsActor(resultSet.getByte("isActor"));
+				worker.setIsDirector(resultSet.getByte("isDirector"));
+				castList.add(worker);*/
+				
+			} // end while
+			
+			returnMedia.setDirectorList(nameList);
+
+			
+			nameList = getSequels(mediaID);
+			returnMedia.setSequelsList(nameList); 
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		
+		
+		return returnMedia;
+		
+	}
+	
+//=============================================================================
+	
+	public List<String> getSequels(int mediaID)
+	{
+		
+		List<String>			sequelList;
+		PreparedStatement 		pstatement;
+		ResultSet 				resultSet;
+		int						sequelToMediaID;
+		boolean					notEndOfSequelsBoolean;
+		
+		sequelList = new ArrayList<String>();
+		pstatement = null;
+		resultSet = null;
+		notEndOfSequelsBoolean = false;
+		
+		
+		try
+		{
+			
+			
+			Connection connection = ConnectionManager.getConnection();
+			
+			//This will change inside to loop in order to repeatedly retrieve
+			//all media sequels. This needs to change because a media can 
+			//indirectly be a sequel e.g. m3 is sequel of m2 and m2 is 
+			//a sequel of m1. m3 is, therefore, a sequel of m1
+			sequelToMediaID = mediaID;
+			
+			//This is a do while because the initial MediaID can be 0
+			//and the result of a null value to mediaID is also 0.
+			//Therefore, if sequelToMediaID is initialized to 0
+			//The program will try to find the sequel to it.
+			//The only problem is if a media with ID 0
+			//is the sequel to another Media.
+			do
+			{
+				notEndOfSequelsBoolean = false;
+				//Get list of sequels
+				pstatement = connection.prepareStatement("SELECT M.title, M.mediaID FROM Media M, Sequel S WHERE S.prequelID = ? AND S.sequelID = M.mediaID GROUP BY M.title");
+			
+				// instantiate parameters
+				pstatement.clearParameters();
+				pstatement.setInt(1, sequelToMediaID);
+			
+				resultSet = pstatement.executeQuery();
+
+				while ( resultSet.next() ) 
+				{
+					
+					sequelList.add(resultSet.getString("title"));
+					sequelToMediaID = resultSet.getInt("mediaID");
+					notEndOfSequelsBoolean = true;
+					
+				} // end while resultSet.next()
+				
+				
+			
+			}while( notEndOfSequelsBoolean );
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		return sequelList;
 		
 	}
 	
