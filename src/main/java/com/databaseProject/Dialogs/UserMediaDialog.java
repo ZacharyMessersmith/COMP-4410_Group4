@@ -13,6 +13,7 @@ import java.awt.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.databaseProject.DAOs.WorkerDAO;
 import com.databaseProject.Pojos.Media;
 
 
@@ -31,8 +32,11 @@ public class UserMediaDialog extends JDialog
 	
 	Media	media;
 	
+	WorkerDAO	workerDao;	
+	
 	public UserMediaDialog(Media media)
 	{
+	workerDao = new WorkerDAO();
 	this.media = media;
 	
 	JLabel	typeLabel;
@@ -54,11 +58,11 @@ public class UserMediaDialog extends JDialog
 	
 	releaseDateBox = new JTextField(10);
 	releaseDateBox.setEditable(false);
-	// Need to convert this to something that can actually be displayed
-	//releaseDateBox.setText(media.getReleaseDate());
+	releaseDateBox.setText(media.getReleaseDate().toString());
 	
 	genreBox = new JTextField(10);
 	genreBox.setEditable(false);
+	genreBox.setText(media.getGenre());
 	
 	// Might need changed based on how it's stored in the database
 	typeBox = new JTextField(10);
@@ -151,10 +155,10 @@ public class UserMediaDialog extends JDialog
 	sequelsLabel = new JLabel("Sequels:");
 	
 	// need to be returned from a database call
-	cast = new ArrayList<String>();
-	awards = new ArrayList<String>();
-	directors = new ArrayList<String>();
-	sequels = new ArrayList<String>();
+	cast = media.getCastList();
+	awards = media.getAwardsList();
+	directors = media.getDirectorList();
+	sequels = media.getSequelsList();
 	
 	castListModel = new DefaultListModel();
 	for (String actor : cast)
@@ -177,7 +181,7 @@ public class UserMediaDialog extends JDialog
 	sequelListModel = new DefaultListModel();
 	for (String sequel : sequels)
 		{
-		directorListModel.addElement(sequel);
+		sequelListModel.addElement(sequel);
 		}
 	
 	castList = new JList(castListModel);

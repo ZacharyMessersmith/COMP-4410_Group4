@@ -17,6 +17,8 @@ import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
+import com.databaseProject.DAOs.MediaDAO;
+import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Dialogs.AdminMediaDialog;
 import com.databaseProject.Dialogs.UserDialog;
 import com.databaseProject.Dialogs.UserMediaDialog;
@@ -50,11 +52,16 @@ public class AdminPanel extends JRootPane
 	JTable		rentalInfoTable;
 	
 	CardLayout	cardLayout;
+	
+	MediaDAO	mediaDao;
+	UserDAO		userDao;
 
 	AdminPanel()
 	{
 	Container	cp;
 	
+	mediaDao = new MediaDAO();
+	userDao = new UserDAO();
 	setJMenuBar(newMenuBar());
 	
 	memberInfoPanel = createMemberInfoPanel();
@@ -218,11 +225,10 @@ public class AdminPanel extends JRootPane
 	
 	titleLabel = new JLabel(" Members");
 	titleLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 45));
-	// needs to be populated from the database
-	userList = new ArrayList<User>();
 	
-	//This is a test user
-	userList.add(new User("email", "Bob Ross", "304-555-5555", "password", "123 Street", "Fairmont", "WV", 26554, false, true));
+	userList = userDao.getAllUsers();
+	
+	
 	userListModel = new DefaultListModel<User>();
 	for (User user : userList)
 		{
@@ -279,12 +285,8 @@ public class AdminPanel extends JRootPane
 	showMediaBox.setActionCommand("UPDATE_MEDIA_VIEW");
 	
 	// needs to be populated from the database
-	mediaList = new ArrayList<Media>();
+	mediaList = mediaDao.getAllMedia();//new ArrayList<Media>();
 	
-	//This is a test media
-	//public Media(int mediaID, Date releaseDate, String genre, String title, int numCopiesAvailable, char mediaType)
-	mediaList.add(new Media(1, new Date(999999999), "Horror", "Test Movie", 7, 'm'));
-	mediaList.add(new Media(2, new Date(999999999), "Action", "Test Game", 3, 'g'));
 	mediaListModel = new DefaultListModel<Media>();
 	for (Media media : mediaList)
 		{

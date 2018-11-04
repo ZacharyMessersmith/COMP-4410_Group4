@@ -203,6 +203,10 @@ public class UserDAO
 					user.setName(resultSet.getString("name"));
 					user.setPhoneNumber(resultSet.getString("phoneNum"));
 					user.setPassword(resultSet.getString("password"));
+					user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
+					user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+					
+					setUserAddress(user);
 					
 					if(true == user.isUser())
 						trueFalseByte = 1;
@@ -276,6 +280,10 @@ public class UserDAO
 				user.setName(resultSet.getString("name"));
 				user.setPhoneNumber(resultSet.getString("phoneNum"));
 				user.setPassword(resultSet.getString("password"));
+				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
+				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				
+				setUserAddress(user);
 				
 				if(1 == resultSet.getByte("isMember"))
 					user.setUser(true);
@@ -352,6 +360,10 @@ public class UserDAO
 						user.setName(resultSet.getString("name"));
 						user.setPhoneNumber(resultSet.getString("phoneNum"));
 						user.setPassword(resultSet.getString("password"));
+						user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
+						user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+						
+						setUserAddress(user);
 						
 						if(0 == resultSet.getByte("isMember"))
 							user.setUser(false);
@@ -421,11 +433,15 @@ public class UserDAO
 					user.setName(resultSet.getString("name"));
 					user.setPhoneNumber(resultSet.getString("phoneNum"));
 					user.setPassword(resultSet.getString("password"));
+					user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
+					user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+					
+					setUserAddress(user);
 					
 					if(0 == resultSet.getByte("isMember"))
 						user.setUser(false);
 					else
-						user.setUser(false);
+						user.setUser(true);
 					
 					if(1 == resultSet.getByte("isAdmin"))
 						user.setAdmin(true);
@@ -455,6 +471,197 @@ public class UserDAO
 	}
 	
 //=============================================================================
+	
+	public List<String> getAllPlanNames()
+	{
+	PreparedStatement 	pstatement;
+	ResultSet 			resultSet;
+	List<String>		planIDs;
+	
+	pstatement = null;
+	planIDs = new ArrayList<String>();
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+	
+		pstatement = connection.prepareStatement("SELECT * FROM Plans");
+
+		// query database
+		resultSet = pstatement.executeQuery();
+		
+		
+		while ( resultSet.next() ) 
+			{
+			planIDs.add(Integer.toString(resultSet.getInt("planID")));
+			}
+		
+		// ensure statement and connection are closed properly                                      
+		resultSet.close();                                      
+		pstatement.close();                                      
+		connection.close();                       
+	
+		return planIDs;
+		}
+	
+	catch(SQLException sqle)
+		{
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		return planIDs;
+		}
+	}	
+	
+//=============================================================================
+	
+	public int getPlanIDForUser(String email)
+	{
+	PreparedStatement 	pstatement;
+	ResultSet 			resultSet;
+	int					planID;
+	
+	pstatement = null;
+	planID = -1;
+	
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+	
+		pstatement = connection.prepareStatement("SELECT hp.planID FROM Has_Plan hp WHERE hp.email = ?");
+
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setString(1, email);
+
+		// query database
+		resultSet = pstatement.executeQuery();
+		
+		while ( resultSet.next() ) 
+			{
+			planID = resultSet.getInt("planID");
+			}
+		
+		// ensure statement and connection are closed properly                                      
+		resultSet.close();                                      
+		pstatement.close();                                      
+		connection.close();                       
+	
+		return planID;
+		}
+	
+	catch(SQLException sqle)
+		{
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		return -1;
+		}
+	}	
+
+//=============================================================================
+	
+	public int getMaxNumRentalsForPlan(int planID)
+	{
+	PreparedStatement 	pstatement;
+	ResultSet 			resultSet;
+	int					maxNumRentals;
+	
+	pstatement = null;
+	maxNumRentals = -1;
+	
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+	
+		pstatement = connection.prepareStatement("SELECT * FROM Plans p WHERE p.planID = ?");
+
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setInt(1, planID);
+
+		// query database
+		resultSet = pstatement.executeQuery();
+		
+		while ( resultSet.next() ) 
+			{
+			maxNumRentals = resultSet.getInt("numMediaAllowed");
+			}
+		
+		// ensure statement and connection are closed properly                                      
+		resultSet.close();                                      
+		pstatement.close();                                      
+		connection.close();                       
+	
+		return maxNumRentals;
+		}
+	
+	catch(SQLException sqle)
+		{
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		return -1;
+		}
+	}	
+	
+//=============================================================================	
+
+	public void setUserAddress(User user)
+	{
+	PreparedStatement 	pstatement;
+	ResultSet 			resultSet;
+	int					maxNumRentals;
+	
+	pstatement = null;
+	maxNumRentals = -1;
+	
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+	
+		pstatement = connection.prepareStatement("SELECT * FROM Lives_At1 l WHERE l.email = ?");
+
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setString(1, user.getEmail());
+
+		// query database
+		resultSet = pstatement.executeQuery();
+		
+		while ( resultSet.next() ) 
+			{
+			user.setStreetAddress(resultSet.getString("street"));
+			user.setZipCode(resultSet.getInt("zip"));
+			}
+		
+		// ensure statement and connection are closed properly                                      
+		resultSet.close();                                      
+		pstatement.close();  
+		
+		pstatement = connection.prepareStatement("SELECT * FROM Addresses a WHERE a.street = ? AND a.zip = ?");
+		
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setString(1, user.getStreetAddress());
+		pstatement.setInt(2, user.getZipCode());
+
+		// query database
+		resultSet = pstatement.executeQuery();
+		
+		while ( resultSet.next() ) 
+			{
+			user.setCity(resultSet.getString("city"));
+			user.setState(resultSet.getString("state"));
+			}
+		
+		resultSet.close();                                      
+		pstatement.close();  
+		connection.close();                       
+		}
+	
+	catch(SQLException sqle)
+		{
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		}
+	
+	
+	}
+	
+//========================= DELETE STUFF ====================================================
 	
 	public void deleteUser(String email)
 	{
@@ -620,4 +827,9 @@ public class UserDAO
 
 //============================================================================
 
+
+	
+	
+	
+	
 }

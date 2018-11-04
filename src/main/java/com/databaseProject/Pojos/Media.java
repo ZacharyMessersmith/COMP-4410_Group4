@@ -27,7 +27,7 @@ public class Media
 	this.numCopiesAvailable = numCopiesAvailable;
 	this.mediaType = mediaType;
 	}
-	
+		
 	public Media()
 	{
 		

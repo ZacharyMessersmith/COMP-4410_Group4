@@ -13,6 +13,9 @@ import java.awt.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.databaseProject.DAOs.MediaDAO;
+import com.databaseProject.DAOs.UserDAO;
+import com.databaseProject.DAOs.WorkerDAO;
 import com.databaseProject.Pojos.Media;
 
 //Since this will be used by the admin, we should give them a default password that they can change later.
@@ -45,6 +48,9 @@ public class AdminMediaDialog extends JDialog
 	
 	Media	media;
 	
+	WorkerDAO	workerDao;
+	MediaDAO	mediaDao;
+	
 	public AdminMediaDialog()
 	{
 	setupBaseMediaDialog();
@@ -55,6 +61,9 @@ public class AdminMediaDialog extends JDialog
 	
 	public AdminMediaDialog(Media media)
 	{
+	int[]	selectedIndicies;
+	int		k;
+	
 	setupBaseMediaDialog();
 	this.media = media;
 	saveButton.setActionCommand("EDIT_MEDIA");
@@ -62,8 +71,7 @@ public class AdminMediaDialog extends JDialog
 	
 	titleBox.setText(media.getTitle());
 	numCopiesBox.setText(Integer.toString(media.getNumCopiesAvailable()));
-	//Need to figure out how to convert from a date to a string
-	//releaseDateBox.setText(media.getReleaseDate());
+	releaseDateBox.setText(media.getReleaseDate().toString());
 	genreBox.setText(media.getGenre());
 	
 	// These might need changed based on what is stored in the database
@@ -77,7 +85,67 @@ public class AdminMediaDialog extends JDialog
 		{
 		movieOption.setSelected(true);
 		
+		selectedIndicies = new int[media.getCastList().size()];
+		k = 0;
+		for (String actor : media.getCastList())
+			{
+			for (int i=0; i < castList.getModel().getSize(); i++)
+				{
+				if (actor.equals(castList.getModel().getElementAt(i)))
+					{
+					selectedIndicies[k] = i;
+					k++;
+					}
+				}
+			}
+		castList.setSelectedIndices(selectedIndicies);
+		
+		selectedIndicies = new int[media.getDirectorList().size()];
+		k = 0;
+		for (String director : media.getDirectorList())
+			{
+			for (int i=0; i < directorList.getModel().getSize(); i++)
+				{
+				if (director.equals(directorList.getModel().getElementAt(i)))
+					{
+					selectedIndicies[k] = i;
+					k++;
+					}
+				}
+			}
+		directorList.setSelectedIndices(selectedIndicies);
+		
+		selectedIndicies = new int[media.getAwardsList().size()];
+		k = 0;
+		for (String award : media.getAwardsList())
+			{
+			for (int i=0; i < awardsList.getModel().getSize(); i++)
+				{
+				if (award.equals(awardsList.getModel().getElementAt(i)))
+					{
+					selectedIndicies[k] = i;
+					k++;
+					}
+				}
+			}
+		awardsList.setSelectedIndices(selectedIndicies);
+	
+		selectedIndicies = new int[media.getSequelsList().size()];
+		k = 0;
+		for (String sequel : media.getSequelsList())
+			{
+			for (int i=0; i < sequelsList.getModel().getSize(); i++)
+				{
+				if (sequel.equals(sequelsList.getModel().getElementAt(i)))
+					{
+					selectedIndicies[k] = i;
+					k++;
+					}
+				}
+			}
+		sequelsList.setSelectedIndices(selectedIndicies);
 		}
+
 	
 	}
 	
@@ -90,6 +158,9 @@ public class AdminMediaDialog extends JDialog
 	JPanel	mainPanel;
 	JPanel	buttonPanel;
 	Container	cp;
+	
+	workerDao = new WorkerDAO();
+	mediaDao = new MediaDAO();
 	
 	titleLabel = new JLabel("Title:");
 	numCopiesLabel = new JLabel("Copies Available:");
@@ -191,10 +262,10 @@ public class AdminMediaDialog extends JDialog
 	sequelsLabel = new JLabel("Sequels:");
 	
 	// need to be returned from a database call
-	cast = new ArrayList<String>();
-	awards = new ArrayList<String>();
-	directors = new ArrayList<String>();
-	sequels = new ArrayList<String>(); 
+	cast = workerDao.getAllActorNames();
+	awards = mediaDao.getAllAwardNames();
+	directors = workerDao.getAllDirectorNames();
+	sequels = mediaDao.getAllMovieTitles(); 
 	
 	castListModel = new DefaultListModel();
 	for (String actor : cast)
@@ -217,7 +288,7 @@ public class AdminMediaDialog extends JDialog
 	sequelsListModel = new DefaultListModel();
 	for (String sequel : sequels)
 		{
-		castListModel.addElement(sequel);
+		sequelsListModel.addElement(sequel);
 		}
 	
 	castList = new JList(castListModel);
