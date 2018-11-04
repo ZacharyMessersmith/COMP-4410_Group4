@@ -1,0 +1,46 @@
+package com.databaseProject.Pojos;
+
+public class Plan
+{
+	Integer planID;
+	Integer cost;
+	Integer numMediaAllowed;
+	
+	public Plan()
+	{
+		
+	}
+	
+	Plan(int planID,int cost, int numMediaAllowed)
+	{
+		this.planID=planID;
+		this.cost=cost;
+		this.numMediaAllowed=numMediaAllowed;
+	}
+	
+	public void setPlanID(int planID)
+	{
+		this.planID=planID;
+	}
+	public void setCost(int cost)
+	{
+		this.cost=cost;
+	}
+	public void setNumMediaAllowed(int numMediaAllowed)
+	{
+		this.numMediaAllowed=numMediaAllowed;
+	}
+	
+	public int getPlanID()
+	{
+		return this.planID;
+	}
+	public int getCost()
+	{
+		return this.cost;
+	}
+	public int getNumMediaAllowed()
+	{
+		return this.numMediaAllowed;
+	}
+}
