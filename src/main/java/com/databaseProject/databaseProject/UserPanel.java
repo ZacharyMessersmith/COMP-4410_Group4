@@ -8,6 +8,7 @@ import javax.swing.table.DefaultTableColumnModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.databaseProject.DAOs.MediaDAO;
 import com.databaseProject.DAOs.RentalDAO;
 import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Dialogs.UserDialog;
@@ -57,6 +58,7 @@ public class UserPanel extends JRootPane
 	CardLayout	cardLayout;
 	
 	RentalDAO	rentalDao;
+	MediaDAO	mediaDao;
 	
 	//JTable for displaying media information
 	
@@ -64,12 +66,14 @@ public class UserPanel extends JRootPane
 	
 	User		user;
 	UserDAO		userDao;
+	
 	UserPanel()//User user)
 	{
 	Container	cp;
 	
 	userDao = new UserDAO();
 	rentalDao = new RentalDAO();
+	mediaDao = new MediaDAO();
 	this.user = userDao.getUser("Bala.Stella@hotmail.com");
 	
 	setJMenuBar(newMenuBar());
@@ -326,14 +330,42 @@ public class UserPanel extends JRootPane
 	if (ae.getActionCommand().equals("SEARCH"))
 		{
 		List<Media>	mediaList;
+		List<Media>	mediaToShow;
 		DefaultListModel<Media>	mediaListModel;		
 		MediaInfoTableModel	tableModel;
+		String	searchString;
+		
+		searchString = searchBar.getText().trim();
+		
 		
 		// Get list from the database
-		mediaList = new ArrayList<Media>();
+		if (searchString.equals(""))
+			mediaList = mediaDao.emptySearch(notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
+		else if (searchByBox.getSelectedItem().equals("Genre"))
+			mediaList = mediaDao.searchGenres(searchString, notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
+		else if(searchByBox.getSelectedItem().equals("Keyword"))
+			mediaList = mediaDao.keywordSearch(searchString, notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
+		else
+			mediaList = new ArrayList<Media>();
+		
+		mediaToShow = new ArrayList<Media>();
+		for (Media media : mediaList)
+			{
+//			System.out.println(media.toString());
+			if (gamesCheck.isSelected())
+				{
+				if (media.getMediaType() == 'g')
+					mediaToShow.add(media);
+				}
+			if (moviesCheck.isSelected())
+				{
+				if (media.getMediaType() == 'm')
+					mediaToShow.add(media);
+				}
+			}
 		
 		mediaListModel = new DefaultListModel<Media>();
-		for (Media media : mediaList)
+		for (Media media : mediaToShow)
 			{
 			mediaListModel.addElement(media);
 			}

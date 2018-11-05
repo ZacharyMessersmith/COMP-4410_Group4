@@ -46,6 +46,12 @@ public class Media
 		
 	}
 
+	@Override
+	public String toString()
+	{
+	return "Media [mediaID=" + mediaID + ", releaseDate=" + releaseDate + ", genre=" + genre + ", title=" + title
+			+ ", numCopiesAvailable=" + numCopiesAvailable + ", mediaType=" + mediaType + "]";
+	}
 	
 	public List<String> getSequelsList()
 	{

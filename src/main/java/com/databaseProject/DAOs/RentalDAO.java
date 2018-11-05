@@ -137,10 +137,15 @@ public class RentalDAO
 		rental = new Rental();
 		pstatement = null;
 		resultSet = null;
-		nowDate = new Date(System.currentTimeMillis());
-		yesterdayDate = new Date(System.currentTimeMillis() - 86400000 );
+		nowDate = new Date(System.currentTimeMillis());;
 		userDAO = new UserDAO();
 		mediaDAO = new MediaDAO();
+		
+		java.util.Date date = new java.util.Date();
+		java.util.Calendar calendar = java.util.Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(java.util.Calendar.DAY_OF_MONTH, -1);
+		yesterdayDate =new Date( calendar.getTimeInMillis());
 		
 		try
 		{
@@ -202,5 +207,67 @@ public class RentalDAO
 	}
 	
 //=============================================================================
+
 	
+	public List<Media> getTop10MediaInLastMonth()
+	{
+//		Media				media;
+		List<Integer>		mediaIDs;
+		List<Media>			top10List;
+		PreparedStatement 	pstatement;
+		ResultSet 			resultSet;
+		Date				nowDate;
+		Date				lastMonthDate;
+		MediaDAO			mediaDao;
+		
+		mediaDao = new MediaDAO();
+		mediaIDs = new ArrayList<Integer>();
+		pstatement = null;
+		resultSet = null;
+		nowDate = new Date(System.currentTimeMillis());
+		
+		//back 1 month
+		java.util.Date date = new java.util.Date();
+		java.util.Calendar calendar = java.util.Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(java.util.Calendar.MONTH, -1);
+		lastMonthDate =new Date( calendar.getTimeInMillis());
+		
+		top10List = new ArrayList<Media>();
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("SELECT *, COUNT(RI.rentalID) AS Popularity FROM Rental_Info RI WHERE RI.checkoutDate <= ? AND RI.checkoutDate >= ? GROUP BY RI.mediaID ORDER BY Popularity DESC LIMIT 10;");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setDate(1, nowDate);
+			pstatement.setDate(2, lastMonthDate);
+			
+			resultSet = pstatement.executeQuery();
+
+			while ( resultSet.next() ) 
+			{
+				mediaIDs.add(resultSet.getInt("mediaID"));
+			} // end while
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+			top10List = mediaDao.getMedia(mediaIDs);
+			return top10List;
+		}
+		
+		catch(SQLException sqle)
+		{
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			return top10List;
+		}
+		
+	}
+	
+//=============================================================================
 }
