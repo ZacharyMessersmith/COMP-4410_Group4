@@ -202,15 +202,41 @@ public class AdminPanel extends JRootPane
 		{
 		if (showMediaBox.getSelectedItem().equals("All"))
 			{
-			// need a database call to get a list of all of the media from the database
-			// Use that list to update the TableModel
-			System.out.println("Show all");
+			List<Media>	mediaList;
+			DefaultListModel<Media>	mediaListModel;		
+			MediaInfoTableModel	tableModel;
+			
+			mediaList = mediaDao.getAllMedia();
+			
+			mediaListModel = new DefaultListModel<Media>();
+			for (Media media : mediaList)
+				{
+				mediaListModel.addElement(media);
+				}
+
+			tableModel = new MediaInfoTableModel(mediaListModel);
+			
+			mediaInfoTable.setModel(tableModel);
+			mediaInfoTable.setColumnModel(getMediaColumnModel());
 			}
 		else 
 			{
-			// need a database call to get a list of top ten rentals in the past month
-			// Use that list to update the tableModel
-			System.out.println("Show top 10");
+			List<Media>	mediaList;
+			DefaultListModel<Media>	mediaListModel;		
+			MediaInfoTableModel	tableModel;
+			
+			mediaList = rentalDao.getTop10MediaInLastMonth();;
+			
+			mediaListModel = new DefaultListModel<Media>();
+			for (Media media : mediaList)
+				{
+				mediaListModel.addElement(media);
+				}
+
+			tableModel = new MediaInfoTableModel(mediaListModel);
+			
+			mediaInfoTable.setModel(tableModel);
+			mediaInfoTable.setColumnModel(getMediaColumnModel());
 			}
 		}
 
