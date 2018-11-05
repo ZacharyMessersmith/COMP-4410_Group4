@@ -10,6 +10,9 @@ import javax.swing.GroupLayout.Alignment;
 import java.awt.*;
 import javax.swing.JDialog;
 
+import com.databaseProject.DAOs.UserDAO;
+import com.databaseProject.databaseProject.MainJFrame;
+
 public class LoginDialog extends JDialog
 						 implements ActionListener
 {
@@ -17,12 +20,16 @@ public class LoginDialog extends JDialog
 	JTextField	passwordBox;
 	JButton		loginButton;
 	
-	LoginDialog()
+	UserDAO		userDao;
+	
+	public LoginDialog()
 	{
 	JLabel		usernameLabel;
 	JLabel		passwordLabel;
 	JPanel		panel1;
 	Container	cp;
+	
+	userDao = new UserDAO();
 	
 	usernameLabel = new JLabel("Username:");
 	passwordLabel = new JLabel("Password:");
@@ -71,11 +78,20 @@ public class LoginDialog extends JDialog
 	{
 	if (ae.getSource() == loginButton)
 		{
-		// get db connection using ConnectionManager.getConnection();
-		// perform login
-		// if (login successful)
-			// determine if admin or regular user
-			// show proper JFrame
+		boolean	validUser = false;
+		String email = usernameBox.getText().trim();
+		String password = passwordBox.getText().trim();
+		validUser = userDao.testUser(email, password);
+		
+		if (validUser)
+			{
+			System.out.println("valid user");
+			new MainJFrame(userDao.getUser(email));
+			dispose();
+			}
+		else
+			JOptionPane.showMessageDialog(this, "Username or password is incorrect.", "Error", JOptionPane.INFORMATION_MESSAGE);
+			
 		}
 	}
 	
@@ -87,12 +103,12 @@ public class LoginDialog extends JDialog
 	tk = Toolkit.getDefaultToolkit();
 	d = tk.getScreenSize();
 
-	setSize(701, 550);
+	setSize(500, 200);
 	setLocation(d.width/3, d.height/4);
 
 //	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-//	getRootPane().setDefaultButton(saveButton);
+	getRootPane().setDefaultButton(loginButton);
 
 	setTitle("Login");
 
