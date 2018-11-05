@@ -35,11 +35,14 @@ class Project1RentalTestLauncher
 	public static void rentalDAOTest()
 	{
 		
+		List<Media>		mediaList;
 		List<Rental>	rentalList;
 		RentalDAO		rentalDAO;
+		MediaDAO		mediaDAO;
 		
 		rentalList = new ArrayList<Rental>();
 		rentalDAO = new RentalDAO();
+		mediaDAO = new MediaDAO();
 		
 		rentalList = rentalDAO.getRentalsWithinLast24Hours();
 		
@@ -69,6 +72,14 @@ class Project1RentalTestLauncher
 			
 		}
 		
+		mediaList = rentalDAO.getTop10MediaInLastMonth();
+		
+		for(int i = 0; i < mediaList.size(); i++)
+		{
+
+			System.out.println("Media Top 10 Number " + (i + 1) + ": " + mediaList.get(i).getTitle());
+			
+		}
 		
 	}
 	

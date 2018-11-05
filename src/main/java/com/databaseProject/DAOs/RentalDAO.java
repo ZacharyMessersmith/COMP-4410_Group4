@@ -137,10 +137,15 @@ public class RentalDAO
 		rental = new Rental();
 		pstatement = null;
 		resultSet = null;
-		nowDate = new Date(System.currentTimeMillis());
-		yesterdayDate = new Date(System.currentTimeMillis() - 86400000 );
+		nowDate = new Date(System.currentTimeMillis());;
 		userDAO = new UserDAO();
 		mediaDAO = new MediaDAO();
+		
+		java.util.Date date = new java.util.Date();
+		java.util.Calendar calendar = java.util.Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(java.util.Calendar.DAY_OF_MONTH, -1);
+		yesterdayDate =new Date( calendar.getTimeInMillis());
 		
 		try
 		{
@@ -202,5 +207,77 @@ public class RentalDAO
 	}
 	
 //=============================================================================
+
 	
+	public List<Media> getTop10MediaInLastMonth()
+	{
+		
+		Media				media;
+		List<Media>			mediaList;
+		PreparedStatement 	pstatement;
+		ResultSet 			resultSet;
+		Date				nowDate;
+		Date				lastMonthDate;
+		MediaDAO			mediaDAO;
+		
+		media = new Media();
+		mediaList = new ArrayList<Media>();
+		pstatement = null;
+		resultSet = null;
+		nowDate = new Date(System.currentTimeMillis());
+		
+		//back 1 month
+		java.util.Date date = new java.util.Date();
+		java.util.Calendar calendar = java.util.Calendar.getInstance();
+		calendar.setTime(date);
+		calendar.add(java.util.Calendar.MONTH, -1);
+		lastMonthDate =new Date( calendar.getTimeInMillis());
+		
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("SELECT M.*, COUNT(M.mediaID) AS Popularity FROM Rental_Info RI, Media M WHERE M.mediaID = RI.mediaID AND RI.checkoutDate <= ? AND RI.checkoutDate >= ? ORDER BY Popularity DESC LIMIT 10;");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setDate(1, nowDate);
+			pstatement.setDate(2, lastMonthDate);
+			
+			resultSet = pstatement.executeQuery();
+
+			while ( resultSet.next() ) 
+			{
+				media = new Media();
+				media.setMediaID(resultSet.getInt("mediaID"));
+				media.setGenre(resultSet.getString("genre"));
+				media.setTitle(resultSet.getString("Title"));
+				media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+				mediaList.add(media);
+				
+			} // end while
+			
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		
+		
+		return mediaList;
+		
+	}
+	
+//=============================================================================
 }
