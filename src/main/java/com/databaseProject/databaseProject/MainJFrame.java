@@ -8,6 +8,8 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.databaseProject.Pojos.User;
+
 import java.awt.*;
 
 public class MainJFrame extends JFrame
@@ -17,18 +19,21 @@ public class MainJFrame extends JFrame
 	UserPanel	userPanel;
 	JTabbedPane	tabPane;
 	
-	MainJFrame()
+	public MainJFrame(User user)
 	{
 	Container	cp;
 	
 	adminPanel = new AdminPanel();
-	userPanel = new UserPanel();
+	userPanel = new UserPanel(user);
 	
 	tabPane = new JTabbedPane();
 	tabPane.addChangeListener(this);
 	
-	tabPane.addTab("Administrator", adminPanel);
-	tabPane.addTab("Member", userPanel);
+	if (user.isAdmin())
+		tabPane.addTab("Administrator", adminPanel);
+	
+	if (user.isUser())
+		tabPane.addTab("Member", userPanel);
 	//tabPane.setTabComponentAt(0, new JLabel("Tab"));
 	
 	cp = getContentPane();

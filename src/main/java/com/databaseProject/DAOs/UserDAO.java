@@ -208,20 +208,6 @@ public class UserDAO
 					
 					setUserAddress(user);
 					
-					if(true == user.isUser())
-						trueFalseByte = 1;
-					else
-						trueFalseByte = 0;
-					
-					pstatement.setByte(5,trueFalseByte);
-					
-					if(true == user.isUser())
-						trueFalseByte = 1;
-					else
-						trueFalseByte = 0;
-					
-					pstatement.setByte(6, trueFalseByte);
-					
 				
 				if(1 == resultSet.getByte("isMember"))
 					user.setUser(true);
@@ -270,12 +256,11 @@ public class UserDAO
 		pstatement = null;
 		resultSet = null;
 		
-		
 		try
 		{
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("SELECT * FROM Users U WHERE U.email = ? AND U.password = ?");
+			pstatement = connection.prepareStatement("SELECT * FROM Users U WHERE U.email = ? AND BINARY U.password = ?");
 			
 			// instantiate parameters
 			pstatement.clearParameters();

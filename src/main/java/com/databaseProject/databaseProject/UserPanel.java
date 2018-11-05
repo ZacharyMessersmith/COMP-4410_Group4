@@ -67,14 +67,14 @@ public class UserPanel extends JRootPane
 	User		user;
 	UserDAO		userDao;
 	
-	UserPanel()//User user)
+	UserPanel(User user)
 	{
 	Container	cp;
 	
 	userDao = new UserDAO();
 	rentalDao = new RentalDAO();
 	mediaDao = new MediaDAO();
-	this.user = userDao.getUser("Bala.Stella@hotmail.com");
+	this.user = user;//userDao.getUser("Bala.Stella@hotmail.com");
 	
 	setJMenuBar(newMenuBar());
 	
