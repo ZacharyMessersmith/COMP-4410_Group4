@@ -18,6 +18,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import com.databaseProject.DAOs.MediaDAO;
+import com.databaseProject.DAOs.RentalDAO;
 import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Dialogs.AdminMediaDialog;
 import com.databaseProject.Dialogs.UserDialog;
@@ -55,6 +56,7 @@ public class AdminPanel extends JRootPane
 	
 	MediaDAO	mediaDao;
 	UserDAO		userDao;
+	RentalDAO	rentalDao;
 
 	AdminPanel()
 	{
@@ -62,6 +64,7 @@ public class AdminPanel extends JRootPane
 	
 	mediaDao = new MediaDAO();
 	userDao = new UserDAO();
+	rentalDao = new RentalDAO(); 
 	setJMenuBar(newMenuBar());
 	
 	memberInfoPanel = createMemberInfoPanel();
@@ -199,15 +202,41 @@ public class AdminPanel extends JRootPane
 		{
 		if (showMediaBox.getSelectedItem().equals("All"))
 			{
-			// need a database call to get a list of all of the media from the database
-			// Use that list to update the TableModel
-			System.out.println("Show all");
+			List<Media>	mediaList;
+			DefaultListModel<Media>	mediaListModel;		
+			MediaInfoTableModel	tableModel;
+			
+			mediaList = mediaDao.getAllMedia();
+			
+			mediaListModel = new DefaultListModel<Media>();
+			for (Media media : mediaList)
+				{
+				mediaListModel.addElement(media);
+				}
+
+			tableModel = new MediaInfoTableModel(mediaListModel);
+			
+			mediaInfoTable.setModel(tableModel);
+			mediaInfoTable.setColumnModel(getMediaColumnModel());
 			}
 		else 
 			{
-			// need a database call to get a list of top ten rentals in the past month
-			// Use that list to update the tableModel
-			System.out.println("Show top 10");
+			List<Media>	mediaList;
+			DefaultListModel<Media>	mediaListModel;		
+			MediaInfoTableModel	tableModel;
+			
+			mediaList = rentalDao.getTop10MediaInLastMonth();;
+			
+			mediaListModel = new DefaultListModel<Media>();
+			for (Media media : mediaList)
+				{
+				mediaListModel.addElement(media);
+				}
+
+			tableModel = new MediaInfoTableModel(mediaListModel);
+			
+			mediaInfoTable.setModel(tableModel);
+			mediaInfoTable.setColumnModel(getMediaColumnModel());
 			}
 		}
 
@@ -342,11 +371,7 @@ public class AdminPanel extends JRootPane
 	titleLabel.setFont(new Font(Font.DIALOG, Font.PLAIN, 45));
 	
 	// needs to be populated from the database
-	rentalList = new ArrayList<Rental>();
-	
-	//This is a test Rental
-	//Rental(String name, String email, String streetAddress, String city, String state, String zipCode,
-	//String title, char mediaType, Date dateRented)
+	rentalList = rentalDao.getRentalsWithinLast24Hours();
 	
 	rentalListModel = new DefaultListModel<Rental>();
 	for (Rental rental : rentalList)

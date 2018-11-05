@@ -15,6 +15,7 @@ public class Media
 	private float	version;
 	private String	platform;
 	private	List<String>	castList;
+	private	List<String>	directorList;
 	private List<String>	awardsList; 
 	private List<String>	sequelsList;
 	
@@ -45,6 +46,12 @@ public class Media
 		
 	}
 
+	@Override
+	public String toString()
+	{
+	return "Media [mediaID=" + mediaID + ", releaseDate=" + releaseDate + ", genre=" + genre + ", title=" + title
+			+ ", numCopiesAvailable=" + numCopiesAvailable + ", mediaType=" + mediaType + "]";
+	}
 	
 	public List<String> getSequelsList()
 	{
@@ -65,8 +72,6 @@ public class Media
 	{
 	this.directorList = directorList;
 	}
-
-	private	List<String>	directorList;
 	
 	public List<String> getCastList()
 	{

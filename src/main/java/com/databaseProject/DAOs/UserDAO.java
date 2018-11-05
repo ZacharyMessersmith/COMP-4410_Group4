@@ -208,20 +208,16 @@ public class UserDAO
 					
 					setUserAddress(user);
 					
-					if(true == user.isUser())
-						trueFalseByte = 1;
-					else
-						trueFalseByte = 0;
-					
-					pstatement.setByte(5,trueFalseByte);
-					
-					if(true == user.isUser())
-						trueFalseByte = 1;
-					else
-						trueFalseByte = 0;
-					
-					pstatement.setByte(6, trueFalseByte);
-					
+				
+				if(1 == resultSet.getByte("isMember"))
+					user.setUser(true);
+				else
+					user.setUser(false);
+				
+				if(1 == resultSet.getByte("isAdmin"))
+					user.setAdmin(true);
+				else
+					user.setAdmin(false);
 				
 			} // end while
 			
@@ -243,6 +239,7 @@ public class UserDAO
 		
 		return user;
 		
+		
 	}
 
 //=============================================================================
@@ -259,12 +256,11 @@ public class UserDAO
 		pstatement = null;
 		resultSet = null;
 		
-		
 		try
 		{
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("SELECT * FROM Users U WHERE U.email = ? AND U.password = ?");
+			pstatement = connection.prepareStatement("SELECT * FROM Users U WHERE U.email = ? AND BINARY U.password = ?");
 			
 			// instantiate parameters
 			pstatement.clearParameters();
@@ -320,6 +316,23 @@ public class UserDAO
 
 //=============================================================================
 	
+	public List<User> getUsers(List<String> emailList)
+	{	
+	List<User> 			userList;
+	
+	userList = new ArrayList<User>();
+
+	for(int i = 0; i < emailList.size(); i++)
+		{
+		userList.add(getUser(emailList.get(i)));
+		}
+	
+	return userList;
+	}
+		
+	
+//=============================================================================
+	
 	//emailList and passwordList should be the same size and assumes that the
 	//kth element in emailList corresponds to the kth element in passwordList
 	public List<User> getUsers(List<String> emailList, List<String> passwordList)
@@ -355,27 +368,27 @@ public class UserDAO
 				while ( resultSet.next() ) 
 				{
 						
-						user= new User();
-						user.setEmail(resultSet.getString("email"));
-						user.setName(resultSet.getString("name"));
-						user.setPhoneNumber(resultSet.getString("phoneNum"));
-						user.setPassword(resultSet.getString("password"));
-						user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
-						user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
-						
-						setUserAddress(user);
-						
-						if(0 == resultSet.getByte("isMember"))
-							user.setUser(false);
-						else
-							user.setUser(false);
-						
-						if(1 == resultSet.getByte("isAdmin"))
-							user.setAdmin(true);
-						else
-							user.setAdmin(false);
-						
-						userList.add(user);
+				user = new User();
+				user.setEmail(resultSet.getString("email"));
+				user.setName(resultSet.getString("name"));
+				user.setPhoneNumber(resultSet.getString("phoneNum"));
+				user.setPassword(resultSet.getString("password"));
+				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
+				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				
+				setUserAddress(user);
+				
+				if(0 == resultSet.getByte("isMember"))
+					user.setUser(false);
+				else
+					user.setUser(true);
+				
+				if(1 == resultSet.getByte("isAdmin"))
+					user.setAdmin(true);
+				else
+					user.setAdmin(false);
+				
+				userList.add(user);
 				
 				} // end while
 			
@@ -427,28 +440,27 @@ public class UserDAO
 
 			while ( resultSet.next() ) 
 			{
-					
-					user = new User();
-					user.setEmail(resultSet.getString("email"));
-					user.setName(resultSet.getString("name"));
-					user.setPhoneNumber(resultSet.getString("phoneNum"));
-					user.setPassword(resultSet.getString("password"));
-					user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
-					user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
-					
-					setUserAddress(user);
-					
-					if(0 == resultSet.getByte("isMember"))
-						user.setUser(false);
-					else
-						user.setUser(true);
-					
-					if(1 == resultSet.getByte("isAdmin"))
-						user.setAdmin(true);
-					else
-						user.setAdmin(false);
-					
-					userList.add(user);
+				user = new User();
+				user.setEmail(resultSet.getString("email"));
+				user.setName(resultSet.getString("name"));
+				user.setPhoneNumber(resultSet.getString("phoneNum"));
+				user.setPassword(resultSet.getString("password"));
+				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
+				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				
+				setUserAddress(user);
+				
+				if(0 == resultSet.getByte("isMember"))
+					user.setUser(false);
+				else
+					user.setUser(true);
+				
+				if(1 == resultSet.getByte("isAdmin"))
+					user.setAdmin(true);
+				else
+					user.setAdmin(false);
+				
+				userList.add(user);
 				
 			} // end while
 			

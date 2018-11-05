@@ -6,6 +6,7 @@
 package com.databaseProject.DAOs;
 
 import com.databaseProject.Pojos.Media;
+import com.databaseProject.Pojos.Worker;
 import com.databaseProject.databaseProject.*;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
@@ -190,58 +191,134 @@ public class MediaDAO
 	
 	public Media getMedia(Integer mediaID)
 	{
-		
-		Media 				media;
-		PreparedStatement 	pstatement;
-		ResultSet 			resultSet;
-		
-		media = new Media();
-		pstatement = null;
-		resultSet = null;
-		
-		
-		try
+	Media	media;
+	
+	media = getMovie(mediaID);
+	if (media.getTitle() == null)
+		media = getGame(mediaID);
+	
+	return media;	
+	}
+
+//=============================================================================	
+	
+	public Media getMovie(Integer movieID)
+	{
+	Media 				media;
+	PreparedStatement 	pstatement;
+	ResultSet 			resultSet;
+	WorkerDAO			workerDao;
+	
+	workerDao = new WorkerDAO();
+	media = new Media();
+	pstatement = null;
+	resultSet = null;
+	
+	try
 		{
-			Connection connection = ConnectionManager.getConnection();
+		Connection connection = ConnectionManager.getConnection();
+	
+		pstatement = connection.prepareStatement("SELECT * FROM Media M, Movies M2 WHERE M.mediaID = M2.movieID "
+				+ "AND M2.movieID = ?");
 		
-			pstatement = connection.prepareStatement("SELECT * FROM Media M WHERE M.mediaID = ?");
-			
-			// instantiate parameters
-			pstatement.clearParameters();
-			pstatement.setInt(1, mediaID);
-			
-			resultSet = pstatement.executeQuery();
-
-			while ( resultSet.next() ) 
-			{
-
-					media.setMediaID(resultSet.getInt("mediaID"));
-					media.setReleaseDate(resultSet.getDate("releaseDate"));
-					media.setGenre(resultSet.getString("genre"));
-					media.setTitle(resultSet.getString("title"));
-					media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
-
-				
-			} // end while
-			
-			// ensure statement and connection are closed properly                                      
-			resultSet.close();                                      
-			pstatement.close();                                      
-			connection.close();                       
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setInt(1, movieID);
 		
-		}
+		resultSet = pstatement.executeQuery();
+
+		//get movies
+		while ( resultSet.next() ) 
+			{	
+			media = new Media();
+			media.setMediaID(resultSet.getInt("mediaID"));
+			media.setReleaseDate(resultSet.getDate("releaseDate"));
+			media.setGenre(resultSet.getString("genre"));
+			media.setTitle(resultSet.getString("title"));
+			media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+			media.setMediaType('m');
+			media.setCastList(getActorsForMovie(media));
+			media.setDirectorList(getDirectorsForMovie(media));
+			media.setAwardsList(getAwardsForMovie(media));
+			media.setSequelsList(getSequelsForMovie(media));
+			} 
 		
-		catch(SQLException sqle)
-		{
-			
-			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
-		}
+		// ensure statement and connection are closed properly                                      
+		resultSet.close();                                      
+		pstatement.close();                                      
+		connection.close();  
 		
 		return media;
+		}
+	
+	catch(SQLException sqle)
+		{
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		return media;
+		}
+	
+	}	
+
+//=============================================================================
+	
+	public Media getGame(Integer gameID)
+	{
+		
+	Media 				media;
+	PreparedStatement 	pstatement;
+	ResultSet 			resultSet;
+	WorkerDAO			workerDao;
+	
+	workerDao = new WorkerDAO();
+	media = null;
+	pstatement = null;
+	resultSet = null;
+	
+	
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+	
+		pstatement = connection.prepareStatement("SELECT * FROM Media M, Games G WHERE M.mediaID = G.gameID "
+				+ "AND G.gameID = ?");
+		
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setInt(1, gameID);
+		
+		resultSet = pstatement.executeQuery();
+		
+		while ( resultSet.next() ) 
+			{
+			media = new Media();
+			media.setMediaID(resultSet.getInt("mediaID"));
+			media.setReleaseDate(resultSet.getDate("releaseDate"));
+			media.setGenre(resultSet.getString("genre"));
+			media.setTitle(resultSet.getString("title"));
+			media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
+			media.setVersion(resultSet.getFloat("version"));
+			media.setPlatform(resultSet.getString("platform"));
+			media.setMediaType('g');
+			}	 
+		
+		// ensure statement and connection are closed properly                                      
+		resultSet.close();                                      
+		pstatement.close();                                      
+		connection.close();  
+		
+		return media;
+		}
+	
+	catch(SQLException sqle)
+		{
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		return media;
+		}
 		
 		
-	}
+		
+		
+	}	
 	
 //=============================================================================
 	
@@ -254,56 +331,13 @@ public class MediaDAO
 		ResultSet 			resultSet;
 		
 		mediaList = new ArrayList<Media>();
-		media = new Media();
-		pstatement = null;
-		resultSet = null;
-		
-		
-		try
-		{
-			Connection connection = ConnectionManager.getConnection();
-		
-			pstatement = connection.prepareStatement("SELECT * FROM Media M WHERE M.mediaID = ?");
-			
-			for(int i = 0; i < mediaIDList.size(); i++)
+		for (int i=0; i < mediaIDList.size(); i++)
 			{
-				
-				pstatement.clearParameters();
-				pstatement.setInt(1, mediaIDList.get(i));
-			
-				resultSet = pstatement.executeQuery();
-
-				while ( resultSet.next() ) 
-				{
-						media = new Media();
-						media.setMediaID(resultSet.getInt("mediaID"));
-						media.setReleaseDate(resultSet.getDate("releaseDate"));
-						media.setGenre(resultSet.getString("genre"));
-						media.setTitle(resultSet.getString("title"));
-						media.setNumCopiesAvailable(resultSet.getInt("numCopiesAvailable"));
-						mediaList.add(media);
-					
-				} //end while
-			
+			mediaList.add(getMedia(mediaIDList.get(i)));
+//			System.out.println(getMedia(mediaIDList.get(i)).getTitle());
 			}
-			
-			// ensure statement and connection are closed properly                                      
-			resultSet.close();                                      
-			pstatement.close();                                      
-			connection.close();                       
-		
-		}
-		
-		catch(SQLException sqle)
-		{
-			
-			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
-		}
 		
 		return mediaList;
-		
-		
 	}
 	
 //=============================================================================
@@ -773,8 +807,202 @@ public class MediaDAO
 		
 	}
 	
-//=============================================================================
+//=========================================================================================================
+	//Search by keyword with 2 booleans to tell if you want to search if it was previously rented or has won awards. 
+	//Also needs the email of the user just to check if it was prevRented by that user.
+	public List<Media> searchGenres(String genre,boolean notPrevRented,boolean wonAwards,String emailOfUser)
+	{
+	List<Media>			mediaSearched;
+	List<Integer>		mediaIDList;
+	PreparedStatement 	pState;
+	ResultSet			rSet;
+	Media				media;
 	
+	mediaSearched = new ArrayList<Media>();
+	mediaIDList = new ArrayList<Integer>();
+	pState = null;
+	rSet = null;
+	
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+		
+		if (notPrevRented && !wonAwards)
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre = ? AND M.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState.clearParameters();
+			pState.setString(1, genre);
+			pState.setString(2, emailOfUser);
+			}
+		else if (wonAwards && !notPrevRented)
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media M, Won W WHERE M.genre = ? AND W.movieID = M.mediaID");
+			pState.clearParameters();
+			pState.setString(1, genre);
+			}
+		else if (notPrevRented && wonAwards)
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media M, Won W WHERE W.movieID = M.mediaID AND M.genre = ? AND M.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState.clearParameters();
+			pState.setString(1, genre);
+			pState.setString(2, emailOfUser);
+			}
+		else
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre = ?");
+			pState.clearParameters();
+			pState.setString(1, genre);
+			}
+		
+		rSet = pState.executeQuery();
+		
+		while(rSet.next())
+			{
+			mediaIDList.add(rSet.getInt("mediaID"));
+			}
+		
+		rSet.close();                                      
+		pState.close();                                      
+		connection.close();
+		
+		mediaSearched = getMedia(mediaIDList);
+		
+		return mediaSearched;
+		}
+	catch(SQLException e)
+		{
+		System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		return mediaSearched;
+		}
+	}
+
+//=========================================================================================================
+	
+	//Search by keyword with 2 booleans to tell if you want to search if it was previously rented or has won awards. 
+	//Also needs the email of the user just to check if it was prevRented by that user.
+	public List<Media> keywordSearch(String keyword, boolean notPrevRented,boolean wonAwards,String emailOfUser)
+	{
+	List<Media>			mediaSearched;
+	List<Integer>		mediaIDList;
+	PreparedStatement 	pState;
+	ResultSet			rSet;
+	Media				media;
+	
+	mediaSearched = new ArrayList<Media>();
+	mediaIDList = new ArrayList<Integer>();
+	pState = null;
+	rSet = null;
+	
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+		
+		if (notPrevRented && !wonAwards)
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media m WHERE m.title LIKE ? AND m.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState.clearParameters();
+			pState.setString(1, "%"+keyword+"%");
+			pState.setString(2, emailOfUser);
+			}
+		else if (wonAwards && !notPrevRented)
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media M, won W WHERE M.title LIKE ? AND W.movieID = M.mediaID");
+			pState.clearParameters();
+			pState.setString(1, "%"+keyword+"%");
+			}
+		else if (notPrevRented && wonAwards)
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media m, Won w WHERE m.title LIKE ? AND w.movieID = m.mediaID AND m.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState.clearParameters();
+			pState.setString(1, "%"+keyword+"%");
+			pState.setString(2, emailOfUser);
+			}
+		else
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.title LIKE ?");
+			pState.clearParameters();
+			pState.setString(1, "%"+keyword+"%");
+			}
+		
+		rSet = pState.executeQuery();
+		
+		while(rSet.next())
+			{
+			mediaIDList.add(rSet.getInt("mediaID"));
+			}
+		
+		rSet.close();                                      
+		pState.close();                                      
+		connection.close();
+		
+		mediaSearched = getMedia(mediaIDList);
+		
+		return mediaSearched;
+		}
+	catch(SQLException e)
+		{
+		System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		return mediaSearched;
+		}
+	}
+
+
+	public List<Media> emptySearch(boolean notPrevRented,boolean wonAwards,String emailOfUser)
+	{
+	List<Media>			mediaSearched;
+	List<Integer>		mediaIDList;
+	PreparedStatement 	pState;
+	ResultSet			rSet;
+	Media				media;
+	
+	mediaSearched = new ArrayList<Media>();
+	mediaIDList = new ArrayList<Integer>();
+	pState = null;
+	rSet = null;
+	
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+		
+		if (notPrevRented && !wonAwards)
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media m WHERE m.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState.clearParameters();
+			pState.setString(1, emailOfUser);
+			}
+		else if (wonAwards && !notPrevRented)
+			pState = connection.prepareStatement("SELECT * FROM Media m, Won w WHERE w.movieID = m.mediaID");
+		else if (notPrevRented && wonAwards)
+			{
+			pState = connection.prepareStatement("SELECT * FROM Media m, Won w WHERE w.movieID = m.mediaID AND m.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState.clearParameters();
+			pState.setString(1, emailOfUser);
+			}
+		else
+			pState = connection.prepareStatement("SELECT * FROM Media m");
+		
+		rSet = pState.executeQuery();
+		
+		while(rSet.next())
+			{
+			mediaIDList.add(rSet.getInt("mediaID"));
+			}
+		
+		rSet.close();                                      
+		pState.close();                                      
+		connection.close();
+		
+		mediaSearched = getMedia(mediaIDList);
+		
+		return mediaSearched;
+		}
+	catch(SQLException e)
+		{
+		System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		return mediaSearched;
+		}
+	}
+
 	
 }
 
