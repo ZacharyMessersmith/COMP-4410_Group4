@@ -808,6 +808,168 @@ public class MediaDAO
 	}
 	
 //=========================================================================================================
+
+	public List<Media> getMovieWithActor(String actorName, boolean notPreviouslyRented, boolean ifWonAwards, String userEmail)
+	{
+	    List<Media>           actorSearchList;
+	    List<Integer>         listOfMedia;
+	    PreparedStatement     pstatement;
+	    ResultSet             resultSet;
+	    int					  isActor;
+
+	    actorSearchList  = new ArrayList<Media>();
+	    listOfMedia = new ArrayList<Integer>();
+	    pstatement   = null;
+	    resultSet    = null;
+
+	    isActor = 1;
+
+	    try
+	    {
+	        Connection connection = ConnectionManager.getConnection();
+	        if (notPreviouslyRented && !ifWonAwards)
+	        {
+	        	pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname = ? AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
+	            pstatement.clearParameters();
+	            pstatement.setInt(1, isActor);
+	            pstatement.setString(2, actorName);
+	            pstatement.setString(3, userEmail);
+	        }
+
+	        else if (ifWonAwards && !notPreviouslyRented)
+	        {
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname = ? AND WN.movieID = WO.movieID");
+	            pstatement.clearParameters();
+	            pstatement.setInt(1, isActor);
+	            pstatement.setString(2, actorName);
+	        }
+
+	        else if (notPreviouslyRented && ifWonAwards)
+	        {
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname = ? AND WN.movieID = WO.movieID AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
+	            pstatement.clearParameters();
+	            pstatement.setInt(1, isActor);
+	            pstatement.setString(2, actorName);
+	            pstatement.setString(3, userEmail);
+	        }
+
+	        else
+	        {
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname = ?");
+	            pstatement.clearParameters();
+	            pstatement.setInt(1, isActor);
+	            pstatement.setString(2, actorName);
+	        }
+
+
+            resultSet = pstatement.executeQuery();
+
+            while (resultSet.next())
+            {
+                listOfMedia.add(resultSet.getInt("movieID"));
+
+            } //end while
+
+            resultSet.close();
+            pstatement.close();
+            connection.close();
+
+            actorSearchList = getMedia(listOfMedia);
+
+            return actorSearchList;
+
+	    } // end of try
+
+	    catch(SQLException sqle)
+	    {
+
+	        System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+	        return actorSearchList;
+	    } // end of catch
+	}
+	
+//=========================================================================================================
+
+	public List<Media> getMovieWithDirector(String directorName, boolean notPreviouslyRented, boolean ifWonAwards, String userEmail)
+	{
+	    List<Media>           directorSearchList;
+	    List<Integer>         listOfMedia;
+	    PreparedStatement     pstatement;
+	    ResultSet             resultSet;
+	    int					  isDirector;
+
+	    directorSearchList  = new ArrayList<Media>();
+	    listOfMedia = new ArrayList<Integer>();
+	    pstatement   = null;
+	    resultSet    = null;
+
+	    isDirector = 1;
+
+	    try
+	    {
+	        Connection connection = ConnectionManager.getConnection();
+	        if (notPreviouslyRented && !ifWonAwards)
+	        {
+	        	pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname = ? AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
+	            pstatement.clearParameters();
+	            pstatement.setInt(1, isDirector);
+	            pstatement.setString(2, directorName);
+	            pstatement.setString(3, userEmail);
+	        }
+
+	        else if (ifWonAwards && !notPreviouslyRented)
+	        {
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname = ? AND WN.movieID = WO.movieID");
+	            pstatement.clearParameters();
+	            pstatement.setInt(1, isDirector);
+	            pstatement.setString(2, directorName);
+	        }
+
+	        else if (notPreviouslyRented && ifWonAwards)
+	        {
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname = ? AND WN.movieID = WO.movieID AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
+	            pstatement.clearParameters();
+	            pstatement.setInt(1, isDirector);
+	            pstatement.setString(2, directorName);
+	            pstatement.setString(3, userEmail);
+	        }
+
+	        else
+	        {
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname = ?");
+	            pstatement.clearParameters();
+	            pstatement.setInt(1, isDirector);
+	            pstatement.setString(2, directorName);
+	        }
+
+
+            resultSet = pstatement.executeQuery();
+
+            while (resultSet.next())
+            {
+                listOfMedia.add(resultSet.getInt("movieID"));
+
+            } //end while
+
+            resultSet.close();
+            pstatement.close();
+            connection.close();
+
+            directorSearchList = getMedia(listOfMedia);
+
+            return directorSearchList;
+
+	    } // end of try
+
+	    catch(SQLException sqle)
+	    {
+
+	        System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+	        return directorSearchList;
+	    } // end of catch
+	}
+	//============================================================================
+	
 	//Search by keyword with 2 booleans to tell if you want to search if it was previously rented or has won awards. 
 	//Also needs the email of the user just to check if it was prevRented by that user.
 	public List<Media> searchGenres(String genre,boolean notPrevRented,boolean wonAwards,String emailOfUser)

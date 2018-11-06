@@ -119,7 +119,7 @@ public class UserPanel extends JRootPane
 	
 	scrollPane = new JScrollPane(searchResultsTable);
 	
-	//setDefaultButton(searchButton);
+	getRootPane().setDefaultButton(searchButton);
 	
 	searchBar = new JTextField(10);
 	
@@ -337,7 +337,6 @@ public class UserPanel extends JRootPane
 		
 		searchString = searchBar.getText().trim();
 		
-		
 		// Get list from the database
 		if (searchString.equals(""))
 			mediaList = mediaDao.emptySearch(notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
@@ -345,13 +344,16 @@ public class UserPanel extends JRootPane
 			mediaList = mediaDao.searchGenres(searchString, notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
 		else if(searchByBox.getSelectedItem().equals("Keyword"))
 			mediaList = mediaDao.keywordSearch(searchString, notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
+		else if (searchByBox.getSelectedItem().equals("Actor"))
+			mediaList = mediaDao.getMovieWithActor(searchString, notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
+		else if (searchByBox.getSelectedItem().equals("Director"))
+			mediaList = mediaDao.getMovieWithDirector(searchString, notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
 		else
 			mediaList = new ArrayList<Media>();
 		
 		mediaToShow = new ArrayList<Media>();
 		for (Media media : mediaList)
 			{
-//			System.out.println(media.toString());
 			if (gamesCheck.isSelected())
 				{
 				if (media.getMediaType() == 'g')
@@ -403,13 +405,10 @@ public class UserPanel extends JRootPane
 	else if (e.getSource() == menuEditProfile)
 		{
 		new UserDialog(user, false);
-		//new UserDialog(new User(), false);
 		}
 	else if (e.getSource() == menuSearch)
 		{
 		cardLayout.show(getContentPane(), "SearchPanel");
-		//new UserDialog(user, false);
-		//new UserDialog(new User(), false);
 		}
 	else if (e.getSource() == rentalInfoTable)
 		{
