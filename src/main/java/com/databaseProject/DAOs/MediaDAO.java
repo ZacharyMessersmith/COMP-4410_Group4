@@ -970,6 +970,61 @@ public class MediaDAO
 	}
 	//============================================================================
 	
+	public List<Media> getGamesByPlatform(String platform,boolean notPrevRented,String emailOfUser)
+	{
+	List<Media>			mediaSearched;
+	List<Integer>		mediaIDList;
+	PreparedStatement 	pState;
+	ResultSet			rSet;
+	Media				media;
+	
+	mediaSearched = new ArrayList<Media>();
+	mediaIDList = new ArrayList<Integer>();
+	pState = null;
+	rSet = null;
+	
+	try
+		{
+		Connection connection = ConnectionManager.getConnection();
+		
+		if (notPrevRented)
+			{
+			pState = connection.prepareStatement("SELECT * FROM Games G WHERE G.platform = ? AND G.gameID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState.clearParameters();
+			pState.setString(1, platform);
+			pState.setString(2, emailOfUser);
+			}
+		else
+			{
+			pState = connection.prepareStatement("SELECT * FROM Games G WHERE G.platform = ?");
+			pState.clearParameters();
+			pState.setString(1, platform);
+			}
+		
+		rSet = pState.executeQuery();
+		
+		while(rSet.next())
+			{
+			mediaIDList.add(rSet.getInt("gameID"));
+			}
+		
+		rSet.close();                                      
+		pState.close();                                      
+		connection.close();
+		
+		mediaSearched = getMedia(mediaIDList);
+		
+		return mediaSearched;
+		}
+	catch(SQLException e)
+		{
+		System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		return mediaSearched;
+		}
+	}
+	
+	//============================================================================
+	
 	//Search by keyword with 2 booleans to tell if you want to search if it was previously rented or has won awards. 
 	//Also needs the email of the user just to check if it was prevRented by that user.
 	public List<Media> searchGenres(String genre,boolean notPrevRented,boolean wonAwards,String emailOfUser)

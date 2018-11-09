@@ -130,6 +130,7 @@ public class UserPanel extends JRootPane
 	gamesCheck = new JCheckBox("Games", true);
 	gamesCheck.addChangeListener(this);
 	moviesCheck = new JCheckBox("Movies", true);
+	moviesCheck.addChangeListener(this);
 	awardsCheck = new JCheckBox("Award winning", false);
 	notPrevRentedCheck = new JCheckBox("Not previously rented", false);
 	
@@ -138,6 +139,7 @@ public class UserPanel extends JRootPane
 	searchByBox.addItem("Actor");
 	searchByBox.addItem("Director");
 	searchByBox.addItem("Genre");
+	searchByBox.addItem("Platform");
 	
 	searchByLabel = new JLabel("Search by: ", SwingConstants.RIGHT);
 	searchByLabel.setMinimumSize(new Dimension(100, 0));
@@ -322,8 +324,48 @@ public class UserPanel extends JRootPane
 	
 	public void stateChanged(ChangeEvent e)
 	{
+	String currentSearchBySelection;
 	
-	}
+	currentSearchBySelection = (String)searchByBox.getSelectedItem();
+	
+	if (moviesCheck.isSelected())
+		awardsCheck.setVisible(true);
+	else
+		awardsCheck.setVisible(false);
+	
+	if (gamesCheck.isSelected() && !moviesCheck.isSelected()) // only games selected
+		{
+		searchByBox.removeAllItems();
+		searchByBox.addItem("Keyword");
+		searchByBox.addItem("Genre");
+		searchByBox.addItem("Platform");
+		}
+	else if (!gamesCheck.isSelected() && moviesCheck.isSelected()) // only movies selected
+		{
+		searchByBox.removeAllItems();
+		searchByBox.addItem("Keyword");
+		searchByBox.addItem("Actor");
+		searchByBox.addItem("Director");
+		searchByBox.addItem("Genre");
+		}
+	else if (gamesCheck.isSelected() && moviesCheck.isSelected()) // both selected
+		{
+		searchByBox.removeAllItems();
+		searchByBox.addItem("Keyword");
+		searchByBox.addItem("Actor");
+		searchByBox.addItem("Director");
+		searchByBox.addItem("Genre");
+		searchByBox.addItem("Platform");
+		}
+	else // neither selected
+		searchByBox.removeAllItems();
+	
+	for (int i=0; i < searchByBox.getItemCount(); i++)
+		{
+		if (searchByBox.getItemAt(i).equals(currentSearchBySelection))
+			searchByBox.setSelectedItem(currentSearchBySelection);
+		}
+	}	
 	
 	public void	actionPerformed(ActionEvent ae)
 	{
@@ -348,7 +390,9 @@ public class UserPanel extends JRootPane
 			mediaList = mediaDao.getMovieWithActor(searchString, notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
 		else if (searchByBox.getSelectedItem().equals("Director"))
 			mediaList = mediaDao.getMovieWithDirector(searchString, notPrevRentedCheck.isSelected(), awardsCheck.isSelected(), user.getEmail());
-		else
+		else if (searchByBox.getSelectedItem().equals("Platform"))
+			mediaList = mediaDao.getGamesByPlatform(searchString, notPrevRentedCheck.isSelected(), user.getEmail());
+		else	
 			mediaList = new ArrayList<Media>();
 		
 		mediaToShow = new ArrayList<Media>();
