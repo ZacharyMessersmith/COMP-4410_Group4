@@ -27,7 +27,7 @@ public class WorkerDAO
 		//Intentionally blank
 		
 	}
-/*
+
 //=============================================================================
 	
 	public void insertWorker(Worker worker)
@@ -45,15 +45,13 @@ public class WorkerDAO
 		{
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("INSERT INTO Worker (workerID, releaseDate, genre, title, numCopiesAvailable) VALUES (?, ?, ?, ?, ?)");
+			pstatement = connection.prepareStatement("INSERT INTO Workers (wname, isActor, isDirector) VALUES (?, ?, ?)");
 
 			// instantiate parameters
 			pstatement.clearParameters();
-			pstatement.setInt(1, worker.getWorkerID());
-			pstatement.setDate(2, worker.getReleaseDate());
-			pstatement.setString(3, worker.getGenre());
-			pstatement.setString(4, worker.getTitle());
-			pstatement.setInt(5, worker.getNumOfCopiesAvailable());
+			pstatement.setString(1, worker.getWName());
+			pstatement.setByte(2, worker.getIsActor());
+			pstatement.setByte(3, worker.getIsDirector());
 			
 			result = pstatement.executeUpdate();
 			
@@ -126,9 +124,76 @@ public class WorkerDAO
 		
 		
 	}
+	*/
 	
 //=============================================================================
-	*/
+	
+	public void insertWorks_On(int workerID, int movieID)
+	{
+		
+
+		PreparedStatement 	pstatement;
+		int		 			result;
+		
+		pstatement = null;
+		//resultSet = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("INSERT INTO Works_On (workerID, movieID) VALUES (?, ?)");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, workerID);
+			pstatement.setInt(2, movieID);
+			
+			result = pstatement.executeUpdate();
+				
+			//System.out.println("3");
+			
+			pstatement.close();                                       
+			connection.close();   
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//=============================================================================
+	
+	public void insertWorks_OnList(List<Integer> workerIDList, List<Integer> movieIDList)
+	{
+		
+		if(workerIDList.size() == movieIDList.size())
+		{
+			
+			for(int i = 0; i < workerIDList.size(); i++)
+			{
+				
+				this.insertWorks_On(workerIDList.get(i).intValue(), movieIDList.get(i).intValue());
+				
+			}
+			
+		}
+		
+		else
+		{
+			
+			System.out.println("workerIDList and mediaIDList are not the same in WorkerDAO.insertWorks_OnList(...)");
+			
+		}
+		
+	}
+	
+//=============================================================================
 	public Worker getWorker(Integer workerID)
 	{
 		
@@ -180,6 +245,57 @@ public class WorkerDAO
 		
 		return worker;
 		
+		
+	}
+	
+//=============================================================================
+	
+	public int getWorkerID(String wname)
+	{
+		
+		int 				workerID;
+		PreparedStatement 	pstatement;
+		ResultSet 			resultSet;
+		
+		workerID = -1;
+		pstatement = null;
+		resultSet = null;
+		
+		
+		try
+		{
+			
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("SELECT W.workerID FROM Workers W WHERE W.wname = ?");
+			
+			//instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, wname);
+			resultSet = pstatement.executeQuery();
+
+			while ( resultSet.next() ) 
+			{
+					
+				workerID = resultSet.getInt("workerID");
+			
+			} // end while
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		return workerID;
 		
 	}
 	
@@ -246,7 +362,26 @@ public class WorkerDAO
 	}
 	
 //=============================================================================
-	
+
+	public List<Integer> getWorkerIDs(List<String> wnameList)
+	{
+		
+		List<Integer> workerIDList;
+		
+		workerIDList = new ArrayList<Integer>();
+		
+		for(int i = 0; i < wnameList.size(); i++)
+		{
+			
+			workerIDList.add(new Integer(getWorkerID(wnameList.get(i))));
+			
+		}
+		
+		return workerIDList;
+		
+	}
+
+//=============================================================================
 	public List<Worker> getAllWorkers()
 	{
 		

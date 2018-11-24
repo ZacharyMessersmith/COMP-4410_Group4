@@ -53,7 +53,7 @@ class Project1TestWorkerLauncher
 		workerIDList = new ArrayList<Integer>();
 		trueFalseByte = 0;
 		
-		int i;
+		/*int i;
 		for(i = 0; i < 10; i++)
 		{
 			
@@ -66,20 +66,30 @@ class Project1TestWorkerLauncher
 			
 			workerListInsert.add(workerInsert);
 			
-		}
+		}*/
 		
 		
 		workerInsert = new Worker();
 		trueFalseByte = 1;
-		workerIDList.add(new Integer(i));
-		workerInsert.setWorkerID(i);
-		workerInsert.setWName("Worker" + i);
+		workerInsert.setWorkerID(7);
+		workerInsert.setWName("Worker" + 7);
 		workerInsert.setIsActor(trueFalseByte);
 		workerInsert.setIsDirector(trueFalseByte);
 		
 		System.out.println("Creating WorkerDAO");
 		workerDAO = new WorkerDAO();
 		System.out.println("Created WorkerDAO");
+		
+		/*System.out.println("Testing getting workerID given a name");
+		System.out.println(workerDAO.getWorkerID("Worker7"));
+		System.out.println("Done Testing getting workerID when given name");*/
+		
+		/*
+		System.out.println("Testing adding worker to Works_On given a movieID");
+		//workerDAO.insertWorker(workerInsert);
+		workerDAO.insertWorks_On(14555, 24);//Pre-setup workerID and movieID to test
+		System.out.println("Done testing adding to Works_On");*/
+		
 		
 		/*System.out.println("Manually adding single worker");
 		workerDAO.insertWorker(workerInsert);
@@ -89,7 +99,7 @@ class Project1TestWorkerLauncher
 		workerDAO.insertWorker(workerListInsert);
 		System.out.println("successfully added list of worker");*/
 		
-		System.out.println("Getting single worker");
+		/*System.out.println("Getting single worker");
 		workerRetrieve = workerDAO.getWorker(i);
 		System.out.println("Got worker. Compare to input.");
 		
@@ -97,7 +107,7 @@ class Project1TestWorkerLauncher
 		System.out.println("Retrieved: " + workerRetrieve.getWName());
 		
 		System.out.println("Compared. Compare list of worker Iserted and Retrieved alternating");
-	
+	*/
 		/*	
 		System.out.println("Compared. Testing to see if worker exists.");
 	
@@ -129,7 +139,7 @@ class Project1TestWorkerLauncher
 			
 		}
 		*/
-		System.out.println("Retrieving list of worker. Returning count of worker retrieved");
+		/*System.out.println("Retrieving list of worker. Returning count of worker retrieved");
 		
 		workerListRetrieve = workerDAO.getWorker(workerIDList);
 		System.out.println("Size = " + workerListRetrieve.size());
@@ -174,7 +184,7 @@ class Project1TestWorkerLauncher
 		
 		System.out.println("Done testing getting actor names.");
 		
-		System.out.println("Done getting all worker.");
+		System.out.println("Done getting all worker.");*/
 		/*
 		System.out.println("Testing updating worker information");
 		

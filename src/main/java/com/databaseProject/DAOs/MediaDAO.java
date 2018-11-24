@@ -10,6 +10,8 @@ import com.databaseProject.Pojos.Worker;
 import com.databaseProject.databaseProject.*;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
+
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -188,7 +190,130 @@ public class MediaDAO
 	}
 	
 //=============================================================================
+
+	public void insertMedia(Date releaseDate, String genre, String title,
+								int numOfCopiesAvailable)
+	{
+		PreparedStatement 	pstatement;
+		int		 			result;
+		
+		pstatement = null;
+		//resultSet = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("INSERT INTO Media ( releaseDate, genre, title, numCopiesAvailable) VALUES (?, ?, ?, ?)");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setDate(1, releaseDate);
+			pstatement.setString(2, genre);
+			pstatement.setString(3, title);
+			pstatement.setInt(4, numOfCopiesAvailable);
+			
+			result = pstatement.executeUpdate();
+				
+			//System.out.println("3");
+			
+			pstatement.close();                                       
+			connection.close();   
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
 	
+//=============================================================================
+	//Warning: if you define media.setMediaType as 'g' and call 
+	//insertMedia(Media media), you do not need this function 
+	public void insertGame(String platform, float version, int mediaID)
+	{
+		
+		PreparedStatement 	pstatement;
+		int		 			result;
+		
+		pstatement = null;
+		//resultSet = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("INSERT INTO Games (platform, version, gameID) VALUES (?, ?, ?)");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, platform);
+			pstatement.setFloat(2, version);
+			pstatement.setInt(3, mediaID);
+			
+			result = pstatement.executeUpdate();
+				
+			//System.out.println("3");
+			
+			pstatement.close();                                       
+			connection.close();   
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//=============================================================================
+	//Warning: if you define media.setMediaType as 'm' and call 
+	//insertMedia(Media media), you do not need this function 
+	public void insertMovie(int movieID)
+	{
+		
+		PreparedStatement 	pstatement;
+		int		 			result;
+		
+		pstatement = null;
+		//resultSet = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("INSERT INTO Movies (movieID) VALUES (?)");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, movieID);
+			
+			result = pstatement.executeUpdate();
+				
+			//System.out.println("3");
+			
+			pstatement.close();                                       
+			connection.close();   
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//=============================================================================
 	public Media getMedia(Integer mediaID)
 	{
 	Media	media;
@@ -431,8 +556,281 @@ public class MediaDAO
 		
 	}
 	
+//=============================================================================
+	
+	public int getMediaIDUsingMovieTitle(String movieTitle)
+	{
+		
+		PreparedStatement 	pstatement;
+		ResultSet			resultSet;
+		int					mediaID;
+		
+		mediaID = -1;
+		pstatement = null;
+		resultSet = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Select M.mediaID\r\n" + 
+													"From Media M, Movies M2\r\n" + 
+													"Where M.title= ? AND M.mediaID = M2.movieID");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, movieTitle);
+			
+			resultSet = pstatement.executeQuery();
+				
+			while(resultSet.next())
+			{
+				
+				mediaID = resultSet.getInt("mediaID");
+				
+			}
+			
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		return mediaID;
+		
+	}
+	
+//=============================================================================
+	
+	public List<Integer> getMediaIDListUsingMovieTitles(List<String> movieTitleList)
+	{
+		
+		List<Integer> mediaIDList;
+		
+		mediaIDList = new ArrayList<Integer>();
+		
+		for(int i = 0; i < movieTitleList.size(); i++)
+		{
+			
+			mediaIDList.add(new Integer(getAwardID(movieTitleList.get(i))));
+			
+		}
+		
+		return mediaIDList;
+		
+	}
+	
+//=============================================================================
+	
+	public int getAwardID(String aname)
+	{
+		
+		PreparedStatement 	pstatement;
+		ResultSet			resultSet;
+		int					awardID;
+		
+		awardID = -1;
+		pstatement = null;
+		resultSet = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Select A.awardID From Awards A Where A.aname = ?");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, aname);
+			
+			resultSet = pstatement.executeQuery();
+				
+			while(resultSet.next())
+			{
+				
+				awardID = resultSet.getInt("awardID");
+				
+			}
+			
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		return awardID;
+		
+	}
+	
+	
+//=============================================================================
+	
+	public List<Integer> getAwardIDList(List<String> anameList)
+	{
+		
+		List<Integer> awardIDList;
+		
+		awardIDList = new ArrayList<Integer>();
+		
+		for(int i = 0; i < anameList.size(); i++)
+		{
+			
+			awardIDList.add(new Integer(getAwardID(anameList.get(i))));
+			
+		}
+		
+		return awardIDList;
+		
+	}
+	
 //============================================================================
 	
+	public void insertWon(int movieID, int awardID)
+	{
+		
+		
+		PreparedStatement 	pstatement;
+		int 				result;
+		
+		pstatement = null;
+		//resultSet = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("INSERT INTO Won (movieID, awardID) VALUES (?, ?)");
+
+			//instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, movieID);
+			pstatement.setInt(2, awardID);
+	
+			result = pstatement.executeUpdate();
+				
+	
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//=============================================================================
+	
+	public void insertWonList(List<Integer> movieIDList, List<Integer> awardIDList)
+	{
+		
+		if(movieIDList.size() == awardIDList.size())
+		{
+			
+			for(int i = 0; i < movieIDList.size(); i++)
+			{
+				
+				insertWon(movieIDList.get(i), awardIDList.get(i));
+				
+			}
+			
+		}
+		
+		else
+		{
+			
+			System.out.println("WARNING: movieIDList size and awardIDList size are not the same in MediaDAO.insertWonList(...)");
+			
+		}
+		
+	}
+	
+//=============================================================================
+	
+	public void insertSequel(int prequelID, int sequelID)
+	{
+		
+		PreparedStatement 	pstatement;
+		int 				result;
+		
+		pstatement = null;
+		//resultSet = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("INSERT INTO Sequel (prequelID, sequelID) VALUES (?, ?)");
+
+			//instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, prequelID);
+			pstatement.setInt(2, sequelID);
+	
+			result = pstatement.executeUpdate();
+				
+	
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//=============================================================================
+	
+	public void insertSequelList(List<Integer> prequelIDList, List<Integer> sequelIDList)
+	{
+		
+		if(prequelIDList.size() == sequelIDList.size())
+		{
+			
+			for(int i = 0; i < prequelIDList.size(); i++)
+			{
+				
+				insertSequel(prequelIDList.get(i), sequelIDList.get(i));
+				
+			}
+			
+		}
+		
+		else
+		{
+			
+			System.out.println("WARNING: prequelIDList size and sequelIDList size are not the same in MediaDAO.insertSequelList(...)");
+			
+		}
+		
+	}
+	
+//=============================================================================
 	public List<String> getDirectorsForMovie(Media media)
 	{
 	List<String>		directorList;
@@ -710,10 +1108,68 @@ public class MediaDAO
 	
 //=============================================================================
 	
-	public void updateMedia(Media media)
+	public void updateMedia(int mediaID, Date releaseDate, 
+							int numOfCopiesAvailable, String genre)
 	{
 		
+		PreparedStatement 	pstatement;
+		int					result;
 		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Media M " + 
+													"Set M.genre = ? " + 
+													"Where M.mediaId = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, genre);
+			pstatement.setInt(2, mediaID);
+			
+			result = pstatement.executeUpdate();
+
+//--------------------			
+
+			pstatement = connection.prepareStatement("Update Media M " + 
+													"Set M.releaseDate = ? " + 
+													"Where M.mediaId = ?; ");
+
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setDate(1, releaseDate);
+			pstatement.setInt(2, mediaID);
+			
+			result = pstatement.executeUpdate();
+
+//---------------------------
+			
+			pstatement = connection.prepareStatement("Update Media M " + 
+													"Set M.numCopiesAvailable = ? " + 
+													"Where M.mediaId = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, numOfCopiesAvailable);
+			pstatement.setInt(2, mediaID);
+			
+			result = pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
 		
 	}
 	

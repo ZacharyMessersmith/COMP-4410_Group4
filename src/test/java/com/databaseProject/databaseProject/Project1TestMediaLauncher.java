@@ -52,7 +52,7 @@ class Project1TestMediaLauncher
 		mediaIDList = new ArrayList<Integer>();
 		titleList = null;
 		
-		int i;
+		/*int i;
 		for(i = 0; i < 10; i++)
 		{
 			
@@ -81,11 +81,72 @@ class Project1TestMediaLauncher
 		mediaInsert.setMediaType('g');
 		mediaInsert.setVersion((float) 1.0);
 		mediaInsert.setPlatform("X-bone");
-		
+		*/
 		System.out.println("Creating MediaDAO");
 		mediaDAO = new MediaDAO();
 		System.out.println("Created MediaDAO");
 		
+		
+		System.out.println("Testing updating media information");
+		mediaDAO.updateMedia(24, new Date(System.currentTimeMillis()), 5, "Action");
+		System.out.println("Done Testing updating media information");
+		
+		
+		
+		/*System.out.println("Testing getting mediaID given a movieTitle");
+		System.out.println(mediaDAO.getMediaIDUsingMovieTitle("BulletBoy"));
+		System.out.println("Done Testing getting mediaID given a movieTitle");*/
+		
+		
+		/*System.out.println("Testing Setting sequel givel a prequelID and sequelID");
+		mediaDAO.insertSequel(6, 24);
+		System.out.println("Done Testing Setting sequel givel a prequelID and sequelID");*/
+		
+		/*System.out.println("Testing Setting Won using movieID and awardID");
+		mediaDAO.insertWon(24, 2);
+		System.out.println("Done Testing Setting Won using movieID and awardID");*/
+		
+		
+	/*	System.out.println("Testing getting an awardID using the aname");
+		System.out.println(mediaDAO.getAwardID("Legendary"));
+		System.out.println("Done Testing getting an awardID using the aname");*/
+		
+		/*System.out.println("Attempting to insert a movie given information");
+		mediaInsert = new Media();
+		releaseDate.setTime(System.currentTimeMillis());
+		mediaInsert.setMediaID(24);
+		mediaInsert.setReleaseDate(releaseDate);
+		mediaInsert.setGenre("action");
+		mediaInsert.setTitle("BulletBoy");
+		mediaInsert.setNumCopiesAvailable(3);
+		mediaInsert.setMediaType('n');//using 'n' instead of 'm' or 'g' causes no insert into movies for testing the following function
+		mediaInsert.setVersion((float) 1.0);
+		mediaInsert.setPlatform("X-bone");
+		mediaDAO.insertMedia(mediaInsert);
+		mediaDAO.insertMovie(mediaInsert.getMediaID());
+		System.out.println("done inserting movie based on information");*/
+		
+		/*System.out.println("Attempting to insert a game given information");
+		mediaInsert = new Media();
+		releaseDate.setTime(System.currentTimeMillis());
+		mediaInsert.setMediaID(23);
+		mediaInsert.setReleaseDate(releaseDate);
+		mediaInsert.setGenre("action");
+		mediaInsert.setTitle("BulletBoy");
+		mediaInsert.setNumCopiesAvailable(3);
+		mediaInsert.setMediaType('n');//using 'n' instead of 'm' or 'g' causes no insert into games for testing the following function
+		mediaInsert.setVersion((float) 1.0);
+		mediaInsert.setPlatform("X-bone");
+		mediaDAO.insertMedia(mediaInsert);
+		mediaDAO.insertGame(mediaInsert.getPlatform(), mediaInsert.getVersion(), mediaInsert.getMediaID());
+		System.out.println("done inserting game based on information");*/
+		
+		/*
+		System.out.println("Testing Adding a media by giving information instead of media");
+		mediaDAO.insertMedia(new java.sql.Date(System.currentTimeMillis()), 
+								"Test Genre 1", "Test Title 1", 3);
+		System.out.println("Done testing adding media by giving information");
+		*/
 		/*System.out.println("Manually adding single media");
 		mediaDAO.insertMedia(mediaInsert);
 		System.out.println("Successfully added single media");
@@ -96,13 +157,13 @@ class Project1TestMediaLauncher
 		
 		System.out.println("Getting single media");
 		mediaRetrieve = mediaDAO.getMedia(i);
-		System.out.println("Got media. Compare to input.");*/
+		System.out.println("Got media. Compare to input.");
 		
 		System.out.println("Inserted: " + mediaInsert.getTitle());
 		System.out.println("Retrieved: " + mediaRetrieve.getTitle());
 		
 		System.out.println("Compared. Compare list of media Iserted and Retrieved alternating");
-	
+	*/
 		/*	
 		System.out.println("Compared. Testing to see if media exists.");
 	
@@ -134,6 +195,7 @@ class Project1TestMediaLauncher
 			
 		}
 		*/
+		/*
 		System.out.println("Retrieving list of media. Returning count of media retrieved");
 		
 		mediaListRetrieve = mediaDAO.getMedia(mediaIDList);
@@ -179,7 +241,7 @@ class Project1TestMediaLauncher
 		System.out.println("Done Testing If Media Type is acquired.");
 		System.out.println("Testing getting Cast From Media");
 		
-		mediaRetrieve = mediaDAO.getMediaInformation(1);
+		
 		
 		for( i = 0; i < mediaRetrieve.getCastList().size(); i ++)
 		{
@@ -210,7 +272,7 @@ class Project1TestMediaLauncher
 			
 		}
 		
-		
+		*/
 		
 		/*
 		titleList = mediaDAO.getAllMediaTitles();
