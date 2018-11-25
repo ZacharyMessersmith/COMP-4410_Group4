@@ -2,22 +2,27 @@ package com.databaseProject.databaseProject;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.databaseProject.Dialogs.LoginDialog;
 import com.databaseProject.Pojos.User;
 
 import java.awt.*;
 
 public class MainJFrame extends JFrame
-						 implements ActionListener, ChangeListener
+						 implements MouseListener
 {
 	AdminPanel	adminPanel;
 	UserPanel	userPanel;
 	JTabbedPane	tabPane;
+	
+	JMenu		menuLogout;
 	
 	public MainJFrame(User user)
 	{
@@ -27,7 +32,7 @@ public class MainJFrame extends JFrame
 	userPanel = new UserPanel(user);
 	
 	tabPane = new JTabbedPane();
-	tabPane.addChangeListener(this);
+	//tabPane.addChangeListener(this);
 	
 	if (user.isAdmin())
 		tabPane.addTab("Administrator", adminPanel);
@@ -38,25 +43,40 @@ public class MainJFrame extends JFrame
 	
 	cp = getContentPane();
 	cp.add(tabPane, BorderLayout.CENTER);
+	setJMenuBar(newMenuBar());
+	
 	
 	setupMainFrame();
 	System.out.println("Done.");
 	}
 
-
-	
-	
-
-	public void	stateChanged(ChangeEvent e)
+	public void mouseClicked(MouseEvent e)
 	{
-	
+	if (e.getSource() == menuLogout)
+		{
+		this.dispose();
+		new LoginDialog();
+		}
 	}
-
-
-
-	public void	actionPerformed(ActionEvent ae)
-	{
 	
+	
+
+	
+	private	 JMenuBar newMenuBar()
+	{
+	JMenuBar	menuBar;
+
+	menuBar = new JMenuBar();
+	
+	menuBar.add(Box.createHorizontalGlue());
+	
+	menuLogout = new JMenu("Logout");
+	menuLogout.addMouseListener(this);
+	menuBar.add(menuLogout);
+	
+	menuBar.add(Box.createRigidArea(new Dimension(10,10)));
+	
+	return menuBar;
 	}
 	
 	void	setupMainFrame()
@@ -78,5 +98,17 @@ public class MainJFrame extends JFrame
 
 	setVisible(true);
 	}
+	
+	public void mouseReleased(MouseEvent e)
+	{}
+
+	public void mousePressed(MouseEvent e) 
+	{}
+	
+	public void mouseEntered(MouseEvent e)
+	{}
+	
+	public void mouseExited(MouseEvent e)
+	{}
 
 }
