@@ -15,6 +15,9 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import java.util.ArrayList;
 
 
@@ -30,6 +33,250 @@ public class MediaDAO
 		//Intentionally blank
 		
 	}
+	
+	
+	
+//=============================================================================
+	
+	public void deleteMedia(Media media)
+	{
+	PreparedStatement 	pstatement;
+	int		 			result;
+	ResultSet 			resultSet;
+	WorkerDAO			workerDao;
+	List<String>		workers;
+	
+	pstatement = null;
+	workerDao = new WorkerDAO();
+	
+	try
+	{
+		Connection connection = ConnectionManager.getConnection();
+
+		if (!hasBeenRented(media.getMediaID()))
+			{
+			if(media.getMediaType() == 'm')
+				{
+					workerDao.deleteWorks_On(media.getMediaID());
+					deleteWon(media.getMediaID());
+					deleteSequels(media.getMediaID());
+					deleteMovie(media.getMediaID());
+				}
+				
+			else if(media.getMediaType() == 'g')
+				{
+					deleteGame(media.getMediaID());
+				}
+				
+			pstatement = connection.prepareStatement("DELETE FROM Media WHERE mediaID = ?");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, media.getMediaID());
+			
+			result = pstatement.executeUpdate();  
+			
+			pstatement.close();                                      
+			connection.close();                       
+			}
+		else
+			JOptionPane.showMessageDialog(null, "You cannot delete a title that has already been rented.", "Error", JOptionPane.ERROR_MESSAGE); 
+	}
+			
+	catch(SQLException sqle)
+	{
+		
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		
+	}
+		
+		
+	}
+	
+//=============================================================================
+	
+	public boolean	hasBeenRented (int mediaID)
+	{
+	PreparedStatement 	pstatement;
+	ResultSet			resultSet;
+	boolean				hasBeenRented;
+	
+	pstatement = null;
+	hasBeenRented = false;
+	
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("SELECT * FROM Rental_Info WHERE mediaID = ?");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, mediaID);
+			
+			resultSet = pstatement.executeQuery();
+	
+			while ( resultSet.next() ) 
+			{
+				hasBeenRented = true;	
+			} // end while
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		return hasBeenRented;
+	}
+	
+//=============================================================================
+
+	public void deleteGame(int gameID)
+	{
+		PreparedStatement 	pstatement;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("DELETE FROM Games WHERE gameID = ?");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, gameID);
+			
+			pstatement.executeUpdate();
+			
+			pstatement.close();                                       
+			connection.close();   
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}	
+
+//=============================================================================
+	
+	public void deleteMovie(int movieID)
+	{
+		PreparedStatement 	pstatement;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("DELETE FROM Movies WHERE movieID = ?");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, movieID);
+			
+			pstatement.executeUpdate();
+			
+			pstatement.close();                                       
+			connection.close();   
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}	
+
+//=============================================================================
+	
+	public void deleteWon(int movieID)
+	{
+		
+		PreparedStatement 	pstatement;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("DELETE FROM Won WHERE movieID = ?");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, movieID);
+			
+			pstatement.executeUpdate();
+			
+			pstatement.close();                                       
+			connection.close();   
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//=============================================================================
+
+	public void deleteSequels(int movieID)
+	{
+		
+		PreparedStatement 	pstatement;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("DELETE FROM Sequel WHERE prequelID = ?");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, movieID);
+			
+			pstatement.executeUpdate();
+			
+			pstatement.close();                                       
+			connection.close();   
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}	
+
+
 	
 //=============================================================================
 	
@@ -1002,25 +1249,6 @@ public class MediaDAO
 		
 		
 		return awardNameList;
-		
-	}
-	
-//=============================================================================
-	
-	public void deleteMedia(Integer mediaID)
-	{
-		
-		
-		
-	}
-	
-//=============================================================================
-	
-	
-	public void deleteMedia(List<Integer> mediaIDList)
-	{
-		
-		
 		
 	}
 	

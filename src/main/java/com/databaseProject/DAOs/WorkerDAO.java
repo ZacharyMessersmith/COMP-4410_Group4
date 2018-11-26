@@ -27,6 +27,45 @@ public class WorkerDAO
 		//Intentionally blank
 		
 	}
+	
+//==================================================================================================
+	
+	public void deleteWorks_On(int movieID)
+	{
+		
+		PreparedStatement 	pstatement;
+		int		 			result;
+		
+		pstatement = null;
+		//resultSet = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("DELETE FROM Works_On WHERE movieID = ?");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, movieID);
+			
+			result = pstatement.executeUpdate();
+				
+			//System.out.println("3");
+			
+			pstatement.close();                                       
+			connection.close();   
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
 
 //=============================================================================
 	

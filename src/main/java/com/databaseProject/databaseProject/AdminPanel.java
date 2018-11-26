@@ -184,8 +184,17 @@ public class AdminPanel extends JRootPane
 		new AdminMediaDialog(selectedMedia, this);
 		}
 	else if (ae.getActionCommand().equals("DELETE_MEDIA"))
-		{}
-	
+		{
+		MediaInfoTableModel		tableModel;
+		Media					selectedMedia;
+		int						selectedRow;
+		
+		selectedRow = mediaInfoTable.getSelectedRow();
+		tableModel = (MediaInfoTableModel)(mediaInfoTable.getModel());
+		selectedMedia = tableModel.getMediaAt(selectedRow);
+		mediaDao.deleteMedia(selectedMedia);
+		showMediaBox.setSelectedItem(showMediaBox.getSelectedItem());
+		}
 	else if (ae.getActionCommand().equals("VIEW_MEMBERS"))
 		{
 		cardLayout.show(getContentPane(), "MemberInfoPanel");
