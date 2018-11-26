@@ -2,6 +2,8 @@ package com.databaseProject.Dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import com.databaseProject.DAOs.MediaDAO;
 import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.DAOs.WorkerDAO;
 import com.databaseProject.Pojos.Media;
+import com.databaseProject.databaseProject.AdminPanel;
 
 //Since this will be used by the admin, we should give them a default password that they can change later.
 
@@ -51,18 +54,24 @@ public class AdminMediaDialog extends JDialog
 	WorkerDAO	workerDao;
 	MediaDAO	mediaDao;
 	
-	public AdminMediaDialog()
+	AdminPanel	parent;
+	
+	public AdminMediaDialog(AdminPanel parent)
 	{
+	this.parent = parent;
+	
 	setupBaseMediaDialog();
 	saveButton.setActionCommand("CREATE_MEDIA");
 	setTitle("Create Media");
 	}
 	
 	
-	public AdminMediaDialog(Media media)
+	public AdminMediaDialog(Media media, AdminPanel parent)
 	{
 	int[]	selectedIndicies;
 	int		k;
+	
+	this.parent = parent;
 	
 	setupBaseMediaDialog();
 	this.media = media;
@@ -369,17 +378,66 @@ public class AdminMediaDialog extends JDialog
 	
 	return tempGamePanel;
 	}
+	
+	private	java.sql.Date formatAsDate(String dateString)
+	{
+	SimpleDateFormat sdf1;
+	
+	try
+		{
+		if (dateString.contains("-"))
+			sdf1 = new SimpleDateFormat("MM-dd-yyyy");
+		else
+			sdf1 = new SimpleDateFormat("MM/dd/yyyy");
+		
+		java.util.Date date = sdf1.parse(dateString);
+		return new java.sql.Date(date.getTime());  
+		}
+	catch (ParseException e) 
+		{
+		System.out.println("Unable to create date: " + dateString);
+		e.printStackTrace();
+		return null;
+		}
+	}
 
 	public void actionPerformed(ActionEvent ae)
 	{
 	if (ae.getActionCommand().equals("CREATE_MEDIA"))
 		{
-		Media	media;
-		// make sure to update the Works_In table too
+		Media	newMedia;
 		
-		// Fill in using info from boxes
-		//media = new Media();
+		newMedia = new Media();
 		
+		if (numCopiesBox.getText().trim().equals(""))
+			numCopiesBox.setText("0");
+		
+		newMedia.setGenre(genreBox.getText().trim());
+		newMedia.setTitle(titleBox.getText().trim());
+		newMedia.setNumCopiesAvailable(Integer.parseInt(numCopiesBox.getText().trim()));
+		newMedia.setReleaseDate(formatAsDate(releaseDateBox.getText().trim()));
+		
+		if (gameOption.isSelected())
+			{
+			newMedia.setMediaType('g');
+			newMedia.setPlatform(platformBox.getText().trim());
+			if (versionBox.getText().trim().equals(""))
+				versionBox.setText("1.0");
+			newMedia.setVersion(Float.parseFloat(versionBox.getText().trim()));
+			}
+		else
+			{
+			newMedia.setMediaType('m');
+			newMedia.setCastList(castList.getSelectedValuesList());
+			newMedia.setDirectorList(directorList.getSelectedValuesList());
+			newMedia.setAwardsList(awardsList.getSelectedValuesList());
+			newMedia.setSequelsList(sequelsList.getSelectedValuesList());
+			}
+		
+		mediaDao.insertMedia(newMedia);
+		
+		//This updates the list so the new media is shown.
+		parent.showMediaBox.setSelectedItem(parent.showMediaBox.getSelectedItem());
 		dispose();
 		}
 	if (ae.getActionCommand().equals("EDIT_MEDIA")) 
@@ -387,6 +445,8 @@ public class AdminMediaDialog extends JDialog
 		// update database where mediaID = this.mediaID
 		// make sure to update the Works_In table too
 		
+		//This updates the list so the edited info is shown.
+		parent.showMediaBox.setSelectedItem(parent.showMediaBox.getSelectedItem());
 		dispose();
 		}
 	else if (ae.getActionCommand().equals("CANCEL"))

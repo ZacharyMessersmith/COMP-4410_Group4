@@ -473,7 +473,7 @@ public class UserPanel extends JRootPane
 		
 		if (e.getClickCount() == 2)
 			{
-			new UserMediaDialog(selectedRental.getMedia());
+			new UserMediaDialog(selectedRental.getMedia(), true);
 			}
 		}
 	else if (e.getSource() == searchResultsTable)
@@ -495,7 +495,7 @@ public class UserPanel extends JRootPane
 		
 		if (e.getClickCount() == 2)
 			{
-			new UserMediaDialog(selectedRental);
+			new UserMediaDialog(selectedRental, true);
 			}
 		}
 	}

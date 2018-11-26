@@ -39,7 +39,7 @@ public class AdminPanel extends JRootPane
 	JMenuItem	menuViewMedia;
 	JMenuItem	menuViewRentals;
 	
-	JComboBox	showMediaBox;
+	public JComboBox	showMediaBox;
 	
 	JPanel		memberInfoPanel;
 	JTable		memberInfoTable;
@@ -137,7 +137,7 @@ public class AdminPanel extends JRootPane
 					}
 				}
 			else
-				new UserMediaDialog(selectedMedia);
+				new UserMediaDialog(selectedMedia, false);
 			}
 		else if (e.getButton() == MouseEvent.BUTTON3)
 			{
@@ -170,7 +170,7 @@ public class AdminPanel extends JRootPane
 		{}
 	else if (ae.getActionCommand().equals("CREATE_MEDIA"))
 		{
-		new AdminMediaDialog();
+		new AdminMediaDialog(this);
 		}
 	else if (ae.getActionCommand().equals("EDIT_MEDIA"))
 		{
@@ -181,7 +181,7 @@ public class AdminPanel extends JRootPane
 		selectedRow = mediaInfoTable.getSelectedRow();
 		tableModel = (MediaInfoTableModel)(mediaInfoTable.getModel());
 		selectedMedia = tableModel.getMediaAt(selectedRow);
-		new AdminMediaDialog(selectedMedia);
+		new AdminMediaDialog(selectedMedia, this);
 		}
 	else if (ae.getActionCommand().equals("DELETE_MEDIA"))
 		{}
@@ -225,7 +225,7 @@ public class AdminPanel extends JRootPane
 			DefaultListModel<Media>	mediaListModel;		
 			MediaInfoTableModel	tableModel;
 			
-			mediaList = rentalDao.getTop10MediaInLastMonth();;
+			mediaList = rentalDao.getTop10MediaInLastMonth();
 			
 			mediaListModel = new DefaultListModel<Media>();
 			for (Media media : mediaList)

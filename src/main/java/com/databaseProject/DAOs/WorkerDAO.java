@@ -131,7 +131,6 @@ public class WorkerDAO
 	public void insertWorks_On(int workerID, int movieID)
 	{
 		
-
 		PreparedStatement 	pstatement;
 		int		 			result;
 		
@@ -169,29 +168,18 @@ public class WorkerDAO
 	
 //=============================================================================
 	
-	public void insertWorks_OnList(List<Integer> workerIDList, List<Integer> movieIDList)
+	
+	public void insertWorks_On(List<String> workerList, int movieID)
 	{
-		
-		if(workerIDList.size() == movieIDList.size())
+	List<Integer>	workerIDList = getWorkerIDs(workerList);		
+	
+		for(int i = 0; i < workerIDList.size(); i++)
 		{
-			
-			for(int i = 0; i < workerIDList.size(); i++)
-			{
-				
-				this.insertWorks_On(workerIDList.get(i).intValue(), movieIDList.get(i).intValue());
-				
-			}
-			
+			this.insertWorks_On(workerIDList.get(i).intValue(), movieID);		
 		}
-		
-		else
-		{
-			
-			System.out.println("workerIDList and mediaIDList are not the same in WorkerDAO.insertWorks_OnList(...)");
-			
-		}
-		
-	}
+	
+	}	
+	
 	
 //=============================================================================
 	public Worker getWorker(Integer workerID)
@@ -204,7 +192,6 @@ public class WorkerDAO
 		worker = new Worker();
 		pstatement = null;
 		resultSet = null;
-		
 		
 		try
 		{
@@ -260,7 +247,6 @@ public class WorkerDAO
 		workerID = -1;
 		pstatement = null;
 		resultSet = null;
-		
 		
 		try
 		{
@@ -373,7 +359,7 @@ public class WorkerDAO
 		for(int i = 0; i < wnameList.size(); i++)
 		{
 			
-			workerIDList.add(new Integer(getWorkerID(wnameList.get(i))));
+			workerIDList.add(getWorkerID(wnameList.get(i)));
 			
 		}
 		
@@ -571,12 +557,12 @@ public class WorkerDAO
 		List<String>		wnameList;
 		PreparedStatement 	pstatement;
 		ResultSet 			resultSet;
-		byte				getActorByte;
+		byte				getDirectorByte;
 		
 		wnameList = new ArrayList<String>();
 		pstatement = null;
 		resultSet = null;
-		getActorByte = 0;
+		getDirectorByte = 1;
 		
 		
 		try
@@ -587,7 +573,7 @@ public class WorkerDAO
 			
 			// instantiate parameters
 			pstatement.clearParameters();
-			pstatement.setByte(1, getActorByte);
+			pstatement.setByte(1, getDirectorByte);
 			
 			resultSet = pstatement.executeQuery();
 

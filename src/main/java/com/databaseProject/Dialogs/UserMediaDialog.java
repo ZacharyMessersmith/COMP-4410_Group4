@@ -34,7 +34,9 @@ public class UserMediaDialog extends JDialog
 	
 	WorkerDAO	workerDao;	
 	
-	public UserMediaDialog(Media media)
+	JButton	rentButton;
+	
+	public UserMediaDialog(Media media, boolean isUser)
 	{
 	workerDao = new WorkerDAO();
 	this.media = media;
@@ -64,7 +66,6 @@ public class UserMediaDialog extends JDialog
 	genreBox.setEditable(false);
 	genreBox.setText(media.getGenre());
 	
-	// Might need changed based on how it's stored in the database
 	typeBox = new JTextField(10);
 	typeBox.setEditable(false);
 	if (media.getMediaType() == 'm')
@@ -83,6 +84,10 @@ public class UserMediaDialog extends JDialog
 	closeButton = new JButton("Close");
 	closeButton.addActionListener(this);
 	closeButton.setActionCommand("CLOSE");
+	
+	rentButton = new JButton("Rent");
+	rentButton.addActionListener(this);
+	rentButton.setActionCommand("RENT");
 	
 	mainPanel = new JPanel();
 	GroupLayout layout = new GroupLayout(mainPanel);
@@ -112,6 +117,8 @@ public class UserMediaDialog extends JDialog
 	layout.setVerticalGroup(vGroup);
 	
 	buttonPanel = new JPanel();
+	if (isUser)
+		buttonPanel.add(rentButton);
 	buttonPanel.add(closeButton);
 	
 	cp = getContentPane();
@@ -274,6 +281,10 @@ public class UserMediaDialog extends JDialog
 	{
 	if (ae.getActionCommand().equals("CLOSE"))
 		dispose();
+	if (ae.getActionCommand().equals("RENT"))
+		{
+		//call function to add rental and decrease numCopiesAvailable
+		}
 	}
 	
 	void	setupMediaDialog(String title)

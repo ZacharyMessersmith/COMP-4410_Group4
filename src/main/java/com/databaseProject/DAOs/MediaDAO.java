@@ -38,26 +38,40 @@ public class MediaDAO
 		
 		PreparedStatement 	pstatement;
 		int		 			result;
+		ResultSet 			resultSet;
+		WorkerDAO			workerDao;
+		List<String>		workers;
 		
 		pstatement = null;
-		//resultSet = null;
-		
+		workerDao = new WorkerDAO();
 		
 		try
 		{
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("INSERT INTO Media (mediaID, releaseDate, genre, title, numCopiesAvailable) VALUES (?, ?, ?, ?, ?)");
+			pstatement = connection.prepareStatement("INSERT INTO Media (releaseDate, genre, title, numCopiesAvailable) VALUES (?, ?, ?, ?)");
 
 			// instantiate parameters
 			pstatement.clearParameters();
-			pstatement.setInt(1, media.getMediaID());
-			pstatement.setDate(2, media.getReleaseDate());
-			pstatement.setString(3, media.getGenre());
-			pstatement.setString(4, media.getTitle());
-			pstatement.setInt(5, media.getNumCopiesAvailable());
+			pstatement.setDate(1, media.getReleaseDate());
+			pstatement.setString(2, media.getGenre());
+			pstatement.setString(3, media.getTitle());
+			pstatement.setInt(4, media.getNumCopiesAvailable());
 			
 			result = pstatement.executeUpdate();
+			
+			pstatement.clearParameters();
+			pstatement = connection.prepareStatement("SELECT mediaID FROM Media M WHERE M.releaseDate = ? AND M.genre = ? AND M.title = ? AND numCopiesAvailable = ?");
+			pstatement.setDate(1, media.getReleaseDate());
+			pstatement.setString(2, media.getGenre());
+			pstatement.setString(3, media.getTitle());
+			pstatement.setInt(4, media.getNumCopiesAvailable());
+			
+			resultSet = pstatement.executeQuery();
+			while (resultSet.next())
+				{
+				media.setMediaID(resultSet.getInt("mediaID"));
+				}
 			
 			if(media.getMediaType() == 'm')
 			{
@@ -70,6 +84,16 @@ public class MediaDAO
 			
 				result = pstatement.executeUpdate(); 
 				
+				workers = media.getCastList();
+				for (String director : media.getDirectorList())
+					{
+					if (!workers.contains(director))
+						workers.add(director);
+					}	
+				workerDao.insertWorks_On(workers, media.getMediaID());
+				
+				insertWonList(media.getAwardsList(), media.getMediaID());
+				insertSequelList(media.getSequelsList(), media.getMediaID());
 			}
 			
 			else if(media.getMediaType() == 'g')
@@ -83,7 +107,6 @@ public class MediaDAO
 				pstatement.setFloat(2, media.getVersion());
 				pstatement.setString(3, media.getPlatform());
 				
-			
 				result = pstatement.executeUpdate(); 
 				
 			}
@@ -106,87 +129,12 @@ public class MediaDAO
 	
 //=============================================================================
 	
-	public void insertMedia( List<Media> mediaList)
+	public void insertMedia(List<Media> mediaList)
 	{
-		
-		Media media;
-		PreparedStatement 	pstatement;
-		int		 			result;
-		
-		media = null;
-		pstatement = null;
-		//resultSet = null;
-		
-		try
+		for(Media media : mediaList)
 		{
-			Connection connection = ConnectionManager.getConnection();
-			
-			for(int i = 0; i < mediaList.size(); i++)
-			{
-				
-				pstatement = connection.prepareStatement("INSERT INTO Media (mediaID, releaseDate, genre, title, numCopiesAvailable) VALUES (?, ?, ?, ?, ?)");
-				media = mediaList.get(i);
-				// instantiate parameters
-				pstatement.clearParameters();
-				pstatement.setInt(1, media.getMediaID());
-				pstatement.setDate(2, media.getReleaseDate());
-				pstatement.setString(3, media.getGenre());
-				pstatement.setString(4, media.getTitle());
-				pstatement.setInt(5, media.getNumCopiesAvailable());
-			
-				result = pstatement.executeUpdate();
-				
-				System.out.println("3");
-				
-				if(media.getMediaType() == 'm')
-				{
-
-					pstatement = connection.prepareStatement("INSERT INTO Movies (movieID) VALUES (?)");
-					
-					// instantiate parameters
-					pstatement.clearParameters();
-					pstatement.setInt(1, media.getMediaID());
-				
-					result = pstatement.executeUpdate(); 
-					
-				}
-				
-				else if(media.getMediaType() == 'g')
-				{
-
-					pstatement = connection.prepareStatement("INSERT INTO Games (gameID, version, platform) VALUES (?, ?, ?)");
-					
-					// instantiate parameters
-					pstatement.clearParameters();
-					pstatement.setInt(1, media.getMediaID());
-					pstatement.setDouble(2, media.getVersion());
-					pstatement.setString(3, media.getPlatform());
-					
-				
-					result = pstatement.executeUpdate(); 
-					pstatement.close(); 
-					
-					
-				}
-				
-				pstatement.close(); 
-			
-			}
-			
-			// ensure statement and connection are closed properly                                      
-			//resultSet.close();                                      
-			
-			connection.close();   
-		
+			insertMedia(media);
 		}
-		
-		catch(SQLException sqle)
-		{
-			
-			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
-		}
-		
 	}
 	
 //=============================================================================
@@ -573,8 +521,8 @@ public class MediaDAO
 		{
 			Connection connection = ConnectionManager.getConnection();
 				
-			pstatement = connection.prepareStatement("Select M.mediaID\r\n" + 
-													"From Media M, Movies M2\r\n" + 
+			pstatement = connection.prepareStatement("Select M.mediaID " + 
+													"From Media M, Movies M2 " + 
 													"Where M.title= ? AND M.mediaID = M2.movieID");
 
 			// instantiate parameters
@@ -619,7 +567,7 @@ public class MediaDAO
 		for(int i = 0; i < movieTitleList.size(); i++)
 		{
 			
-			mediaIDList.add(new Integer(getAwardID(movieTitleList.get(i))));
+			mediaIDList.add(new Integer(getMediaIDUsingMovieTitle(movieTitleList.get(i))));
 			
 		}
 		
@@ -699,10 +647,9 @@ public class MediaDAO
 	
 //============================================================================
 	
-	public void insertWon(int movieID, int awardID)
+	public void insertWon(int awardID, int movieID)
 	{
-		
-		
+	
 		PreparedStatement 	pstatement;
 		int 				result;
 		
@@ -721,9 +668,7 @@ public class MediaDAO
 			pstatement.setInt(2, awardID);
 	
 			result = pstatement.executeUpdate();
-				
-	
-			
+
 			pstatement.close();             
 			connection.close();
 			
@@ -740,33 +685,21 @@ public class MediaDAO
 	
 //=============================================================================
 	
-	public void insertWonList(List<Integer> movieIDList, List<Integer> awardIDList)
+	public void insertWonList(List<String> anameList, int movieID)
 	{
-		
-		if(movieIDList.size() == awardIDList.size())
+	List<Integer> awardIDList = getAwardIDList(anameList);
+	
+		for(int i = 0; i < awardIDList.size(); i++)
 		{
 			
-			for(int i = 0; i < movieIDList.size(); i++)
-			{
-				
-				insertWon(movieIDList.get(i), awardIDList.get(i));
-				
-			}
+			insertWon(awardIDList.get(i), movieID);
 			
 		}
-		
-		else
-		{
-			
-			System.out.println("WARNING: movieIDList size and awardIDList size are not the same in MediaDAO.insertWonList(...)");
-			
-		}
-		
 	}
 	
 //=============================================================================
 	
-	public void insertSequel(int prequelID, int sequelID)
+	public void insertSequel(int sequelID, int prequelID)
 	{
 		
 		PreparedStatement 	pstatement;
@@ -787,8 +720,6 @@ public class MediaDAO
 			pstatement.setInt(2, sequelID);
 	
 			result = pstatement.executeUpdate();
-				
-	
 			
 			pstatement.close();             
 			connection.close();
@@ -806,28 +737,15 @@ public class MediaDAO
 	
 //=============================================================================
 	
-	public void insertSequelList(List<Integer> prequelIDList, List<Integer> sequelIDList)
+	public void insertSequelList(List<String> sequelList, int prequelID)
 	{
-		
-		if(prequelIDList.size() == sequelIDList.size())
+	List<Integer>	sequelIDList = getMediaIDListUsingMovieTitles(sequelList);
+	
+		for(int i = 0; i < sequelIDList.size(); i++)
 		{
-			
-			for(int i = 0; i < prequelIDList.size(); i++)
-			{
-				
-				insertSequel(prequelIDList.get(i), sequelIDList.get(i));
-				
-			}
-			
+			System.out.println(sequelIDList.get(i));
+			insertSequel(sequelIDList.get(i), prequelID);	
 		}
-		
-		else
-		{
-			
-			System.out.println("WARNING: prequelIDList size and sequelIDList size are not the same in MediaDAO.insertSequelList(...)");
-			
-		}
-		
 	}
 	
 //=============================================================================
