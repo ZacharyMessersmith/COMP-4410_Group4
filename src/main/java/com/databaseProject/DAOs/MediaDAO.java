@@ -1431,36 +1431,36 @@ public class MediaDAO
 	        Connection connection = ConnectionManager.getConnection();
 	        if (notPreviouslyRented && !ifWonAwards)
 	        {
-	        	pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname = ? AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
+	        	pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname LIKE ? AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
 	            pstatement.clearParameters();
 	            pstatement.setInt(1, isActor);
-	            pstatement.setString(2, actorName);
+	            pstatement.setString(2, "%"+actorName+"%");
 	            pstatement.setString(3, userEmail);
 	        }
 
 	        else if (ifWonAwards && !notPreviouslyRented)
 	        {
-	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname = ? AND WN.movieID = WO.movieID");
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname LIKE ? AND WN.movieID = WO.movieID");
 	            pstatement.clearParameters();
 	            pstatement.setInt(1, isActor);
-	            pstatement.setString(2, actorName);
+	            pstatement.setString(2, "%"+actorName+"%");
 	        }
 
 	        else if (notPreviouslyRented && ifWonAwards)
 	        {
-	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname = ? AND WN.movieID = WO.movieID AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname LIKE ? AND WN.movieID = WO.movieID AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
 	            pstatement.clearParameters();
 	            pstatement.setInt(1, isActor);
-	            pstatement.setString(2, actorName);
+	            pstatement.setString(2, "%"+actorName+"%");
 	            pstatement.setString(3, userEmail);
 	        }
 
 	        else
 	        {
-	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname = ?");
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isActor = ? AND W.workerID = WO.workerID AND W.wname LIKE ?");
 	            pstatement.clearParameters();
 	            pstatement.setInt(1, isActor);
-	            pstatement.setString(2, actorName);
+	            pstatement.setString(2, "%"+actorName+"%");
 	        }
 
 
@@ -1512,36 +1512,36 @@ public class MediaDAO
 	        Connection connection = ConnectionManager.getConnection();
 	        if (notPreviouslyRented && !ifWonAwards)
 	        {
-	        	pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname = ? AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
+	        	pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname LIKE? AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
 	            pstatement.clearParameters();
 	            pstatement.setInt(1, isDirector);
-	            pstatement.setString(2, directorName);
+	            pstatement.setString(2, "%"+directorName+"%");
 	            pstatement.setString(3, userEmail);
 	        }
 
 	        else if (ifWonAwards && !notPreviouslyRented)
 	        {
-	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname = ? AND WN.movieID = WO.movieID");
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname LIKE ? AND WN.movieID = WO.movieID");
 	            pstatement.clearParameters();
 	            pstatement.setInt(1, isDirector);
-	            pstatement.setString(2, directorName);
+	            pstatement.setString(2, "%"+directorName+"%");
 	        }
 
 	        else if (notPreviouslyRented && ifWonAwards)
 	        {
-	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname = ? AND WN.movieID = WO.movieID AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO, Won WN WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname LIKE ? AND WN.movieID = WO.movieID AND WO.movieID NOT IN (SELECT R.mediaID FROM rental_info R WHERE email = ?)");
 	            pstatement.clearParameters();
 	            pstatement.setInt(1, isDirector);
-	            pstatement.setString(2, directorName);
+	            pstatement.setString(2, "%"+directorName+"%");
 	            pstatement.setString(3, userEmail);
 	        }
 
 	        else
 	        {
-	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname = ?");
+	            pstatement = connection.prepareStatement("SELECT WO.movieID FROM Workers W, Works_On WO WHERE W.isDirector = ? AND W.workerID = WO.workerID AND W.wname LIKE ?");
 	            pstatement.clearParameters();
 	            pstatement.setInt(1, isDirector);
-	            pstatement.setString(2, directorName);
+	            pstatement.setString(2, "%"+directorName+"%");
 	        }
 
 
@@ -1591,16 +1591,16 @@ public class MediaDAO
 		
 		if (notPrevRented)
 			{
-			pState = connection.prepareStatement("SELECT * FROM Games G WHERE G.platform = ? AND G.gameID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState = connection.prepareStatement("SELECT * FROM Games G WHERE G.platform LIKE ? AND G.gameID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
 			pState.clearParameters();
-			pState.setString(1, platform);
+			pState.setString(1, "%"+platform+"%");
 			pState.setString(2, emailOfUser);
 			}
 		else
 			{
-			pState = connection.prepareStatement("SELECT * FROM Games G WHERE G.platform = ?");
+			pState = connection.prepareStatement("SELECT * FROM Games G WHERE G.platform LIKE ?");
 			pState.clearParameters();
-			pState.setString(1, platform);
+			pState.setString(1, "%"+platform+"%");
 			}
 		
 		rSet = pState.executeQuery();
@@ -1648,29 +1648,29 @@ public class MediaDAO
 		
 		if (notPrevRented && !wonAwards)
 			{
-			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre = ? AND M.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre LIKE ? AND M.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
 			pState.clearParameters();
-			pState.setString(1, genre);
+			pState.setString(1, "%"+genre+"%");
 			pState.setString(2, emailOfUser);
 			}
 		else if (wonAwards && !notPrevRented)
 			{
-			pState = connection.prepareStatement("SELECT * FROM Media M, Won W WHERE M.genre = ? AND W.movieID = M.mediaID");
+			pState = connection.prepareStatement("SELECT * FROM Media M, Won W WHERE M.genre LIKE ? AND W.movieID = M.mediaID");
 			pState.clearParameters();
-			pState.setString(1, genre);
+			pState.setString(1, "%"+genre+"%");
 			}
 		else if (notPrevRented && wonAwards)
 			{
-			pState = connection.prepareStatement("SELECT * FROM Media M, Won W WHERE W.movieID = M.mediaID AND M.genre = ? AND M.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState = connection.prepareStatement("SELECT * FROM Media M, Won W WHERE W.movieID = M.mediaID AND M.genre LIKE ? AND M.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
 			pState.clearParameters();
-			pState.setString(1, genre);
+			pState.setString(1, "%"+genre+"%");
 			pState.setString(2, emailOfUser);
 			}
 		else
 			{
-			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre = ?");
+			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.genre LIKE ?");
 			pState.clearParameters();
-			pState.setString(1, genre);
+			pState.setString(1, "%"+genre+"%");
 			}
 		
 		rSet = pState.executeQuery();
@@ -1718,29 +1718,57 @@ public class MediaDAO
 		
 		if (notPrevRented && !wonAwards)
 			{
-			pState = connection.prepareStatement("SELECT * FROM Media m WHERE m.title LIKE ? AND m.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState = connection.prepareStatement("SELECT DISTINCT m.* FROM Media m, Games g, Movies mo, Workers w, Works_On wo "
+					+ "WHERE (m.title LIKE ? OR m.genre LIKE ? "
+					+ "OR (m.mediaID = g.gameID AND g.platform LIKE ?) "
+					+ "OR (m.mediaID = mo.movieID AND mo.movieID = wo.movieID AND wo.workerID = w.workerID AND "
+						+ "w.wname LIKE ?)) "
+					+ "AND m.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			
 			pState.clearParameters();
 			pState.setString(1, "%"+keyword+"%");
-			pState.setString(2, emailOfUser);
+			pState.setString(2, "%"+keyword+"%");
+			pState.setString(3, "%"+keyword+"%");
+			pState.setString(4, "%"+keyword+"%");
+			pState.setString(5, emailOfUser);
 			}
 		else if (wonAwards && !notPrevRented)
 			{
-			pState = connection.prepareStatement("SELECT * FROM Media M, won W WHERE M.title LIKE ? AND W.movieID = M.mediaID");
+			pState = connection.prepareStatement("SELECT DISTINCT m.* FROM Media m, Games g, Movies mo, Workers w, "
+						+ "Works_On wo, Won won "
+					+ "WHERE (m.title LIKE ? OR m.genre LIKE ? "
+					+ "OR (m.mediaID = mo.movieID AND mo.movieID = wo.movieID AND wo.workerID = w.workerID AND "
+						+ "w.wname LIKE ?)) AND won.movieID = m.mediaID");
 			pState.clearParameters();
 			pState.setString(1, "%"+keyword+"%");
+			pState.setString(2, "%"+keyword+"%");
+			pState.setString(3, "%"+keyword+"%");
 			}
 		else if (notPrevRented && wonAwards)
 			{
-			pState = connection.prepareStatement("SELECT * FROM Media m, Won w WHERE m.title LIKE ? AND w.movieID = m.mediaID AND m.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
+			pState = connection.prepareStatement("SELECT DISTINCT m.* FROM Media m, Games g, Movies mo, Workers w, "
+					+ "Works_On wo, Won won "
+				+ "WHERE (m.title LIKE ? OR m.genre LIKE ? "
+				+ "OR (m.mediaID = mo.movieID AND mo.movieID = wo.movieID AND wo.workerID = w.workerID AND "
+					+ "w.wname LIKE ?)) AND won.movieID = m.mediaID AND m.mediaID NOT IN (SELECT mediaID FROM rental_info WHERE email = ?)");
 			pState.clearParameters();
 			pState.setString(1, "%"+keyword+"%");
-			pState.setString(2, emailOfUser);
+			pState.setString(2, "%"+keyword+"%");
+			pState.setString(3, "%"+keyword+"%");
+			pState.setString(4, emailOfUser);
 			}
 		else
 			{
-			pState = connection.prepareStatement("SELECT * FROM Media M WHERE M.title LIKE ?");
+			pState = connection.prepareStatement("SELECT DISTINCT m.* FROM Media m, Games g, Movies mo, Workers w, Works_On wo "
+					+ "WHERE (m.title LIKE ? OR m.genre LIKE ? "
+					+ "OR (m.mediaID = g.gameID AND g.platform LIKE ?) "
+					+ "OR (m.mediaID = mo.movieID AND mo.movieID = wo.movieID AND wo.workerID = w.workerID AND "
+						+ "w.wname LIKE ?)) ");
 			pState.clearParameters();
 			pState.setString(1, "%"+keyword+"%");
+			pState.setString(2, "%"+keyword+"%");
+			pState.setString(3, "%"+keyword+"%");
+			pState.setString(4, "%"+keyword+"%");
 			}
 		
 		rSet = pState.executeQuery();

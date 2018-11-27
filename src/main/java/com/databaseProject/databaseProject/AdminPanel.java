@@ -167,7 +167,31 @@ public class AdminPanel extends JRootPane
 		new UserDialog(selectedUser, true);
 		}
 	else if (ae.getActionCommand().equals("DELETE_USER"))
-		{}
+		{
+		MemberInfoTableModel	tableModel;
+		User					selectedUser;
+		int						selectedRow;
+		List<User>				userList;
+		DefaultListModel<User>	userListModel;
+		
+		selectedRow = memberInfoTable.getSelectedRow();
+		tableModel = (MemberInfoTableModel)(memberInfoTable.getModel());
+		selectedUser = tableModel.getUserAt(selectedRow);
+		userDao.deleteUser(selectedUser);
+		
+		userList = userDao.getAllUsers();
+		
+		userListModel = new DefaultListModel<User>();
+		for (User user : userList)
+			{
+			userListModel.addElement(user);
+			}
+
+		tableModel = new MemberInfoTableModel(userListModel);
+		
+		memberInfoTable.setModel(tableModel);
+		memberInfoTable.setColumnModel(getMemberColumnModel());
+		}
 	else if (ae.getActionCommand().equals("CREATE_MEDIA"))
 		{
 		new AdminMediaDialog(this);

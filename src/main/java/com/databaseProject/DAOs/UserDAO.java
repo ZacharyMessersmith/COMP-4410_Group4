@@ -11,6 +11,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+
+import javax.swing.JOptionPane;
+
 import java.util.ArrayList;
 
 public class UserDAO 
@@ -23,6 +26,101 @@ public class UserDAO
 		
 		//Intentionally blank.
 		
+	}
+
+//=============================================================================
+	
+	public void deleteUser(User user)
+	{
+	PreparedStatement 	pstatement;
+	
+	pstatement = null;
+	
+	try
+	{
+		Connection connection = ConnectionManager.getConnection();
+
+		if (!hasRented(user.getEmail()))
+			{
+			// Leave the address in the Addresses table
+			pstatement = connection.prepareStatement("DELETE FROM Has_Plan WHERE email = ?");
+			pstatement.clearParameters();
+			pstatement.setString(1, user.getEmail());
+			pstatement.executeUpdate(); 
+			
+			pstatement = connection.prepareStatement("DELETE FROM Lives_At1 WHERE email = ?");
+			pstatement.clearParameters();
+			pstatement.setString(1, user.getEmail());
+			pstatement.executeUpdate(); 
+			
+			pstatement = connection.prepareStatement("DELETE FROM Users WHERE email = ?");
+			pstatement.clearParameters();
+			pstatement.setString(1, user.getEmail());
+			pstatement.executeUpdate();  
+			
+			pstatement.close();                                      
+			connection.close();                       
+			}
+		else
+			JOptionPane.showMessageDialog(null, "You cannot delete a user that has rented an item.", "Error", JOptionPane.ERROR_MESSAGE); 
+	}
+			
+	catch(SQLException sqle)
+	{
+		
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		
+	}
+		
+	
+	}
+	
+	
+	
+//=============================================================================	
+	
+	private boolean	hasRented(String email)
+	{
+	PreparedStatement 	pstatement;
+	ResultSet			resultSet;
+	boolean				hasRented;
+	
+	pstatement = null;
+	hasRented = false;
+	
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("SELECT * FROM Rental_Info WHERE email = ?");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, email);
+			
+			resultSet = pstatement.executeQuery();
+	
+			while ( resultSet.next() ) 
+			{
+				hasRented = true;	
+			} // end while
+			
+			// ensure statement and connection are closed properly                                      
+			resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		return hasRented;
+	
 	}
 	
 //=============================================================================
