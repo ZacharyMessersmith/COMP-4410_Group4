@@ -1338,6 +1338,97 @@ public class MediaDAO
 	}
 	
 //=============================================================================
+	
+	public void updateMediaInventory(int mediaID, int numOfCopiesAvailable)
+	{
+
+		PreparedStatement 	pstatement;
+		int					result;
+		
+		pstatement = null;
+		
+		try
+		{
+			
+			Connection connection = ConnectionManager.getConnection();
+			pstatement = connection.prepareStatement("Update Media M " + 
+													"Set M.numCopiesAvailable = ? " + 
+													"Where M.mediaId = ?; ");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, numOfCopiesAvailable);
+			pstatement.setInt(2, mediaID);
+			
+			result = pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+		
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		
+		}
+				
+	}
+	
+//=============================================================================
+	
+	public void updateGame(int gameID, String platform, float version)
+	{
+
+		PreparedStatement 	pstatement;
+		int					result;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Games G " + 
+													"Set G.platform = ? " + 
+													"Where G.gameID = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, platform);
+			pstatement.setInt(2, gameID);
+			
+			result = pstatement.executeUpdate();
+
+//--------------------			
+
+			pstatement = connection.prepareStatement("Update Games G " + 
+													"Set G.version = ? " + 
+													"Where G.gameID = ?; ");
+
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setFloat(1, version);
+			pstatement.setInt(2, gameID);
+			
+			result = pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+	}
+	
+//=============================================================================
 
 	public List<String> getAllMediaTitles()
 	{

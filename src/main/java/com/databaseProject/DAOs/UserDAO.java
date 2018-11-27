@@ -183,6 +183,63 @@ public class UserDAO
 	
 //=============================================================================
 	
+	public void insertUser(String name, String email, String phoneNumber,
+			boolean isAdmin, boolean isMember)
+{
+
+	PreparedStatement 	pstatement;
+	int		 			result;
+	byte				trueFalseByte;
+	
+	pstatement = null;
+	//resultSet = null;
+	
+	
+	try
+	{
+		if(getUser(email).getEmail() == null)
+		{
+			Connection connection = ConnectionManager.getConnection();
+			
+			pstatement = connection.prepareStatement("INSERT INTO Users (email, name, phoneNum, password, isMember, isAdmin) VALUES (?, ?, ?, ?, ?, ?)");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, email);
+			pstatement.setString(2, name);
+			pstatement.setString(3, phoneNumber);
+			pstatement.setString(4, "BobRoss");
+			pstatement.setBoolean(5, isMember);
+			pstatement.setBoolean(6, isAdmin);
+			
+			result = pstatement.executeUpdate();
+			
+			// ensure statement and connection are closed properly                                      
+			//resultSet.close();                                      
+			pstatement.close();                                      
+			connection.close();                       
+		}
+		
+		else
+		{
+		
+			System.out.println("Error in insertUser(...). User already exists.");
+		
+		}
+		
+	}
+	
+	catch(SQLException sqle)
+	{
+	
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+	
+	}
+
+}
+	
+//=============================================================================
+	
 	public void insertUsers( List<User> userList)
 	{
 		
@@ -914,6 +971,188 @@ public class UserDAO
 		
 	}
 	*/
+	
+//=============================================================================
+	
+	public void updateUser(String email, String name, String phoneNumber, 
+							boolean isMember, boolean isAdmin)
+	{
+		
+		PreparedStatement 	pstatement;
+		int					result;
+		byte				trueFalseByte;
+		
+		pstatement = null;
+		trueFalseByte = 0;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Users U " + 
+													"Set U.name = ? " + 
+													"Where U.email = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, name);
+			pstatement.setString(2, email);
+			
+			result = pstatement.executeUpdate();
+
+//--------------------			
+
+			pstatement = connection.prepareStatement("Update Users U " + 
+													"Set U.phoneNum = ? " + 
+													"Where U.email = ?; ");
+
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, phoneNumber);
+			pstatement.setString(2, email);
+			
+			result = pstatement.executeUpdate();
+
+//---------------------------
+			
+			pstatement = connection.prepareStatement("Update Users U " + 
+													"Set U.isMember = ? " + 
+													"Where U.email = ?; ");
+
+			
+			if(true == isMember)
+			{
+				
+				trueFalseByte = 1;
+				
+			}
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setByte(1, trueFalseByte);
+			pstatement.setString(2, email);
+			
+			result = pstatement.executeUpdate();
+			
+//---------------------------
+			
+			pstatement = connection.prepareStatement("Update Users U " + 
+													"Set U.isAdmin = ? " + 
+													"Where U.email = ?; ");
+
+			
+			if(true == isAdmin)
+			{
+				
+				trueFalseByte = 1;
+				
+			}
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setByte(1, trueFalseByte);
+			pstatement.setString(2, email);
+			
+			result = pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//=============================================================================
+	
+	public void updateUserPassword(String email, String password)
+	{
+		
+		PreparedStatement 	pstatement;
+		int					result;
+		byte				trueFalseByte;
+		
+		pstatement = null;
+		trueFalseByte = 0;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Users U " + 
+													"Set U.password = ? " + 
+													"Where U.email = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, password);
+			pstatement.setString(2, email);
+			
+			result = pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+		
+	}
+	
+//============================================================================
+	
+	public void updateUserPlan(String email, int planID)
+	{
+		
+		PreparedStatement 	pstatement;
+		int					result;
+		byte				trueFalseByte;
+		
+		pstatement = null;
+		trueFalseByte = 0;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Has_Plan HP " + 
+													"Set HP.planID = ? " + 
+													"Where HP.email = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, planID);
+			pstatement.setString(2, email);
+			
+			result = pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
 //=============================================================================
 
 	public List<String> getAllUserEmails()
