@@ -1176,7 +1176,248 @@ public class UserDAO
 
 //============================================================================
 
+	public void insertIntoToLivesAt_1(String email,String street, int zip)
+	{
 
+		PreparedStatement 	pstatement;
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("INSERT INTO lives_at1 (email, street, zip) VALUES (?, ?, ?)");
+
+			//Filling the '?' in pstatement
+			pstatement.clearParameters();
+			pstatement.setString(1, email);
+			pstatement.setString(2, street);
+			pstatement.setInt(3, zip);
+			
+			pstatement.executeUpdate();
+			
+			                                 
+			//Close the connections                                  
+			pstatement.close();                                      
+			connection.close();                     
+			
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		}
+	}
+//=============================================================================
+	public void insertIntoAddresses(String street, int zip, String city, String state)
+	{
+		PreparedStatement 	pstatement;
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("INSERT INTO addresses (street, zip, city, state) VALUES (?, ?, ?, ?)");
+
+			//Filling the '?' in pstatement
+			pstatement.clearParameters();
+			pstatement.setString(1, street);
+			pstatement.setInt(2, zip);
+			pstatement.setString(3, city);
+			pstatement.setString(4, state);
+			
+			pstatement.executeUpdate();
+			
+			                                 
+			//Close the connections                                  
+			pstatement.close();                                      
+			connection.close();                     
+			
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		}
+	}
+//=============================================================================
+	public boolean isAddress(String street, int zip)
+	{
+		PreparedStatement 	pstatement;
+		pstatement = null;
+		ResultSet rs;
+		rs= null;
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("SELECT * FROM addresses A WHERE A.street = ? AND A.zip = ? ");
+			
+			pstatement.setString(1, street);
+			pstatement.setInt(2, zip);
+			
+			rs = pstatement.executeQuery();
+			
+			//this checks if the result set is empty or not
+			//if empty return false, else return true (found the address)
+			if(rs.next()==false)
+			{
+				rs.close();
+				pstatement.close();
+				connection.close();
+				
+				return false;
+			}
+			else
+			{
+				rs.close();
+				pstatement.close();
+				connection.close();
+				return true;
+			}
+			
+			
+			
+			
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+			return false;
+		}
+	}
+	
+//============================================================================
+
+	public void updateUserEmail(String oldEmail, String newEmail)
+	{
+		
+		PreparedStatement 	pstatement;
+		int					result;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Users U " + 
+													"Set U.email = ? " + 
+													"Where U.email = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, newEmail);
+			pstatement.setString(2, oldEmail);
+			
+			result = pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//=============================================================================
+	
+	public void updateAddress(String oldStreet, int oldZip, String newStreet, int newZip,
+							String city, String state)
+	{
+		
+		PreparedStatement 	pstatement;
+		int					result;
+		byte				trueFalseByte;
+		
+		pstatement = null;
+		trueFalseByte = 0;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Addresses A " + 
+													"Set A.state = ? " + 
+													"Where A.street = ?"+
+													"AND A.zip = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, state);
+			pstatement.setString(2, oldStreet);
+			pstatement.setInt(3, oldZip);
+			
+			result = pstatement.executeUpdate();
+
+//--------------------			
+
+			pstatement = connection.prepareStatement("Update Addresses A " + 
+													"Set A.city = ? " + 
+													"Where A.street = ?"+
+													"AND A.zip = ?; ");
+
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, city);
+			pstatement.setString(2, oldStreet);
+			pstatement.setInt(3, oldZip);
+			
+			result = pstatement.executeUpdate();
+
+//---------------------------
+			
+			pstatement = connection.prepareStatement("Update Addresses A " + 
+														"Set A.zip = ? " + 
+														"Where A.street = ?"+
+														"AND A.zip = ?; ");
+
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, newZip);
+			pstatement.setString(2, oldStreet);
+			pstatement.setInt(3, oldZip);
+			
+			result = pstatement.executeUpdate();
+			
+//---------------------------
+			
+			pstatement = connection.prepareStatement("Update Addresses A " + 
+													"Set A.street = ? " + 
+													"Where A.street = ?"+
+													"AND A.zip = ?; ");
+
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, newStreet);
+			pstatement.setString(2, oldStreet);
+			pstatement.setInt(3, newZip);
+
+			result = pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//=============================================================================
 	
 	
 	

@@ -68,7 +68,7 @@ CREATE TABLE Lives_At1(
     street	VARCHAR(30),
     zip		INTEGER,
     PRIMARY KEY(email,street,zip),
-    FOREIGN KEY(email) REFERENCES Users(email),
+    FOREIGN KEY(email) REFERENCES Users(email)ON UPDATE CASCADE,
     FOREIGN KEY(street,zip) REFERENCES Addresses(street,zip)ON DELETE CASCADE ON UPDATE CASCADE);
     
 CREATE TABLE Won(

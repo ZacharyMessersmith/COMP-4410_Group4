@@ -83,9 +83,22 @@ class Project1TestUserLauncher
 		System.out.println("Created UserDAO");
 		
 		
-		System.out.println("Testing updating a users password");
+		//userDAO.insertIntoAddresses("555 Testing Ave.", 55555, "TestingCity", "WV");
+		//userDAO.insertIntoToLivesAt_1("TestUser1-1@email.com", "555 Testing Ave.", 55555);
+		
+		System.out.println("Testing updating a users email");
+		userDAO.updateAddress("555 Testing Ave.", 55555 , "556 Testing Road.", 55556,
+									"TestingOasis", "VA");
+		System.out.println("Done Testing updating a uers email");
+		
+		/*System.out.println("Testing updating a users email");
+		userDAO.updateUserEmail("TestUser1-1@email.com", "TestUser1@email.com" );
+		System.out.println("Done Testing updating a uers email");*/
+		
+		
+		/*System.out.println("Testing updating a users password");
 		userDAO.updateUserPassword("TestUser1@email.com", "BobRoss" );
-		System.out.println("Done Testing updating a uers password");
+		System.out.println("Done Testing updating a uers password");*/
 		
 		/*
 		System.out.println("Testing updating a user plan");
