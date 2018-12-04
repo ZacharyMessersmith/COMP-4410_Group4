@@ -21,6 +21,7 @@ import com.databaseProject.DAOs.MediaDAO;
 import com.databaseProject.DAOs.RentalDAO;
 import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Dialogs.AdminMediaDialog;
+import com.databaseProject.Dialogs.ReturnMediaDialog;
 import com.databaseProject.Dialogs.UserDialog;
 import com.databaseProject.Dialogs.UserMediaDialog;
 import com.databaseProject.Pojos.Media;
@@ -134,10 +135,11 @@ public class AdminPanel extends JRootPane
 					inventory =	Integer.parseInt(inv);
 					// need to update the database here
 					selectedMedia.setNumCopiesAvailable(inventory);
+					mediaDao.updateMediaInventory(selectedMedia.getMediaID(), selectedMedia.getNumCopiesAvailable());
 					}
 				}
 			else
-				new UserMediaDialog(selectedMedia, false);
+				new UserMediaDialog(selectedMedia, false, null);
 			}
 		else if (e.getButton() == MouseEvent.BUTTON3)
 			{
@@ -218,6 +220,17 @@ public class AdminPanel extends JRootPane
 		selectedMedia = tableModel.getMediaAt(selectedRow);
 		mediaDao.deleteMedia(selectedMedia);
 		showMediaBox.setSelectedItem(showMediaBox.getSelectedItem());
+		}
+	else if (ae.getActionCommand().equals("RETURN_MEDIA")) 
+		{
+		MediaInfoTableModel		tableModel;
+		Media					selectedMedia;
+		int						selectedRow;
+		
+		selectedRow = mediaInfoTable.getSelectedRow();
+		tableModel = (MediaInfoTableModel)(mediaInfoTable.getModel());
+		selectedMedia = tableModel.getMediaAt(selectedRow);
+		new ReturnMediaDialog(selectedMedia, this);
 		}
 	else if (ae.getActionCommand().equals("VIEW_MEMBERS"))
 		{
@@ -382,6 +395,10 @@ public class AdminPanel extends JRootPane
 	mediaInfoTable.setColumnModel(getMediaColumnModel());
 	
 	mediaInfoPopup = new JPopupMenu();
+	item = new JMenuItem("Process Return");
+	item.addActionListener(this);
+	item.setActionCommand("RETURN_MEDIA");
+	mediaInfoPopup.add(item);
 	item = new JMenuItem("Edit");
 	item.addActionListener(this);
 	item.setActionCommand("EDIT_MEDIA");

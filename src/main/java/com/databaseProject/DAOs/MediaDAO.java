@@ -1355,12 +1355,10 @@ public class MediaDAO
 		
 		try
 		{
-			
 			Connection connection = ConnectionManager.getConnection();
 			pstatement = connection.prepareStatement("Update Media M " + 
 													"Set M.numCopiesAvailable = ? " + 
-													"Where M.mediaId = ?; ");
-			
+													"Where M.mediaId = ?; ");	
 			// instantiate parameters
 			pstatement.clearParameters();
 			pstatement.setInt(1, numOfCopiesAvailable);

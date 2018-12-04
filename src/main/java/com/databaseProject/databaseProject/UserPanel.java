@@ -145,7 +145,8 @@ public class UserPanel extends JRootPane
 	searchByLabel.setMinimumSize(new Dimension(100, 0));
 	
 	numRentalsAvailableLabel = new JLabel("Number of Rentals Available: 0", SwingConstants.RIGHT);
-	updateNumRentalsAvailableLabel(user.getMaxNumRentals()-user.getCurrentNumRentals());
+	System.out.println("maxNumRentals: " + user.getMaxNumRentals());
+	updateNumRentalsAvailableLabel(user.getNumRentalsAvailable());
 		
 	buttonPanel = new JPanel();
 	GroupLayout layout = new GroupLayout(buttonPanel);
@@ -473,7 +474,7 @@ public class UserPanel extends JRootPane
 		
 		if (e.getClickCount() == 2)
 			{
-			new UserMediaDialog(selectedRental.getMedia(), true);
+			new UserMediaDialog(selectedRental.getMedia(), true, this);
 			}
 		}
 	else if (e.getSource() == searchResultsTable)
@@ -495,14 +496,14 @@ public class UserPanel extends JRootPane
 		
 		if (e.getClickCount() == 2)
 			{
-			new UserMediaDialog(selectedRental, true);
+			new UserMediaDialog(selectedRental, true, this);
 			}
 		}
 	}
 	
 	/////////////////////////////////////////////////////////////////////////////////////////////////
 	
-	void	updateNumRentalsAvailableLabel(int numAvailable)
+	public void	updateNumRentalsAvailableLabel(int numAvailable)
 	{
 	numRentalsAvailableLabel.setText("Number of Rentals Available: " + numAvailable);
 	}
@@ -531,6 +532,11 @@ public class UserPanel extends JRootPane
 	menuSearch.setEnabled(true);
 	
 	return menuBar;
+	}
+	
+	public User getUser()
+	{
+	return this.user;
 	}
 	
 	public void mouseReleased(MouseEvent e)

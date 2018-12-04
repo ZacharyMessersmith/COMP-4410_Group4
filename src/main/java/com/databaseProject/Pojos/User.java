@@ -15,7 +15,7 @@ public class User
 	private int		zipCode;
 	private int		maxNumRentals;
 	private List<Media>	currentRentals;
-	private int		currentNumRentals;
+	private int		numRentalsAvailable; //number of rentals available
 	private	boolean	isAdmin;
 	private	boolean	isUser;
 	private String	plan;
@@ -67,7 +67,7 @@ public class User
 		isAdmin = false;
 		isUser = false;
 		maxNumRentals = 0;
-		currentNumRentals = 0;
+		numRentalsAvailable = 0;
 		currentRentals = new ArrayList<Media>();
 		plan = null;
 		
@@ -99,7 +99,7 @@ public class User
 
 	boolean	isAtRentalMax()
 	{
-	if (currentNumRentals < currentRentals.size())
+	if (numRentalsAvailable < currentRentals.size())
 		return false;
 	else
 		return true;
@@ -109,7 +109,7 @@ public class User
 	void	rentMedia(Media media)
 	{
 	currentRentals.add(media);
-	currentNumRentals++;
+	numRentalsAvailable++;
 	//Update database
 	}
 	
@@ -119,7 +119,7 @@ public class User
 	if (currentRentals.contains(media))
 		{
 		currentRentals.remove(media); // Not sure if this will work
-		currentNumRentals--;
+		numRentalsAvailable--;
 		//Update database
 		}
 	else
@@ -228,14 +228,14 @@ public class User
 	this.currentRentals = currentRentals;
 	}
 	
-	public int getCurrentNumRentals()
+	public int getNumRentalsAvailable()
 	{
-	return currentNumRentals;
+	return numRentalsAvailable;
 	}
 	
-	public void setCurrentNumRentals(int currentNumRentals)
+	public void setNumRentalsAvailable(int currentNumRentals)
 	{
-	this.currentNumRentals = currentNumRentals;
+	this.numRentalsAvailable = currentNumRentals;
 	}
 		
 }

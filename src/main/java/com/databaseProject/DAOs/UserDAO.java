@@ -135,7 +135,7 @@ public class UserDAO
 		{
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("INSERT INTO Users (email, name, phoneNum, password, isMember, isAdmin) VALUES (?, ?, ?, ?, ?, ?)");
+			pstatement = connection.prepareStatement("INSERT INTO Users (email, name, phoneNum, password, isMember, isAdmin, numRentalsAvailable) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
 			// instantiate parameters
 			pstatement.clearParameters();
@@ -157,6 +157,8 @@ public class UserDAO
 				trueFalseByte = 0;
 			
 			pstatement.setByte(6, trueFalseByte);
+			
+			pstatement.setInt(7, getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
 			
 			pstatement.executeUpdate();
 			
@@ -411,6 +413,7 @@ public class UserDAO
 				user.setPassword(resultSet.getString("password"));
 				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
 				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				user.setNumRentalsAvailable(resultSet.getInt("numRentalsAvailable"));
 				
 				setUserAddress(user);
 				
@@ -447,7 +450,6 @@ public class UserDAO
 	//gets a users information
 	public User getUser(String email, String password)
 	{
-		
 		User 				user;
 		PreparedStatement 	pstatement;
 		ResultSet 			resultSet;
@@ -478,6 +480,7 @@ public class UserDAO
 				user.setPassword(resultSet.getString("password"));
 				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
 				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				user.setNumRentalsAvailable(resultSet.getInt("numRentalsAvailable"));
 				
 				setUserAddress(user);
 				
@@ -572,6 +575,7 @@ public class UserDAO
 				user.setPassword(resultSet.getString("password"));
 				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
 				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				user.setNumRentalsAvailable(resultSet.getInt("numRentalsAvailable"));
 				
 				setUserAddress(user);
 				
@@ -644,6 +648,7 @@ public class UserDAO
 				user.setPassword(resultSet.getString("password"));
 				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
 				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				user.setNumRentalsAvailable(resultSet.getInt("numRentalsAvailable"));
 				
 				setUserAddress(user);
 				
@@ -931,8 +936,8 @@ public class UserDAO
 			Connection connection = ConnectionManager.getConnection();
 				
 			pstatement = connection.prepareStatement("Update Users U "
-					+ "Set U.name = ?, U.phoneNum = ?, U.isMember = ?, U.isAdmin = ?, U.password = ? "
-					+ "Where U.email = ?; ");
+					+ "Set U.name = ?, U.phoneNum = ?, U.isMember = ?, U.isAdmin = ?, U.password = ?, "
+					+ "U.numRentalsAvailable = ? Where U.email = ? ");
 
 			// instantiate parameters
 			pstatement.clearParameters();
@@ -943,6 +948,7 @@ public class UserDAO
 			pstatement.setInt(index++, isMember);
 			pstatement.setInt(index++, isAdmin);
 			pstatement.setString(index++, user.getPassword());
+			pstatement.setInt(index++, user.getNumRentalsAvailable());
 			pstatement.setString(index++, user.getEmail());
 			
 			pstatement.executeUpdate();
@@ -1002,6 +1008,42 @@ public class UserDAO
 	
 //============================================================================
 	
+	public void updateNumberOfAvailableRentalsForUser(User user)
+	{
+		
+		PreparedStatement 	pstatement;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Users U Set U.numRentalsAvailable = ? Where U.email = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, user.getNumRentalsAvailable());
+			pstatement.setString(2, user.getEmail());
+			
+			pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+		
+	}
+	
+//============================================================================
+	
 	public void updateUserPlan(String email, int planID)
 	{
 		
@@ -1013,9 +1055,7 @@ public class UserDAO
 		{
 			Connection connection = ConnectionManager.getConnection();
 				
-			pstatement = connection.prepareStatement("Update Has_Plan HP " + 
-													"Set HP.planID = ? " + 
-													"Where HP.email = ?; ");
+			pstatement = connection.prepareStatement("Update Has_Plan HP Set HP.planID = ? Where HP.email = ?; ");
 
 			// instantiate parameters
 			pstatement.clearParameters();
@@ -1259,138 +1299,8 @@ public class UserDAO
 	}
 	
 //============================================================================
-
-//	public void updateUserEmail(String oldEmail, String newEmail)
-//	{
-//		
-//		PreparedStatement 	pstatement;
-//		int					result;
-//		
-//		pstatement = null;
-//		
-//		try
-//		{
-//			Connection connection = ConnectionManager.getConnection();
-//				
-//			pstatement = connection.prepareStatement("Update Users U " + 
-//													"Set U.email = ? " + 
-//													"Where U.email = ?; ");
-//
-//			// instantiate parameters
-//			pstatement.clearParameters();
-//			pstatement.setString(1, newEmail);
-//			pstatement.setString(2, oldEmail);
-//			
-//			result = pstatement.executeUpdate();
-//			
-//			pstatement.close();             
-//			connection.close();
-//			
-//		}
-//		
-//		catch(SQLException sqle)
-//		{
-//			
-//			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-//			
-//		}
-//		
-//	}
 	
-//=============================================================================
-	
-	public void updateAddress(String oldStreet, int oldZip, String newStreet, int newZip,
-							String city, String state)
-	{
-		
-		PreparedStatement 	pstatement;
-		int					result;
-		byte				trueFalseByte;
-		
-		pstatement = null;
-		trueFalseByte = 0;
-		
-		try
-		{
-			Connection connection = ConnectionManager.getConnection();
-				
-			pstatement = connection.prepareStatement("Update Addresses A " + 
-													"Set A.state = ? " + 
-													"Where A.street = ?"+
-													"AND A.zip = ?; ");
 
-			// instantiate parameters
-			pstatement.clearParameters();
-			pstatement.setString(1, state);
-			pstatement.setString(2, oldStreet);
-			pstatement.setInt(3, oldZip);
-			
-			result = pstatement.executeUpdate();
-
-//--------------------			
-
-			pstatement = connection.prepareStatement("Update Addresses A " + 
-													"Set A.city = ? " + 
-													"Where A.street = ?"+
-													"AND A.zip = ?; ");
-
-
-			// instantiate parameters
-			pstatement.clearParameters();
-			pstatement.setString(1, city);
-			pstatement.setString(2, oldStreet);
-			pstatement.setInt(3, oldZip);
-			
-			result = pstatement.executeUpdate();
-
-//---------------------------
-			
-			pstatement = connection.prepareStatement("Update Addresses A " + 
-														"Set A.zip = ? " + 
-														"Where A.street = ?"+
-														"AND A.zip = ?; ");
-
-
-			// instantiate parameters
-			pstatement.clearParameters();
-			pstatement.setInt(1, newZip);
-			pstatement.setString(2, oldStreet);
-			pstatement.setInt(3, oldZip);
-			
-			result = pstatement.executeUpdate();
-			
-//---------------------------
-			
-			pstatement = connection.prepareStatement("Update Addresses A " + 
-													"Set A.street = ? " + 
-													"Where A.street = ?"+
-													"AND A.zip = ?; ");
-
-
-			// instantiate parameters
-			pstatement.clearParameters();
-			pstatement.setString(1, newStreet);
-			pstatement.setString(2, oldStreet);
-			pstatement.setInt(3, newZip);
-
-			result = pstatement.executeUpdate();
-			
-			pstatement.close();             
-			connection.close();
-			
-		}
-		
-		catch(SQLException sqle)
-		{
-			
-			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
-		}
-		
-	}
-	
-//=============================================================================
-	
 	
 	
 	
