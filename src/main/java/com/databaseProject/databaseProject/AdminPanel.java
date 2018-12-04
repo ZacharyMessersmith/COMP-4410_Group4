@@ -308,6 +308,27 @@ public class AdminPanel extends JRootPane
 	memberInfoTable.setColumnModel(getMemberColumnModel());
 	}
 	
+	public void updateRentalInfoDisplay()
+	{
+	List<Rental>	rentalList;
+	DefaultListModel<Rental>	rentalListModel;		
+	AdminRentalInfoTableModel	tableModel;
+	
+	rentalList = rentalDao.getRentalsWithinLast24Hours();
+	
+	rentalListModel = new DefaultListModel<Rental>();
+	for (Rental rental : rentalList)
+		{
+		rentalListModel.addElement(rental);
+		}
+
+	tableModel = new AdminRentalInfoTableModel(rentalListModel);
+	
+	rentalInfoTable = new JTable(tableModel);
+	rentalInfoTable.setColumnModel(getRentalColumnModel());
+	}
+	
+	
 	JPanel	createMemberInfoPanel()
 	{
 	JPanel	infoPanel;

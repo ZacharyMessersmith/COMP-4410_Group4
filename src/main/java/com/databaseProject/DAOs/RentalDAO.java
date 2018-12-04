@@ -26,6 +26,122 @@ public class RentalDAO
 		
 	}
 	
+	public void insertRental(Rental rental)
+	{
+		PreparedStatement 	pstatement;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("INSERT INTO Rental_Info (checkoutDate, dueDate, email, mediaID) " 
+					+ "VALUES (?, ?, ?, ?)");
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setDate(1, rental.getDateRented());
+			pstatement.setDate(2, rental.getDueDate());
+			pstatement.setString(3, rental.getUser().getEmail());
+			pstatement.setInt(4, rental.getMedia().getMediaID());
+			
+			pstatement.executeUpdate();
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+	}
+	
+	public void returnRental(Rental rental)
+	{
+	PreparedStatement 	pstatement;
+	
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("UPDATE Rental_Info SET returnedDate = ? WHERE rentalID = ?"); 
+			
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setDate(1, rental.getDateReturned());
+			pstatement.setInt(2, rental.getRentalID());
+		
+			pstatement.executeUpdate();
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
+	}
+	
+	public Rental getUnreturnedRentalForUser(User user, Media media)
+	{
+	PreparedStatement pstatement;
+	ResultSet		resultSet;
+	Rental			rental;
+	List<Rental>	rentalList;
+	
+	pstatement = null;
+	rentalList = new ArrayList<Rental>();
+	
+	try
+	{
+		Connection connection = ConnectionManager.getConnection();
+	
+		pstatement = connection.prepareStatement("SELECT RI.* "
+				+ "FROM Rental_Info RI, Users U, Media M "
+				+ "WHERE U.email = ? AND U.email = RI.email AND M.mediaID = ? AND M.mediaID = RI.mediaID "
+				+ "AND RI.returnedDate IS NULL");
+		
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setString(1, user.getEmail());
+		pstatement.setInt(2, media.getMediaID());
+		
+		resultSet = pstatement.executeQuery();
+
+		while ( resultSet.next() ) 
+		{
+			
+			rental = new Rental();
+			rental.setDateRented(resultSet.getDate("checkoutDate"));
+			rental.setDateReturned(resultSet.getDate("returnedDate"));
+			rental.setDueDate(resultSet.getDate("dueDate"));
+			rental.setRentalID(resultSet.getInt("rentalID"));
+			rental.setUser(user);
+			rental.setMedia(media);
+			rentalList.add(rental);
+			
+		} 
+		
+		resultSet.close();                                      
+		pstatement.close();                                      
+		connection.close();                       
+		
+		if (rentalList.size() > 0)
+			return rentalList.get(0);
+		else
+			return null;
+	}
+	
+	catch(SQLException sqle)
+	{
+		
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		return null;
+		
+	}
+
+	}
+	
+	
 	public List<Rental> getRentalsWithinLast24Hours()
 	{
 		
@@ -199,12 +315,8 @@ public class RentalDAO
 			return rentalList;
 			
 		}
-		
-		
-		
-		
-		
-	}
+
+	}	
 	
 //=============================================================================
 
