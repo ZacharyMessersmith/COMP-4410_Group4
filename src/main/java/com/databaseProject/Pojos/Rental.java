@@ -8,23 +8,25 @@ public class	Rental
 	private Media	media;
 	private	Date	dateRented;
 	private	Date	dateReturned;
-	
-	public Rental(User user, Media media, Date dateRented, Date dateReturned)
+	private Date	dueDate;
+	private int		rentalID;
+
+	public Rental(User user, Media media, Date dateRented, Date dateReturned, Date dueDate)
 	{
 	this.user = user;
 	this.media = media;
 	this.dateRented = dateRented;
 	this.dateReturned = dateReturned;
+	this.dueDate = dueDate;
 	}
 	
 	public Rental()
 	{
-		
-		user = null;
-		media = null;
-		dateRented = null;
-		dateReturned = null;
-		
+	user = null;
+	media = null;
+	dateRented = null;
+	dateReturned = null;
+	dueDate = null;
 	}
 
 	public User getUser()
@@ -66,5 +68,26 @@ public class	Rental
 	{
 	this.dateReturned = dateReturned;
 	}
+	
+	public Date getDueDate()
+	{
+	return dueDate;
+	}
+
+	public void setDueDate(Date dueDate)
+	{
+	this.dueDate = dueDate;
+	}
+	
+	public int getRentalID()
+	{
+	return rentalID;
+	}
+
+	public void setRentalID(int rentalID)
+	{
+	this.rentalID = rentalID;
+	}
+
 
 }

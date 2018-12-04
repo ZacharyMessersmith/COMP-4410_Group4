@@ -2,6 +2,7 @@ package com.databaseProject.Dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 import java.util.*;
 import java.util.List;
 
@@ -14,9 +15,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.databaseProject.DAOs.MediaDAO;
+import com.databaseProject.DAOs.RentalDAO;
 import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.DAOs.WorkerDAO;
 import com.databaseProject.Pojos.Media;
+import com.databaseProject.Pojos.Rental;
 import com.databaseProject.Pojos.User;
 import com.databaseProject.databaseProject.UserPanel;
 
@@ -295,14 +298,30 @@ public class UserMediaDialog extends JDialog
 	{
 	MediaDAO	mediaDao;
 	UserDAO		userDao;
+	RentalDAO	rentalDao;
 	
 	mediaDao = new MediaDAO();
 	userDao = new UserDAO();
+	rentalDao = new RentalDAO();
 	
 	if (ae.getActionCommand().equals("CLOSE"))
 		dispose();
 	if (ae.getActionCommand().equals("RENT"))
 		{
+		Date	nowDate;
+		Date	dueDate;
+		Rental	rental;	
+		
+		nowDate = new Date(System.currentTimeMillis());
+		dueDate = new Date(System.currentTimeMillis() + 1210000000); // two weeks
+		
+		rental = new Rental();
+		rental.setUser(user);
+		rental.setMedia(media);
+		rental.setDateRented(nowDate);
+		rental.setDueDate(dueDate);
+		
+		rentalDao.insertRental(rental);
 		user.setNumRentalsAvailable(user.getNumRentalsAvailable() - 1); 
 		mediaDao.updateMediaInventory(media.getMediaID(), media.getNumCopiesAvailable()-1);
 		userDao.updateNumberOfAvailableRentalsForUser(user);

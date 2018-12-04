@@ -2,6 +2,7 @@ package com.databaseProject.Dialogs;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
@@ -10,8 +11,10 @@ import java.awt.*;
 import java.util.List;
 
 import com.databaseProject.DAOs.MediaDAO;
+import com.databaseProject.DAOs.RentalDAO;
 import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Pojos.Media;
+import com.databaseProject.Pojos.Rental;
 import com.databaseProject.Pojos.User;
 import com.databaseProject.databaseProject.AdminPanel;
 import com.databaseProject.databaseProject.MainJFrame;
@@ -26,6 +29,7 @@ public class ReturnMediaDialog extends JDialog
 	
 	UserDAO		userDao;
 	MediaDAO	mediaDao;
+	RentalDAO	rentalDao;
 	
 	Media		media;
 	AdminPanel	parent;
@@ -42,6 +46,7 @@ public class ReturnMediaDialog extends JDialog
 	
 	userDao = new UserDAO();
 	mediaDao = new MediaDAO();
+	rentalDao = new RentalDAO();
 	
 	this.media = media;
 	this.parent = parent;
@@ -110,21 +115,35 @@ public class ReturnMediaDialog extends JDialog
 		{
 		User	user;
 		String	email;
+		Rental	unreturnedRental;
+		Date	nowDate;
 		
 		email = (String)emailDropdown.getSelectedItem();
-		
+	
 		user = userDao.getUser(email);
-		if (user.getNumRentalsAvailable() < user.getMaxNumRentals())
-			{
-			user.setNumRentalsAvailable(user.getNumRentalsAvailable() + 1);
-			userDao.updateNumberOfAvailableRentalsForUser(user);	
-			}
 		
-		//media.setNumCopiesAvailable(Integer.parseInt(inventoryBox.getText().trim()));
-		media.setNumCopiesAvailable(media.getNumCopiesAvailable() + 1);
-		mediaDao.updateMediaInventory(media.getMediaID(), media.getNumCopiesAvailable());
-		parent.showMediaBox.setSelectedItem(parent.showMediaBox.getSelectedItem());
-		dispose();
+		unreturnedRental = rentalDao.getUnreturnedRentalForUser(user, media);
+		nowDate = new Date(System.currentTimeMillis());
+		if (unreturnedRental != null)
+			{
+			unreturnedRental.setDateReturned(nowDate);
+			rentalDao.returnRental(unreturnedRental);
+			
+			if (user.getNumRentalsAvailable() < user.getMaxNumRentals())
+				{
+				user.setNumRentalsAvailable(user.getNumRentalsAvailable() + 1);
+				userDao.updateNumberOfAvailableRentalsForUser(user);	
+				}
+			
+			//media.setNumCopiesAvailable(Integer.parseInt(inventoryBox.getText().trim()));
+			media.setNumCopiesAvailable(media.getNumCopiesAvailable() + 1);
+			mediaDao.updateMediaInventory(media.getMediaID(), media.getNumCopiesAvailable());
+			parent.showMediaBox.setSelectedItem(parent.showMediaBox.getSelectedItem());
+			parent.updateRentalInfoDisplay();
+			dispose();
+			}
+		else
+			JOptionPane.showMessageDialog(null, "This user does not have this title checked out.", "Error", JOptionPane.ERROR_MESSAGE); 
 		}
 	else if (ae.getActionCommand().equals("CANCEL"))
 		dispose();
