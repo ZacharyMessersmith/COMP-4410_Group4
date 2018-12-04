@@ -448,7 +448,7 @@ public class UserPanel extends JRootPane
 		}
 	else if (e.getSource() == menuEditProfile)
 		{
-		new UserDialog(user, false);
+		new UserDialog(user, false, null);
 		}
 	else if (e.getSource() == menuSearch)
 		{

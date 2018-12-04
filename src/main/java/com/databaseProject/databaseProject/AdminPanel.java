@@ -98,7 +98,7 @@ public class AdminPanel extends JRootPane
 		selectedUser = tableModel.getUserAt(rowIndex);
 		
 		if (e.getClickCount() == 2)
-			new UserDialog(selectedUser, true);
+			new UserDialog(selectedUser, true, this);
 		else if (e.getButton() == MouseEvent.BUTTON3)
 			{
 			memberInfoTable.setRowSelectionInterval(rowIndex, rowIndex);
@@ -153,7 +153,7 @@ public class AdminPanel extends JRootPane
 	{
 	if (ae.getActionCommand().equals("CREATE_USER"))
 		{
-		new UserDialog();
+		new UserDialog(this);
 		}
 	else if (ae.getActionCommand().equals("EDIT_USER"))
 		{
@@ -164,7 +164,7 @@ public class AdminPanel extends JRootPane
 		selectedRow = memberInfoTable.getSelectedRow();
 		tableModel = (MemberInfoTableModel)(memberInfoTable.getModel());
 		selectedUser = tableModel.getUserAt(selectedRow);
-		new UserDialog(selectedUser, true);
+		new UserDialog(selectedUser, true, this);
 		}
 	else if (ae.getActionCommand().equals("DELETE_USER"))
 		{
@@ -273,6 +273,26 @@ public class AdminPanel extends JRootPane
 			}
 		}
 
+	}
+	
+	public void	updateUserDisplay()
+	{
+	MemberInfoTableModel	tableModel;
+	List<User>				userList;
+	DefaultListModel<User>	userListModel;
+	
+	userList = userDao.getAllUsers();
+	
+	userListModel = new DefaultListModel<User>();
+	for (User user : userList)
+		{
+		userListModel.addElement(user);
+		}
+
+	tableModel = new MemberInfoTableModel(userListModel);
+	
+	memberInfoTable.setModel(tableModel);
+	memberInfoTable.setColumnModel(getMemberColumnModel());
 	}
 	
 	JPanel	createMemberInfoPanel()
