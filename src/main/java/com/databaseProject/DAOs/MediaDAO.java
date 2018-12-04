@@ -1254,10 +1254,8 @@ public class MediaDAO
 	
 //=============================================================================
 	
-	public void updateMedia(int mediaID, Date releaseDate, 
-							int numOfCopiesAvailable, String genre)
-	{
-		
+	public void updateMedia(Media media)
+	{	
 		PreparedStatement 	pstatement;
 		int					result;
 		
@@ -1268,36 +1266,99 @@ public class MediaDAO
 			Connection connection = ConnectionManager.getConnection();
 				
 			pstatement = connection.prepareStatement("Update Media M " + 
-													"Set M.genre = ? " + 
+					"Set M.genre = ?, M.releaseDate = ?, M.title = ?, M.numCopiesAvailable = ? " + 
 													"Where M.mediaId = ?; ");
 
 			// instantiate parameters
 			pstatement.clearParameters();
-			pstatement.setString(1, genre);
-			pstatement.setInt(2, mediaID);
+			pstatement.setString(1, media.getGenre());
+			pstatement.setDate(2, media.getReleaseDate());
+			pstatement.setString(3, media.getTitle());
+			pstatement.setInt(4, media.getNumCopiesAvailable());
+			pstatement.setInt(5, media.getMediaID());
 			
 			result = pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();	
+			
+			if (media.getMediaType() == 'g')
+				updateGame(media);
+			else
+				updateMovie(media);
+		}
+		
+		catch(SQLException sqle)
+		{
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());		
+		}
+		
+	}
+	
+//=============================================================================
 
-//--------------------			
+	public void updateMovie(Media media)
+	{
+		PreparedStatement 	pstatement;
+		WorkerDAO			workerDao;
+		
+		pstatement = null;
+		workerDao = new WorkerDAO();
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("DELETE FROM Works_On WHERE movieID = ?");
 
-			pstatement = connection.prepareStatement("Update Media M " + 
-													"Set M.releaseDate = ? " + 
-													"Where M.mediaId = ?; ");
-
-
-			// instantiate parameters
 			pstatement.clearParameters();
-			pstatement.setDate(1, releaseDate);
-			pstatement.setInt(2, mediaID);
+			pstatement.setInt(1, media.getMediaID());
 			
-			result = pstatement.executeUpdate();
+			pstatement.executeUpdate();
+			
+			pstatement = connection.prepareStatement("DELETE FROM Sequel WHERE prequelID = ?");
 
-//---------------------------
+			pstatement.clearParameters();
+			pstatement.setInt(1, media.getMediaID());
 			
+			pstatement.executeUpdate();
+			
+			pstatement = connection.prepareStatement("DELETE FROM Won WHERE movieID = ?");
+
+			pstatement.clearParameters();
+			pstatement.setInt(1, media.getMediaID());
+			
+			pstatement.executeUpdate();
+			pstatement.close();             
+			connection.close();	
+			
+			workerDao.insertWorks_On(media.getDirectorList(), media.getMediaID());
+			workerDao.insertWorks_On(media.getCastList(), media.getMediaID());
+			insertSequelList(media.getSequelsList(), media.getMediaID());
+			insertWonList(media.getAwardsList(), media.getMediaID());
+		}
+		
+		catch(SQLException sqle)
+		{
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());	
+		}
+	}
+	
+//=============================================================================
+	
+	public void updateMediaInventory(int mediaID, int numOfCopiesAvailable)
+	{
+		PreparedStatement 	pstatement;
+		int					result;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
 			pstatement = connection.prepareStatement("Update Media M " + 
 													"Set M.numCopiesAvailable = ? " + 
-													"Where M.mediaId = ?; ");
-
+													"Where M.mediaId = ?; ");	
 			// instantiate parameters
 			pstatement.clearParameters();
 			pstatement.setInt(1, numOfCopiesAvailable);
@@ -1307,34 +1368,44 @@ public class MediaDAO
 			
 			pstatement.close();             
 			connection.close();
-			
 		}
 		
 		catch(SQLException sqle)
 		{
-			
 			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		}
+				
+	}
+	
+//=============================================================================
+	
+	public void updateGame(Media media)
+	{
+		PreparedStatement 	pstatement;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Games G " + 
+					"Set G.platform = ?, G.version = ? Where G.gameID = ?; ");
+
+			pstatement.clearParameters();
+			pstatement.setString(1, media.getPlatform());
+			pstatement.setFloat(2, media.getVersion());
+			pstatement.setInt(3, media.getMediaID());
 			
+			pstatement.executeUpdate();
+			pstatement.close();             
+			connection.close();			
 		}
 		
-	}
-	
-//=============================================================================
-	
-	public void updateMedia(List<Media> mediaList)
-	{
-		
-		
-		
-	}
-	
-//=============================================================================
-	
-	public void upateAllMedia(Media media)
-	{
-		
-		
-		
+		catch(SQLException sqle)
+		{
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());	
+		}
 	}
 	
 //=============================================================================
@@ -1371,7 +1442,6 @@ public class MediaDAO
 		movieNameList = new ArrayList<String>();
 		pstatement = null;
 		resultSet = null;
-		
 		
 		try
 		{

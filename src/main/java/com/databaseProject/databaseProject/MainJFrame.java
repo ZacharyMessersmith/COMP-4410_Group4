@@ -10,23 +10,27 @@ import javax.swing.GroupLayout.Alignment;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Dialogs.LoginDialog;
 import com.databaseProject.Pojos.User;
 
 import java.awt.*;
 
 public class MainJFrame extends JFrame
-						 implements MouseListener
+						 implements MouseListener, ChangeListener
 {
 	AdminPanel	adminPanel;
 	UserPanel	userPanel;
 	JTabbedPane	tabPane;
 	
 	JMenu		menuLogout;
+	User		user;
 	
-	public MainJFrame(User user)
+	public MainJFrame(User user) 
 	{
 	Container	cp;
+	
+	this.user = user;
 	
 	adminPanel = new AdminPanel();
 	userPanel = new UserPanel(user);
@@ -35,11 +39,14 @@ public class MainJFrame extends JFrame
 	//tabPane.addChangeListener(this);
 	
 	if (user.isAdmin())
+		{
 		tabPane.addTab("Administrator", adminPanel);
+		}
 	
 	if (user.isUser())
 		tabPane.addTab("Member", userPanel);
-	//tabPane.setTabComponentAt(0, new JLabel("Tab"));
+	
+	tabPane.addChangeListener(this);
 	
 	cp = getContentPane();
 	cp.add(tabPane, BorderLayout.CENTER);
@@ -59,8 +66,28 @@ public class MainJFrame extends JFrame
 		}
 	}
 	
+	public void stateChanged(ChangeEvent e)
+	{
+    UserDAO	userDao;
+    
+    userDao = new UserDAO();
+    
+	JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
+    int index = sourceTabbedPane.getSelectedIndex();
+    
+    if (sourceTabbedPane.getTitleAt(index).equals("Administrator"))
+    	{
+    	//adminPanel = new AdminPanel();
+    	}
+    else if (sourceTabbedPane.getTitleAt(index).equals("Member"))
+    	{
+    	user = userDao.getUser(user.getEmail());
+    	userPanel = new UserPanel(user);
+    	tabPane.setComponentAt(index, userPanel);
+    	}
+    	
 	
-
+	}
 	
 	private	 JMenuBar newMenuBar()
 	{

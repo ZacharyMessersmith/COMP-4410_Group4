@@ -10,9 +10,9 @@ import java.util.List;
 
 import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.Pojos.User;
+import com.databaseProject.databaseProject.AdminPanel;
 
 import java.awt.*;
-import javax.swing.JDialog;
 
 //Since this will be used by the admin, we should give them a default password that they can change later.
 
@@ -45,8 +45,12 @@ public class UserDialog extends JDialog
 	
 	UserDAO	userDao;
 	
-	public UserDialog()
+	AdminPanel	parent;
+	
+	public UserDialog(AdminPanel parent)
 	{
+	this.parent = parent;
+	
 	userDao = new UserDAO();
 	initializeBaseUserDialog();
 	setTitle("Create User");
@@ -58,8 +62,10 @@ public class UserDialog extends JDialog
 	userPlanLabel.setVisible(false);
 	}
 	
-	public UserDialog(User user, boolean isAdmin)
+	public UserDialog(User user, boolean isAdmin, AdminPanel parent)
 	{
+	this.parent = parent;
+	
 	userDao = new UserDAO();
 	initializeBaseUserDialog();
 	this.user = user;
@@ -245,7 +251,6 @@ public class UserDialog extends JDialog
 		{
 		user.setName(nameBox.getText().trim());
 		user.setPhoneNumber(phoneNumberBox.getText().trim());
-		user.setPassword(passwordBox.getText().trim());
 		user.setStreetAddress(streetAddressBox.getText().trim());
 		user.setCity(cityBox.getText().trim());
 		user.setState(stateBox.getText().trim());
@@ -254,7 +259,9 @@ public class UserDialog extends JDialog
 		user.setUser(isUserBox.isSelected());
 		user.setPlan((String)planDropdown.getSelectedItem());
 		
-		//update where the email = user.getEmail()
+		userDao.updateUser(user);
+		
+		parent.updateUserDisplay();
 		
 		dispose();
 		}
@@ -268,7 +275,7 @@ public class UserDialog extends JDialog
 		user.setState(stateBox.getText().trim());
 		user.setZipCode(Integer.parseInt(zipBox.getText().trim()));
 		
-		//update the database where the email = user.getEmail()
+		userDao.updateUser(user);
 		
 		dispose();
 		}
@@ -280,30 +287,30 @@ public class UserDialog extends JDialog
 		boolean	isAdmin, isUser;
 		String	plan;
 		
-		email = emailBox.getText();
-		name = nameBox.getText();
-		streetAddress = streetAddressBox.getText();
-		city = cityBox.getText();
-		state = stateBox.getText();
-		phoneNumber = phoneNumberBox.getText();
+		newUser = new User();
+		newUser.setEmail(emailBox.getText());
+		newUser.setName(nameBox.getText());
+		newUser.setStreetAddress(streetAddressBox.getText());
+		newUser.setCity(cityBox.getText());
+		newUser.setState(stateBox.getText());
+		newUser.setPhoneNumber(phoneNumberBox.getText());
+		newUser.setZipCode(Integer.parseInt(zipBox.getText()));
+		newUser.setPassword("BobRoss");
+		newUser.setAdmin(isAdminBox.isSelected());
+		newUser.setUser(isUserBox.isSelected());
+		newUser.setPlan((String)planDropdown.getSelectedItem());
 		
-	//probably need this in a try-catch, or at least do some form of validation
-		zip = Integer.parseInt(zipBox.getText());
+		if (!userDao.userExists(newUser.getEmail()))
+			{
+			userDao.insertUser(newUser);
+			parent.updateUserDisplay();
+			dispose();
+			}
+		else
+			{
+			JOptionPane.showMessageDialog(null, "A user with this email already exists!", "Error", JOptionPane.ERROR_MESSAGE);
+			}
 		
-		// look into how to make one of them be selected at all times
-				// if I figure it out, implement that on the UserPanel too
-		isAdmin = isAdminBox.isSelected();
-		isUser = isUserBox.isSelected();
-		
-		password = email; //default password
-		
-		//insert into the database
-		newUser = new User(email, name, phoneNumber, password, streetAddress, city, state, zip, isAdmin, isUser);
-		
-		plan = (String)planDropdown.getSelectedItem();
-		// Insert the email/plan combo into Has_Plan
-		
-		dispose();
 		}
 	else if (ae.getActionCommand().equals("CANCEL"))
 		{

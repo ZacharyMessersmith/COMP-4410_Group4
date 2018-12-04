@@ -18,9 +18,6 @@ import java.util.ArrayList;
 
 public class UserDAO 
 {
-
-	
-	
 	public UserDAO()
 	{
 		
@@ -72,7 +69,6 @@ public class UserDAO
 		
 	}
 		
-	
 	}
 	
 	
@@ -129,7 +125,6 @@ public class UserDAO
 	{
 		
 		PreparedStatement 	pstatement;
-		int		 			result;
 		byte				trueFalseByte;
 		
 		pstatement = null;
@@ -140,7 +135,7 @@ public class UserDAO
 		{
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("INSERT INTO Users (email, name, phoneNum, password, isMember, isAdmin) VALUES (?, ?, ?, ?, ?, ?)");
+			pstatement = connection.prepareStatement("INSERT INTO Users (email, name, phoneNum, password, isMember, isAdmin, numRentalsAvailable) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
 			// instantiate parameters
 			pstatement.clearParameters();
@@ -163,13 +158,16 @@ public class UserDAO
 			
 			pstatement.setByte(6, trueFalseByte);
 			
-			result = pstatement.executeUpdate();
+			pstatement.setInt(7, getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
 			
-			// ensure statement and connection are closed properly                                      
-			//resultSet.close();                                      
+			pstatement.executeUpdate();
+			
+			// ensure statement and connection are closed properly                                                                           
 			pstatement.close();                                      
 			connection.close();                       
 		
+			insertAddressForUser(user);
+			insertPlanForUser(user);
 		}
 		
 		catch(SQLException sqle)
@@ -183,56 +181,27 @@ public class UserDAO
 	
 //=============================================================================
 	
-	public void insertUsers( List<User> userList)
+	public void insertPlanForUser(User user)
 	{
-		
-		User user;
 		PreparedStatement 	pstatement;
-		int		 			result;
 		byte				trueFalseByte;
+		int					planId;
 		
-		user = null;
-		pstatement = null;
-		//resultSet = null;
-		
+		pstatement = null;		
 		
 		try
 		{
+			planId = Integer.parseInt(user.getPlan());
 			Connection connection = ConnectionManager.getConnection();
 		
-			pstatement = connection.prepareStatement("INSERT INTO Users (email, name, phoneNum, password, isMember, isAdmin) VALUES (?, ?, ?, ?, ?, ?)");
+			pstatement = connection.prepareStatement("INSERT INTO Has_Plan (email, planID) VALUES (?, ?)");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, user.getEmail());
+			pstatement.setInt(2, planId);
 			
-			for(int i = 0; i < userList.size(); i++)
-			{
-				
-				user = userList.get(i);
-				// instantiate parameters
-				pstatement.clearParameters();
-				pstatement.setString(1, user.getEmail());
-				pstatement.setString(2, user.getName());
-				pstatement.setString(3, user.getPhoneNumber());
-				pstatement.setString(4, user.getPassword());
-				
-				if(true == user.isUser())
-					trueFalseByte = 1;
-				else
-					trueFalseByte = 0;
-				
-				pstatement.setByte(5,trueFalseByte);
-				
-				if(true == user.isUser())
-					trueFalseByte = 1;
-				else
-					trueFalseByte = 0;
-				
-				pstatement.setByte(6, trueFalseByte);
-				
-				result = pstatement.executeUpdate();
-			
-			}
-			
-			// ensure statement and connection are closed properly                                      
-			//resultSet.close();                                      
+			pstatement.executeUpdate();                                                                           
 			pstatement.close();                                      
 			connection.close();                       
 		
@@ -240,12 +209,138 @@ public class UserDAO
 		
 		catch(SQLException sqle)
 		{
-			
 			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
 		}
 		
+		catch(NumberFormatException e)
+		{
+		e.printStackTrace();
+		}
 		
+	}
+	
+//=============================================================================
+
+		
+	public void insertAddressForUser(User user)
+	{
+		PreparedStatement 	pstatement;
+		byte				trueFalseByte;
+		
+		pstatement = null;		
+		
+		try
+		{
+			if (!addressExists(user.getStreetAddress(), user.getZipCode()))
+				createAddress(user);
+		
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("INSERT INTO Lives_At1 (email, street, zip) VALUES (?, ?, ?)");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, user.getEmail());
+			pstatement.setString(2, user.getStreetAddress());
+			pstatement.setInt(3, user.getZipCode());
+			
+			pstatement.executeUpdate();                                                                           
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		}
+		
+	}
+	
+//=============================================================================	
+	
+	public void createAddress(User user)
+	{
+		PreparedStatement 	pstatement;
+		byte				trueFalseByte;
+		
+		pstatement = null;		
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("INSERT INTO Addresses (street, zip, city, state) VALUES (?, ?, ?, ?)");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, user.getStreetAddress());
+			pstatement.setInt(2, user.getZipCode());
+			pstatement.setString(3, user.getCity());
+			pstatement.setString(4, user.getState());
+			
+			pstatement.executeUpdate();                                                                           
+			pstatement.close();                                      
+			connection.close();                       
+		
+		}
+		
+		catch(SQLException sqle)
+		{
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		}
+		
+	}
+	
+//=============================================================================
+	
+	public boolean	addressExists(String streetAddress, int zipCode)
+	{
+	boolean	addressExists;
+	PreparedStatement pstatement;
+	Connection connection;
+	ResultSet	resultSet;
+	
+	addressExists = false;
+	
+	try
+		{
+		connection = ConnectionManager.getConnection();
+		
+		pstatement = connection.prepareStatement("SELECT * FROM Addresses a WHERE a.street = ? AND a.zip = ?");
+		
+		// instantiate parameters
+		pstatement.clearParameters();
+		pstatement.setString(1, streetAddress);
+		pstatement.setInt(2, zipCode);
+	
+		// query database
+		resultSet = pstatement.executeQuery();
+		
+		while ( resultSet.next() ) 
+			{
+			addressExists = true;
+			}
+		
+		resultSet.close();                                      
+		pstatement.close();  
+		connection.close();                       
+		}
+	
+	catch(SQLException sqle)
+		{
+		System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+		}
+	
+	return addressExists;
+	}
+	
+//=============================================================================
+	
+	public void insertUsers(List<User> userList)
+	{
+		for (int i=0; i < userList.size(); i++)
+			insertUser(userList.get(i));
 	}
 	
 //=============================================================================
@@ -257,13 +352,29 @@ public class UserDAO
 		
 		if(null != getUser(email, password).getEmail())
 		{
-			
 			exists = true;
-			
 		}
+		return exists;
+	}
+	
+//=============================================================================
+	
+	public boolean userExists(String email)
+	{
+		boolean exists = false;
+		
+		User user = getUser(email);
+		
+		if(user != null)
+			{
+			if (user.getEmail() != null)
+				{
+				if (!email.equals(user.getEmail()))
+					exists = true;
+				}
+			}
 		
 		return exists;
-		
 	}
 	
 //=============================================================================
@@ -281,7 +392,6 @@ public class UserDAO
 		pstatement = null;
 		resultSet = null;
 		
-		
 		try
 		{
 			Connection connection = ConnectionManager.getConnection();
@@ -297,25 +407,26 @@ public class UserDAO
 			while ( resultSet.next() ) 
 			{
 				
-					user.setEmail(resultSet.getString("email"));
-					user.setName(resultSet.getString("name"));
-					user.setPhoneNumber(resultSet.getString("phoneNum"));
-					user.setPassword(resultSet.getString("password"));
-					user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
-					user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
-					
-					setUserAddress(user);
-					
+				user.setEmail(resultSet.getString("email"));
+				user.setName(resultSet.getString("name"));
+				user.setPhoneNumber(resultSet.getString("phoneNum"));
+				user.setPassword(resultSet.getString("password"));
+				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
+				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				user.setNumRentalsAvailable(resultSet.getInt("numRentalsAvailable"));
 				
-				if(1 == resultSet.getByte("isMember"))
-					user.setUser(true);
-				else
-					user.setUser(false);
+				setUserAddress(user);
 				
-				if(1 == resultSet.getByte("isAdmin"))
-					user.setAdmin(true);
-				else
-					user.setAdmin(false);
+			
+			if(1 == resultSet.getByte("isMember"))
+				user.setUser(true);
+			else
+				user.setUser(false);
+			
+			if(1 == resultSet.getByte("isAdmin"))
+				user.setAdmin(true);
+			else
+				user.setAdmin(false);
 				
 			} // end while
 			
@@ -328,16 +439,10 @@ public class UserDAO
 		
 		catch(SQLException sqle)
 		{
-			
-			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());	
 		}
 		
-		
-		
 		return user;
-		
-		
 	}
 
 //=============================================================================
@@ -345,7 +450,6 @@ public class UserDAO
 	//gets a users information
 	public User getUser(String email, String password)
 	{
-		
 		User 				user;
 		PreparedStatement 	pstatement;
 		ResultSet 			resultSet;
@@ -376,6 +480,7 @@ public class UserDAO
 				user.setPassword(resultSet.getString("password"));
 				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
 				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				user.setNumRentalsAvailable(resultSet.getInt("numRentalsAvailable"));
 				
 				setUserAddress(user);
 				
@@ -405,10 +510,7 @@ public class UserDAO
 			
 		}
 		
-		
-		
 		return user;
-		
 	}
 
 
@@ -473,6 +575,7 @@ public class UserDAO
 				user.setPassword(resultSet.getString("password"));
 				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
 				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				user.setNumRentalsAvailable(resultSet.getInt("numRentalsAvailable"));
 				
 				setUserAddress(user);
 				
@@ -545,6 +648,7 @@ public class UserDAO
 				user.setPassword(resultSet.getString("password"));
 				user.setPlan(Integer.toString(getPlanIDForUser(user.getEmail())));
 				user.setMaxNumRentals(getMaxNumRentalsForPlan(Integer.parseInt(user.getPlan())));
+				user.setNumRentalsAvailable(resultSet.getInt("numRentalsAvailable"));
 				
 				setUserAddress(user);
 				
@@ -775,13 +879,10 @@ public class UserDAO
 	
 	public void deleteUser(String email)
 	{
-		
-		
 		PreparedStatement 	pstatement;
 		int		 			result;
 		
 		pstatement = null;
-		
 		
 		try
 		{
@@ -805,95 +906,131 @@ public class UserDAO
 		
 		catch(SQLException sqle)
 		{
-			
 			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
 		}
 		
 	}
 	
 //=============================================================================
 	
-	
-	public void deleteUsers(List<String> emailList)
-	{
-		
-		PreparedStatement 	pstatement;
-		int			 		result;
-		
-		pstatement = null;
-		//resultSet = null;
-		
-		
-		try
-		{
-			Connection connection = ConnectionManager.getConnection();
-		
-			pstatement = connection.prepareStatement("DELETE FROM Users WHERE Users.email = ?");
-			
-			for(int i = 0; i < emailList.size(); i++)	
-			{
-				// instantiate parameters
-				pstatement.clearParameters();
-				pstatement.setString(1, emailList.get(i));
-
-				// query database
-				result = pstatement.executeUpdate();
-
-			}
-			
-			// ensure statement and connection are closed properly                                      
-			//resultSet.close();                                      
-			pstatement.close();                                      
-			connection.close();                       
-		
-		}
-		
-		catch(SQLException sqle)
-		{
-			
-			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
-			
-		}
-		
-	}
-	
-//=============================================================================
-/*
-	//Checks and updates a user in the database when given a database object.
-	//If an attribute is null in the user object, it is interpreted as not
-	//wanting to be updated and will not be updated in the database.
 	public void updateUser(User user)
 	{
 		
 		PreparedStatement 	pstatement;
-		String				pstatementString;
-		ResultSet 			resultSet;
+		int					isMember;
+		int					isAdmin;
 		
 		pstatement = null;
-		resultSet = null;
+		if (user.isAdmin())
+			isAdmin = 1;
+		else
+			isAdmin = 0;
 		
-		if(null != user.get())
-		{
-			
-			
-			
-		}
-		
+		if (user.isUser())
+			isMember = 1;
+		else
+			isMember = 0;
 		
 		try
 		{
 			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Users U "
+					+ "Set U.name = ?, U.phoneNum = ?, U.isMember = ?, U.isAdmin = ?, U.password = ?, "
+					+ "U.numRentalsAvailable = ? Where U.email = ? ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			
+			int index = 1;
+			pstatement.setString(index++, user.getName());
+			pstatement.setString(index++, user.getPhoneNumber());
+			pstatement.setInt(index++, isMember);
+			pstatement.setInt(index++, isAdmin);
+			pstatement.setString(index++, user.getPassword());
+			pstatement.setInt(index++, user.getNumRentalsAvailable());
+			pstatement.setString(index++, user.getEmail());
+			
+			pstatement.executeUpdate();
+			pstatement.close();             
+			connection.close();
+			
+			updatePlan(user);
+			updateUserAddress(user);
+		}
 		
-			pstatement = connection.prepareStatement("DELETE FROM Users WHERE Users.email = ?");
-			
-			
-			
-			// ensure statement and connection are closed properly                                      
-			resultSet.close();                                      
-			pstatement.close();                                      
-			connection.close();                       
+		catch(SQLException sqle)
+		{
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());	
+		}
 		
+	}
+	
+//============================================================================
+
+	public void updateUserAddress(User user)
+	{
+		PreparedStatement 	pstatement;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("DELETE FROM Lives_At1 WHERE email = ?");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setString(1, user.getEmail());
+			pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+			if (!addressExists(user.getStreetAddress(), user.getZipCode()))
+				{
+				insertIntoAddresses(user.getStreetAddress(), user.getZipCode(), user.getCity(), user.getState());
+				}
+			else if (addressHasBeenChanged(user.getStreetAddress(), user.getZipCode(), user.getCity(), user.getState()))
+				{
+				updateAddress(user.getStreetAddress(), user.getZipCode(), user.getCity(), user.getState());
+				}
+			
+			insertIntoToLives_At1(user.getEmail(), user.getStreetAddress(), user.getZipCode());
+		}
+	
+		catch(SQLException sqle)
+		{
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());	
+		}
+	}
+	
+//============================================================================
+	
+	public void updateNumberOfAvailableRentalsForUser(User user)
+	{
+		
+		PreparedStatement 	pstatement;
+		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Users U Set U.numRentalsAvailable = ? Where U.email = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, user.getNumRentalsAvailable());
+			pstatement.setString(2, user.getEmail());
+			
+			pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
 		}
 		
 		catch(SQLException sqle)
@@ -905,15 +1042,55 @@ public class UserDAO
 		
 	}
 	
-//=============================================================================
+//============================================================================
 	
-	public void updateUsers(List<User> userList)
+	public void updateUserPlan(String email, int planID)
 	{
 		
+		PreparedStatement 	pstatement;
 		
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+				
+			pstatement = connection.prepareStatement("Update Has_Plan HP Set HP.planID = ? Where HP.email = ?; ");
+
+			// instantiate parameters
+			pstatement.clearParameters();
+			pstatement.setInt(1, planID);
+			pstatement.setString(2, email);
+			
+			pstatement.executeUpdate();
+			
+			pstatement.close();             
+			connection.close();
+			
+		}
+		
+		catch(SQLException sqle)
+		{
+			
+			System.out.println("SQLState = " + sqle.getSQLState() + "\n" + sqle.getMessage());
+			
+		}
 		
 	}
-	*/
+	
+	public void updatePlan(User user)
+	{
+	try
+		{
+		int planId = Integer.parseInt(user.getPlan());
+		updateUserPlan(user.getEmail(), planId);
+		}
+	catch (NumberFormatException e)
+		{
+		e.printStackTrace();
+		}	
+	}
+	
 //=============================================================================
 
 	public List<String> getAllUserEmails()
@@ -937,8 +1114,193 @@ public class UserDAO
 
 //============================================================================
 
+	public void insertIntoToLives_At1(String email,String street, int zip)
+	{
 
+		PreparedStatement 	pstatement;
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("INSERT INTO lives_at1 (email, street, zip) VALUES (?, ?, ?)");
+
+			//Filling the '?' in pstatement
+			pstatement.clearParameters();
+			pstatement.setString(1, email);
+			pstatement.setString(2, street);
+			pstatement.setInt(3, zip);
+			
+			pstatement.executeUpdate();
+			
+			                                 
+			//Close the connections                                  
+			pstatement.close();                                      
+			connection.close();                     
+			
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		}
+	}
+//=============================================================================
+	public void insertIntoAddresses(String street, int zip, String city, String state)
+	{
+		PreparedStatement 	pstatement;
+		pstatement = null;
+		
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("INSERT INTO addresses (street, zip, city, state) VALUES (?, ?, ?, ?)");
+
+			//Filling the '?' in pstatement
+			pstatement.clearParameters();
+			pstatement.setString(1, street);
+			pstatement.setInt(2, zip);
+			pstatement.setString(3, city);
+			pstatement.setString(4, state);
+			
+			pstatement.executeUpdate();
+			
+			                                 
+			//Close the connections                                  
+			pstatement.close();                                      
+			connection.close();                     
+			
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		}
+	}
+//=============================================================================
+	public boolean isAddress(String street, int zip)
+	{
+		PreparedStatement 	pstatement;
+		pstatement = null;
+		ResultSet rs;
+		rs= null;
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("SELECT * FROM addresses A WHERE A.street = ? AND A.zip = ? ");
+			
+			pstatement.setString(1, street);
+			pstatement.setInt(2, zip);
+			
+			rs = pstatement.executeQuery();
+			
+			//this checks if the result set is empty or not
+			//if empty return false, else return true (found the address)
+			if(rs.next()==false)
+			{
+				rs.close();
+				pstatement.close();
+				connection.close();
+				
+				return false;
+			}
+			else
+			{
+				rs.close();
+				pstatement.close();
+				connection.close();
+				return true;
+			}	
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+			return false;
+		}
+	}
 	
+//============================================================================
+
+	public void updateAddress (String street, int zip, String city, String state)
+	{
+		PreparedStatement 	pstatement;
+		pstatement = null;
+		ResultSet rs;
+		rs= null;
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("UPDATE addresses A SET A.city = ? AND A.state = ? "
+					+ "WHERE A.street = ? AND A.zip = ? ");
+			
+			pstatement.setString(1, city);
+			pstatement.setString(2, state);
+			pstatement.setString(3, street);
+			pstatement.setInt(4, zip);
+			
+			pstatement.executeUpdate();
+			
+			pstatement.close();
+			connection.close();
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+		}
+	}	
+	
+//============================================================================
+	
+	public boolean addressHasBeenChanged(String street, int zip, String city, String state)
+	{
+		PreparedStatement 	pstatement;
+		pstatement = null;
+		ResultSet rs;
+		rs= null;
+		try
+		{
+			Connection connection = ConnectionManager.getConnection();
+		
+			pstatement = connection.prepareStatement("SELECT * FROM addresses A WHERE A.street = ? AND A.zip = ? "
+					+ "AND A.city = ? AND A.state = ?");
+			
+			pstatement.setString(1, street);
+			pstatement.setInt(2, zip);
+			pstatement.setString(3, city);
+			pstatement.setString(4, state);
+			
+			rs = pstatement.executeQuery();
+			
+			//this checks if the result set is empty or not
+			//if empty return false, else return true (found the address)
+			if(rs.next()==false)
+			{
+				rs.close();
+				pstatement.close();
+				connection.close();
+				
+				return true;
+			}
+			else
+			{
+				rs.close();
+				pstatement.close();
+				connection.close();
+				return false;
+			}	
+		}
+		catch(SQLException e)
+		{
+			System.out.println("SQLState = " + e.getSQLState() + "\n" + e.getMessage());
+			return false;
+		}
+	}
+	
+//============================================================================
+	
+
 	
 	
 	

@@ -83,7 +83,9 @@ public class AdminMediaDialog extends JDialog
 	releaseDateBox.setText(media.getReleaseDate().toString());
 	genreBox.setText(media.getGenre());
 	
-	// These might need changed based on what is stored in the database
+	gameOption.setEnabled(false);
+	movieOption.setEnabled(false);
+	
 	if (media.getMediaType() == 'g') 
 		{
 		gameOption.setSelected(true);
@@ -442,8 +444,32 @@ public class AdminMediaDialog extends JDialog
 		}
 	if (ae.getActionCommand().equals("EDIT_MEDIA")) 
 		{
-		// update database where mediaID = this.mediaID
-		// make sure to update the Works_In table too
+		if (numCopiesBox.getText().trim().equals(""))
+			numCopiesBox.setText("0");
+		
+		media.setGenre(genreBox.getText().trim());
+		media.setTitle(titleBox.getText().trim());
+		media.setNumCopiesAvailable(Integer.parseInt(numCopiesBox.getText().trim()));
+		media.setReleaseDate(formatAsDate(releaseDateBox.getText().trim()));
+		
+		if (gameOption.isSelected())
+			{
+			media.setMediaType('g');
+			media.setPlatform(platformBox.getText().trim());
+			if (versionBox.getText().trim().equals(""))
+				versionBox.setText("1.0");
+			media.setVersion(Float.parseFloat(versionBox.getText().trim()));
+			}
+		else
+			{
+			media.setMediaType('m');
+			media.setCastList(castList.getSelectedValuesList());
+			media.setDirectorList(directorList.getSelectedValuesList());
+			media.setAwardsList(awardsList.getSelectedValuesList());
+			media.setSequelsList(sequelsList.getSelectedValuesList());
+			}
+		
+		mediaDao.updateMedia(media);
 		
 		//This updates the list so the edited info is shown.
 		parent.showMediaBox.setSelectedItem(parent.showMediaBox.getSelectedItem());

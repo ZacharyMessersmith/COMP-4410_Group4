@@ -87,10 +87,14 @@ class Project1TestMediaLauncher
 		System.out.println("Created MediaDAO");
 		
 		
-		System.out.println("Testing updating media information");
+		/*System.out.println("Testing updating game information");
+		mediaDAO.updateGame(23, "X-Tron", (float) 2.0);
+		System.out.println("Done Testing updating game information");*/
+		
+/*		System.out.println("Testing updating media information");
 		mediaDAO.updateMedia(24, new Date(System.currentTimeMillis()), 5, "Action");
 		System.out.println("Done Testing updating media information");
-		
+		*/
 		
 		
 		/*System.out.println("Testing getting mediaID given a movieTitle");

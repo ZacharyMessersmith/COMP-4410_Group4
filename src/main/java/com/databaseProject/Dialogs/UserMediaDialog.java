@@ -13,8 +13,12 @@ import java.awt.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import com.databaseProject.DAOs.MediaDAO;
+import com.databaseProject.DAOs.UserDAO;
 import com.databaseProject.DAOs.WorkerDAO;
 import com.databaseProject.Pojos.Media;
+import com.databaseProject.Pojos.User;
+import com.databaseProject.databaseProject.UserPanel;
 
 
 public class UserMediaDialog extends JDialog
@@ -31,15 +35,19 @@ public class UserMediaDialog extends JDialog
 	JPanel	moviePanel;
 	
 	Media	media;
+	User	user;
+	UserPanel	parent;
 	
 	WorkerDAO	workerDao;	
 	
 	JButton	rentButton;
 	
-	public UserMediaDialog(Media media, boolean isUser)
+	public UserMediaDialog(Media media, boolean isUser, UserPanel parent)
 	{
 	workerDao = new WorkerDAO();
 	this.media = media;
+	this.user = parent.getUser();
+	this.parent = parent;
 	
 	JLabel	typeLabel;
 	JLabel	numCopiesLabel;
@@ -118,7 +126,13 @@ public class UserMediaDialog extends JDialog
 	
 	buttonPanel = new JPanel();
 	if (isUser)
+		{
 		buttonPanel.add(rentButton);
+		if (user.getNumRentalsAvailable() <= 0)
+			rentButton.setEnabled(false);
+		else if (media.getNumCopiesAvailable() <= 0)
+			rentButton.setEnabled(false);
+		}
 	buttonPanel.add(closeButton);
 	
 	cp = getContentPane();
@@ -279,11 +293,22 @@ public class UserMediaDialog extends JDialog
 	
 	public void actionPerformed(ActionEvent ae)
 	{
+	MediaDAO	mediaDao;
+	UserDAO		userDao;
+	
+	mediaDao = new MediaDAO();
+	userDao = new UserDAO();
+	
 	if (ae.getActionCommand().equals("CLOSE"))
 		dispose();
 	if (ae.getActionCommand().equals("RENT"))
 		{
-		//call function to add rental and decrease numCopiesAvailable
+		user.setNumRentalsAvailable(user.getNumRentalsAvailable() - 1); 
+		mediaDao.updateMediaInventory(media.getMediaID(), media.getNumCopiesAvailable()-1);
+		userDao.updateNumberOfAvailableRentalsForUser(user);
+		parent.updateNumRentalsAvailableLabel(user.getNumRentalsAvailable());
+		
+		dispose();
 		}
 	}
 	

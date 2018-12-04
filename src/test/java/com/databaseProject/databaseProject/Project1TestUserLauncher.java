@@ -50,7 +50,7 @@ class Project1TestUserLauncher
 		passwordList = new ArrayList<String>();
 		
 		
-		for(int i = 0; i < 10; i++)
+		/*for(int i = 0; i < 10; i++)
 		{
 			
 			userInsert = new User();
@@ -77,11 +77,40 @@ class Project1TestUserLauncher
 		userInsert.setPhoneNumber("ManualAdd1");
 		userInsert.setUser(true);
 		userInsert.setAdmin(true);
-		
+		*/
 		System.out.println("Creating UserDAO");
 		userDAO = new UserDAO();
 		System.out.println("Created UserDAO");
 		
+		
+		//userDAO.insertIntoAddresses("555 Testing Ave.", 55555, "TestingCity", "WV");
+		//userDAO.insertIntoToLivesAt_1("TestUser1-1@email.com", "555 Testing Ave.", 55555);
+		
+		System.out.println("Testing updating a users email");
+		userDAO.updateAddress("555 Testing Ave.", 55555 , "556 Testing Road.", 55556,
+									"TestingOasis", "VA");
+		System.out.println("Done Testing updating a uers email");
+		
+		/*System.out.println("Testing updating a users email");
+		userDAO.updateUserEmail("TestUser1-1@email.com", "TestUser1@email.com" );
+		System.out.println("Done Testing updating a uers email");*/
+		
+		
+		/*System.out.println("Testing updating a users password");
+		userDAO.updateUserPassword("TestUser1@email.com", "BobRoss" );
+		System.out.println("Done Testing updating a uers password");*/
+		
+		/*
+		System.out.println("Testing updating a user plan");
+		userDAO.updateUserPlan("TestUser1@email.com", 4);
+		System.out.println("Done Testing updating a user plan");*/
+		
+		/*
+		System.out.println("Testing updating a user");
+		userDAO.updateUser("TestUser1@email.com", "TestUser1-1", "6666666666", true, true );
+		System.out.println("Done Testing updating a user");*/
+		
+		/*
 		System.out.println("Manually adding single user");
 		userDAO.insertUser(userInsert);
 		System.out.println("Successfully added single user");
@@ -147,7 +176,7 @@ class Project1TestUserLauncher
 			
 			System.out.println(emailStringList.get(i));
 			
-		}
+		}*/
 		
 		/*
 		System.out.println("Testing updating user information");
